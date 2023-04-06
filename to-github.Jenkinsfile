@@ -19,7 +19,7 @@ pipeline {
                     // Nodes by default don't have a .ssh folder
                     sh 'mkdir -p ~/.ssh'
                     sh 'if ! grep -q github.com ~/.ssh/known_hosts; then ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts; fi'
-                    sh 'git push git@github.com:aristanetworks/aql-examples.git HEAD:master'
+                    sh 'git push git@github.com:aristanetworks/aql-examples.git HEAD:refs/heads/master'
                 }
             }
         }
