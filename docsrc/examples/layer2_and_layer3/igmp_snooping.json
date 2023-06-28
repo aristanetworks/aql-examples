@@ -1,0 +1,88 @@
+{
+  "dashboards": [
+    {
+      "key": "cdfff4f9-a6a1-4190-b635-2e717811aa28",
+      "createdAt": [
+        999819416,
+        1574
+      ],
+      "createdBy": "cvpadmin",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "IGMP Snooping",
+      "description": "#device",
+      "widgets": [
+        {
+          "id": "dc092a39-346a-4c47-9b3f-c9e3cdf97ecd",
+          "name": "Snooping Groups",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 11,
+            "height": 21
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let igmpSnooping = `<_device>:/Sysdb/bridging/igmpsnooping/forwarding/status/vlanStatus/*/ethGroup/*/intf`\nlet filteredIgmpSnooping = igmpSnooping | recmap(2, merge(_value))\nlet result = newDict()\nfor vlanKey, macAddrIntf in filteredIgmpSnooping {\n    for macAddr, intfState in macAddrIntf {\n        # Create a list of interfaces a vlan is mapped to\n        let interfaceList = \"\"\n        if length(intfState) > 1{\n            for interface, intfBool in intfState {\n                let interfaceList = interfaceList + str(interface) + \", \"\n            }\n        } else {\n            # if there is only 1 interface no need to add a comma\n            let interfaceList = str(dictKeys(intfState)[0])\n        }\n        let vlan = reFindCaptures(str(vlanKey), \"{\\\"value\\\":(\\d+)}\")[0][1]\n        result[macAddr] = newDict() | setFields(\"VLAN\", vlan, \"Members\", interfaceList)\n    }\n}\nresult",
+            "graphConfig": {
+              "defaultSort": {
+                "key": "Switch"
+              },
+              "columns": {
+                "Switch": {
+                  "mapToHostname": true
+                }
+              },
+              "columnOrders": {
+                "key": 1,
+                "Switch": 2,
+                "Interface": 3,
+                "Status": 4,
+                "Switchport Mode": 5,
+                "Trunked VLANs": 6,
+                "Access VLAN": 7,
+                "Port Description": 8,
+                "Chassis Identifier": 9,
+                "Remote LLDP Hostname": 10,
+                "Remote LLDP PortID": 11,
+                "Speed": 12
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "eaf7b6ec-8b70-4970-aa3d-f7bf1760c931",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "BAD032986065E8DC14CBB6472EC314A6",
+            "inputName": "device",
+            "inputSource": "devices",
+            "tagLabel": "device"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691178747788,
+      "lastUpdatedBy": "cvpadmin"
+    }
+  ]
+}
