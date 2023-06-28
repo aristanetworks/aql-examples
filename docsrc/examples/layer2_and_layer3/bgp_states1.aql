@@ -1,0 +1,20 @@
+let neighbors = `analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`
+
+# Dict to store the states and counts
+let res = newDict()
+# Loop over each device
+for device, deviceSessions in neighbors{
+    # Loop over each session on each device
+    for ip, sessionData in deviceSessions{
+        let data = merge(sessionData)
+        # Have we used this status yet?
+        let status = data["bgpState"]["Name"]
+        if !dictHasKey(res, status) {
+            # If not lets set it use count to zero
+            res[status] = 0
+        }
+        # Add one to the total times this status is used
+        res[status] = res[status] + 1
+    }
+}
+res

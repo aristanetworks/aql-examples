@@ -1,0 +1,28 @@
+let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
+
+if str(_POD_NAME) == "" {
+    let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`
+} else {
+    let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*` | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")))
+}
+
+# This is the table
+let res = newDict()
+let id = 0
+# Lets loop over every device
+for device, deviceSessions in bgpNeighbors{
+    # And each session on the devices
+    for ip, sessionData in deviceSessions{
+        let data = merge(sessionData)
+        # Add one to the ID
+        let id = id + 1
+        res[id] = newDict()
+        # This is where we add the various columns
+        res[id]["0. Device"] = device
+        res[id]["1. Status"] = data["bgpState"]["Name"]
+        res[id]["2. Peering Address"] = data["bgpPeerLocalAddr"]
+        res[id]["3. Neighbor Address"] = data["key"]
+        res[id]["4. Neighbor AS"] = data["bgpPeerAs"]["value"]
+    }
+}
+res
