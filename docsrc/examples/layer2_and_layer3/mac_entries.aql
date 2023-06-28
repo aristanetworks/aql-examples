@@ -1,0 +1,2 @@
+let data = `*:/Smash/bridging/status/_counts`
+sum(data | map(merge(_value)) | where(dictHasKey(_value, "smashFdbStatus")) | map(_value["smashFdbStatus"]))
