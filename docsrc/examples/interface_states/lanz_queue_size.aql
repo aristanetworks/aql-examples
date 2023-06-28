@@ -1,0 +1,32 @@
+let intervalToMonitor = "10s" # Can be "1m", "10s" or "1ms"
+let queueToMonitor = "queueSize" # Can be "queueSize" (to monitor queue size), "qDropCount" (to monitor actual drops) or "txLatency" (to monitor Tx latency)
+
+# Section to get a Serial-number to hostname dict (SNToHostnameDict)
+let SNToHostnameDict = newDict()
+let dataDeviceAnalytics = `analytics:/Devices/*/versioned-data/Device`
+for device, deviceData in dataDeviceAnalytics {
+   let mergedDeviceData = merge(deviceData)
+   SNToHostnameDict[device] = mergedDeviceData["hostname"]
+}
+
+# let data = `analytics:/Devices/*/versioned-data/interfaces/data/*/lanz/aggregate-congestion/*`[_timeWindowStart:_timeWindowEnd]
+let data = `analytics:/Devices/*/versioned-data/interfaces/data/*/lanz/aggregate-congestion/*`[7*24h]
+let result = newDict()
+for deviceSN, deviceData in data {
+    for interface, interfaceData in deviceData {
+        for interval, aggData in interfaceData {
+            let empty = true
+            for timestamp, timeseriesData in aggData {
+                if (dictHasKey(timeseriesData, queueToMonitor) && timeseriesData[queueToMonitor]["avg"] > 0 && interval == intervalToMonitor && strHasPrefix(interface, "Ethernet")) {
+                    let empty = false
+                }
+            }
+            if (!empty) {
+                let deviceHostname = SNToHostnameDict[deviceSN]
+                result[interface + " on " + deviceHostname + " (" + interval + ")"] = aggData | map(_value[queueToMonitor]["avg"])
+            }
+
+        }
+    }
+}
+result
