@@ -1,0 +1,30 @@
+let data =`analytics:/Devices/*/versioned-data/hardware/disk/\/mnt\/flash`
+let data = data | map(merge(_value) | fields("usedPartitionPercent"))
+
+let test = 0
+let i60 = 0
+let b6080 = 0
+let s80 = 0
+
+for device, deviceData in data {
+    if dictHasKey(deviceData, "usedPartitionPercent") {
+        let test = deviceData["usedPartitionPercent"]
+        if test < 60 {
+            let i60=i60+1
+        }
+        if test < 80 && test > 60 {
+            let b6080=b6080+1
+        }
+        if test > 80 {
+            let s80=s80+1
+        }
+    }
+}
+
+let usageDict = newDict()
+
+usageDict["Disk < 60%"] = i60
+usageDict["60% < Disk < 80%"] = b6080
+usageDict["Disk > 80%"] = s80
+
+usageDict

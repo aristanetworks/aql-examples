@@ -1,0 +1,30 @@
+let data =`analytics:/Devices/*/versioned-data/hardware/meminfo/memoryUsage`
+let data = data | map(merge(_value) | fields("usedMemoryPercent"))
+
+let test = 0
+let i60 = 0
+let b6070 = 0
+let s70 = 0
+
+for device, deviceData in data {
+    if dictHasKey(deviceData, "usedMemoryPercent") {
+        let test = deviceData["usedMemoryPercent"]
+        if test < 70 {
+            let i60=i60+1
+        }
+        if test < 80 && test > 70 {
+            let b6070=b6070+1
+        }
+        if test > 70 {
+            let s70=s70+1
+        }
+    }
+}
+
+let usageDict = newDict()
+
+usageDict["Memory < 60%"] = i60
+usageDict["60% < Memory < 70%"] = b6070
+usageDict["Memory > 70%"] = s70
+
+usageDict
