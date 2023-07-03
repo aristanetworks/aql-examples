@@ -1,0 +1,18 @@
+let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
+let devicesInCPOD1 = merge(`analytics:/tags/labels/devices/pod_name/value/CPOD1/elements`)
+
+if str(_POD_NAME) == "" {
+    let vlanConfig = `*:/Sysdb/bridging/config/vlanConfig` | where(dictHasKey(devicesInCPOD1, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(merge(_value))
+} else {
+    let vlanConfig = `*:/Sysdb/bridging/config/vlanConfig` | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(merge(_value))
+}
+
+let numberVlan = newDict()
+
+for deviceKey, deviceValue in vlanConfig {
+    for vlanKey, vlanValue in deviceValue{
+        numberVlan[vlanKey["value"]] = 1
+    }
+}
+
+length(numberVlan)
