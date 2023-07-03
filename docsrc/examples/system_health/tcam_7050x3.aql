@@ -1,0 +1,29 @@
+# Get the devices that have the `hdl` (high-density leaf) tag
+let devices = merge(`analytics:/tags/labels/devices/switch_role/value/hdl/elements`)
+
+# Get the L3 hardware capacity for all devices
+let hwCapL3 =`*:/Sysdb/hardware/capacity/status/l3/entry`
+
+# Get the L2 hardware capacity for all devices
+let hwCapL2 =`*:/Sysdb/hardware/capacity/status/l2/entry`
+
+# Get the devices that are part of a specific pod
+let podDeviceList = merge(`analytics:/tags/labels/devices/pod_name/value/<_pod_name>/elements`)
+
+# If the POD_NAME variable is not set (none) show the utilization for all pods
+if str(_pod_name) == "" {
+    let filteredHwCapL3 = hwCapL3 | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(merge(_value) )
+    let filteredHwCapL2 = hwCapL2 | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(merge(_value) )
+} else {
+    let filteredHwCapL3 = hwCapL3 | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(podDeviceList, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(merge(_value) )
+    let filteredHwCapL2 = hwCapL2 | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(podDeviceList, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(merge(_value) )
+}
+
+# Build a new table with MAC, HOST, LPM and NextHop utilization
+for deviceKey, deviceValue in filteredHwCapL3{
+    filteredHwCapL3[deviceKey]["Host Percent"] = filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"Host\", \"feature\": \"\"}")]["used"] / filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"Host\", \"feature\": \"\"}")]["maxLimit"]*100
+    filteredHwCapL3[deviceKey]["LPM Percent"] = filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"LPM\", \"feature\": \"\"}")]["used"] / filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"LPM\", \"feature\": \"\"}")]["maxLimit"]*100
+    filteredHwCapL3[deviceKey]["NextHop Percent"] = filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"NextHop\", \"feature\": \"\"}")]["used"] / filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"NextHop\", \"feature\": \"\"}")]["maxLimit"]*100
+    filteredHwCapL3[deviceKey]["MAC Percent"] = filteredHwCapL2[deviceKey][complexKey("{\"chip\": \"Linecard0/0\", \"table\":\"MAC\", \"feature\": \"L2\"}")]["used"] / filteredHwCapL2[deviceKey][complexKey("{\"chip\": \"Linecard0/0\", \"table\":\"MAC\", \"feature\": \"L2\"}")]["maxLimit"]*100
+}
+filteredHwCapL3 | map(_value | fields("MAC Percent","Host Percent", "LPM Percent", "NextHop Percent"))
