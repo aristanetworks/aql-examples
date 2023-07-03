@@ -1,0 +1,11 @@
+Listing of devices affected by FN72
+===================================
+
+.. literalinclude:: fn72.aql
+   :language: aql
+
+.. image:: fn72.png
+   :width: 600
+   :alt: Listing of devices affected by FN72
+
+:download:`Download the Dashboard JSON here <fn72.json>`

@@ -1,0 +1,49 @@
+let inventory = merge(`analytics:/DatasetInfo/Devices`)
+let affected = newDict()
+let id = 1
+for dkey, dval in inventory{
+
+    let serial_slice = strCut(dkey,3,7)
+    let model = dval["modelName"]
+    let hostname = dval["hostname"]
+    if strContains(model, "7280SR3-48YC8"){
+        if strHasPrefix(dkey, "JPE"){
+            if num(serial_slice) < 2131{
+                affected[id] = newDict()
+                affected[id]["Hostname"] = hostname
+                affected[id]["Serial Number"] = dkey
+                affected[id]["Model"] = model
+            }
+        }
+        if strHasPrefix(dkey,"JAS"){
+            if num(serial_slice) < 2041{
+                affected[id] = newDict()
+                affected[id]["Hostname"] = hostname
+                affected[id]["Serial Number"] = dkey
+                affected[id]["Model"] = model
+            }
+        }
+        let id = id + 1
+    }
+    if strContains(model, "7280SR3K-48YC8"){
+        if strHasPrefix(dkey, "JPE"){
+            if num(serial_slice) < 2134{
+                affected[id] = newDict()
+                affected[id]["Hostname"] = hostname
+                affected[id]["Serial Number"] = dkey
+                affected[id]["Model"] = model
+            }
+        }
+        if strHasPrefix(dkey, "JAS"){
+            if num(serial_slice) < 2041{
+                affected[id] = newDict()
+                affected[id]["Hostname"] = hostname
+                affected[id]["Serial Number"] = dkey
+                affected[id]["Model"] = model
+            }
+        }
+        let id = id + 1
+    }
+
+}
+affected
