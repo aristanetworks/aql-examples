@@ -1,0 +1,30 @@
+let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
+let devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/<_SWITCH_ROLE>/elements`)
+
+let fans = `*:/Sysdb/environment/archer/cooling/status/*`
+let fansHwStatus = fans | where(dictHasKey(fans, _key) == true) | recmap(2, (merge(_value)["hwStatus"]["Name"]))
+
+if str(_POD_NAME) == "" && str(_SWITCH_ROLE) == "" {
+    let result = fansHwStatus
+} else {
+    if str(_SWITCH_ROLE) == "" {
+        let result = fansHwStatus | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")))
+    } else {
+        if str(_POD_NAME) == "" {
+            let result = fansHwStatus | where(dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+        } else {
+            let result = fansHwStatus | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+        }
+    }
+}
+
+for deviceKey, deviceValue  in result{
+    for fansKey, fansValue in deviceValue{
+        if fansValue=="ok"{
+            result[deviceKey][fansKey]="✔️"
+        } else{
+            result[deviceKey][fansKey]="❌"
+        }
+    }
+}
+result
