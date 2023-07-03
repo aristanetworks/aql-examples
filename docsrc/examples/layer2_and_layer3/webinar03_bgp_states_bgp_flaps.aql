@@ -1,0 +1,23 @@
+let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
+
+if str(_POD_NAME) == "" {
+    let data =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`[4h]
+} else {
+    let data =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`[4h] | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")))
+}
+
+let result = newDict()
+for sn, deviceValues in data{
+    let count = 0
+    for ip, tseries in deviceValues{
+        for timestamp, values in tseries {
+            if dictHasKey(values, "bgpState"){
+                if values["bgpState"]["Name"] == "Established"{
+                    let count = count +1
+                }
+            }
+        }
+    }
+    result[sn] = newDict() | setFields("Flaps", count-1)
+}
+result

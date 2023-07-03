@@ -1,0 +1,7 @@
+let data = `<_bgpDevice>:/Logs/var/log/messages`[4h] | field("line") | where(reMatch(_value, "BGP"))
+let logs = newDict()
+for timest, logentry in data {
+    logs[str(timest)] = newDict()
+    logs[str(timest)]["Log"] = logentry
+}
+logs
