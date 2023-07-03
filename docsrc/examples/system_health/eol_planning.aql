@@ -1,0 +1,56 @@
+let inventory = `analytics:/DatasetInfo/Devices`
+let hardware = `analytics:/lifecycles/hardware`[0][-1]
+let softwareLife = `analytics:/lifecycles/software`[0][-1]
+let software = `analytics:/lifecycles/devices/software`[0][-1]
+let skus = `analytics:/BugAlerts/skus`[0][-1]
+
+let filteredSkus = newDict()
+for key, val in skus {
+    if  strContains(key, "DCS-") {
+        filteredSkus[key] = newDict()
+        let relNum = ""
+        if str(val["releaseDeprecated"]) != "[]" {
+            let deprecatedReleaseNum = strSplit(str(val["releaseDeprecated"]),",")[0]
+            let deprecatedReleaseNum = strReplace(deprecatedReleaseNum, "[","")
+            let deprecatedReleaseNum = strReplace(deprecatedReleaseNum, "]","")
+            let deprecatedReleaseNum = strReplace(deprecatedReleaseNum, "\"","")
+            let deprecatedReleaseNum = strSplit(deprecatedReleaseNum,".")
+            let relNum = deprecatedReleaseNum[0]+"."+str(num(deprecatedReleaseNum[1])-1)
+        }
+        filteredSkus[key]["releaseDeprecated"] = relNum
+    }
+}
+let inv = newDict()
+for deviceUpdate, device in inventory {
+    for deviceSN, deviceData in device {
+        inv[deviceSN] = newDict()
+        inv[deviceSN]["Hostname"] = deviceData["hostname"]
+        inv[deviceSN]["ModelName"] = deviceData["modelName"]
+        inv[deviceSN]["Version"] = deviceData["eosVersion"]
+        inv[deviceSN]["TerminAttr"] = deviceData["terminAttrVersion"]
+        for hw, hwEol in hardware {
+            if  deviceData["modelName"] == hw {
+                inv[deviceSN]["Hardware EndOfSale"] = hwEol["endOfSale"]
+                inv[deviceSN]["Hardware EndOfTACSupport"] = hwEol["endOfTACSupport"]
+                inv[deviceSN]["Hardware EndOfRMARequests"] = hwEol["endOfHardwareRMARequests"]
+                inv[deviceSN]["Hardware EndOfLife"] = hwEol["endOfLife"]
+            }
+        }
+        for switch, switchEol in software {
+            if  switch == deviceSN {
+                inv[deviceSN]["Current Software EndOfLife"] = switchEol["endOfSupport"]
+            }
+        }
+        for skuKey, skuVal in filteredSkus {
+            if  strContains(skuKey, deviceData["modelName"]) {
+                inv[deviceSN]["Last Supported Software Train"] = skuVal["releaseDeprecated"]
+            }
+        }
+        for sw, swEol in softwareLife {
+            if  dictHasKey(inv[deviceSN],"Last Supported Software Train") && sw == inv[deviceSN]["Last Supported Software Train"] {
+                inv[deviceSN]["Last Supported Software Train EndOfLife"] = swEol["endOfSupport"]
+            }
+        }
+    }
+}
+inv
