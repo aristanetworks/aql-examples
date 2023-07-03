@@ -1,0 +1,66 @@
+{
+    "dashboards": [
+      {
+        "key": "020f88a1-8f36-4ea4-984b-0e6e04cf0c49",
+        "createdAt": [
+          66742831,
+          1558
+        ],
+        "createdBy": "tamas",
+        "metaData": {
+          "schemaVersion": "3",
+          "legacyKey": "",
+          "legacyVersion": "",
+          "fromPackage": ""
+        },
+        "name": "Output power consumption over 48h",
+        "description": "",
+        "widgets": [
+          {
+            "id": "e280cf43-878c-4e51-a2dd-3f18a8333ead",
+            "name": "Total Output Power Per Device",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 9,
+              "height": 11
+            },
+            "type": "aql-query-widget",
+            "inputs": {
+              "expression": "let powerSupply = `analytics:/Devices/*/versioned-data/environment/power/aggregate/*/out/15m`[48h]\nlet result = newDict()\nfor key, value in _device{\n    \n    if dictHasKey(powerSupply,key) {     \n         for psk,psv in powerSupply[key]{\n             result[key+\"-\"+psk] = powerSupply[key][psk] | field(\"value\") | field(\"avg\")\n         }\n    } \n}\nresult",
+              "graphConfig": {
+                "mapToHostname": true,
+                "unit": "W"
+              },
+              "visualization": "horizonGraph"
+            },
+            "location": "main"
+          },
+          {
+            "id": "4cc83150-9bab-442a-a3a3-18fa0d57caac",
+            "name": "",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 9,
+              "height": 2
+            },
+            "type": "tag-query-widget",
+            "inputs": {
+              "inputName": "device",
+              "inputSource": "devices",
+              "inputWidgetId": "4cc83150-9bab-442a-a3a3-18fa0d57caac",
+              "defaultValue": "device:*"
+            },
+            "location": "inputs"
+          }
+        ],
+        "lastUpdated": 1678762440534,
+        "lastUpdatedBy": "tamas"
+      }
+    ]
+  }
