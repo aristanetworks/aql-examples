@@ -1,0 +1,18 @@
+# Get the VRF configuration for all routed interfaces for all devices
+let data=`*:/Sysdb/l3/intf/config/intfConfig/*`
+
+# Build a new dictionary and select only the SVIs and the VRFs they are configured in
+let res = newDict()
+let id = 0
+for deviceKey, deviceValue in data {
+    for interfaceKey, interfaceValue in deviceValue {
+        if strContains(interfaceKey, "Vlan"){
+            let id = id + 1
+            res[id] = newDict()
+            res[id]["Device"] = deviceKey
+            res[id]["Interfaces"] = interfaceKey
+            res[id]["VRFs"] = merge(interfaceValue)["vrf"]["value"]
+        }
+    }
+}
+res
