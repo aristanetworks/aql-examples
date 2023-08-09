@@ -1,5 +1,5 @@
 EoL Planning
-============
+------------
 
 .. literalinclude:: eol_planning.aql
    :language: aql

@@ -1,5 +1,5 @@
 Admin state of interfaces per device
-====================================
+------------------------------------
 
 .. literalinclude:: admin_state.aql
    :language: aql

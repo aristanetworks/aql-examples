@@ -1,5 +1,5 @@
 NTP Stats
-=========
+---------
 
 .. literalinclude:: ntp_stats.aql
    :language: aql

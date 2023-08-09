@@ -1,5 +1,5 @@
 Number of ARP entries across all devices
-========================================
+----------------------------------------
 
 .. literalinclude:: arp_entries.aql
    :language: aql

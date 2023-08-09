@@ -1,5 +1,5 @@
 Listing Devices that have a file in /var/core
-=============================================
+---------------------------------------------
 
 > Useful to understand if there were any agent crashes on EOS
 

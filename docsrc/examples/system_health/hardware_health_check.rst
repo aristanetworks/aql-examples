@@ -1,20 +1,20 @@
 Hardware Health Check
-=====================
+---------------------
 
 Power Supply Status per Device
-------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: hardware_health_check_psu.aql
    :language: aql
 
 Fan Status per Device
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: hardware_health_check_fsu.aql
+.. literalinclude:: hardware_health_check_fan.aql
    :language: aql
 
 Temperature Sensors per Device
-------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: hardware_health_check_temp_sensor.aql
    :language: aql

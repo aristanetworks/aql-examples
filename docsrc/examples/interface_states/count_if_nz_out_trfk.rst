@@ -1,5 +1,5 @@
 Count interfaces with non-zero outbound traffic
-===============================================
+-----------------------------------------------
 
 .. literalinclude:: count_if_nz_out_trfk.aql
    :language: aql

@@ -1,5 +1,5 @@
 Number of MACs per device per interface
-=======================================
+---------------------------------------
 
 .. literalinclude:: macs_per_device.aql
    :language: aql

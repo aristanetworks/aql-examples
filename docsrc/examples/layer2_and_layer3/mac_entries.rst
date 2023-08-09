@@ -1,5 +1,5 @@
 Number of MAC addresses across all devices
-==========================================
+------------------------------------------
 
 .. literalinclude:: mac_entries.aql
    :language: aql

@@ -1,5 +1,5 @@
 Listing of devices affected by FN72
-===================================
+-----------------------------------
 
 .. literalinclude:: fn72.aql
    :language: aql

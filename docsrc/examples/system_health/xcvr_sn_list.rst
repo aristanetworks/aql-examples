@@ -1,5 +1,5 @@
 List the serial numbers for all transceivers
-============================================
+--------------------------------------------
 
 .. literalinclude:: xcvr_sn_list.aql
    :language: aql

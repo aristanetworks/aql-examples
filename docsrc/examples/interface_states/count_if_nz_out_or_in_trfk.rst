@@ -1,5 +1,5 @@
 Count interfaces with non-zero outbound OR inbound traffic (with key existence check)
-=====================================================================================
+-------------------------------------------------------------------------------------
 
 .. literalinclude:: count_if_nz_out_or_in_trfk.aql
    :language: aql

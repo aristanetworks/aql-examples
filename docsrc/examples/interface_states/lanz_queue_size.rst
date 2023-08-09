@@ -1,5 +1,5 @@
 LANZ queue Size information filtering the null-values
-=====================================================
+-----------------------------------------------------
 
 .. literalinclude:: lanz_queue_size.aql
    :language: aql

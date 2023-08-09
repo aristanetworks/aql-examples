@@ -1,5 +1,5 @@
 PowerSupply Output
-==================
+------------------
 
 .. literalinclude:: output_power_over_48h.aql
    :language: aql
