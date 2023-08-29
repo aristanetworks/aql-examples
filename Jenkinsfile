@@ -45,5 +45,25 @@ pipeline {
                 }
             }
         }
+
+        stage('Build and Publish Documentation') {
+            steps {
+                container('artools') {
+                    dir("${WORKSPACE}") {
+                        sh "pip install -r requirements.txt"
+                        sh "sphinx-build docsrc _build"
+
+                        publishHTML (target: [
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: false,
+                            keepAll: true,
+                            reportDir: '_build',
+                            reportFiles: 'index.html',
+                            reportName: 'Documentation'
+                        ])
+                    }
+                }
+            }
+        }
     }
 }
