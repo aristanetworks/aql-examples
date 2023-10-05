@@ -1,0 +1,5 @@
+let data = `*:/Sysdb/hardware/archer/xcvr/status/all/*`
+let xcvrStatus = data | map(_value | mapne(_value, _value | field("goVendorInfo") | field("vendorSn")))
+let xcvrStatus = xcvrStatus | map(_value | mapne(_value[0], _value))
+
+xcvrStatus | map(_value | where(reMatch(_value, _regexInput))) | where(length(_value) > 0)

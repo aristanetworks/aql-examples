@@ -1,0 +1,71 @@
+{
+  "dashboards": [
+    {
+      "key": "93b5abba-7807-453a-be77-56a1fde055fd",
+      "createdAt": [
+        977361740,
+        1579
+      ],
+      "createdBy": "cvpadmin",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Filtered Transcevier Data",
+      "description": "",
+      "widgets": [
+        {
+          "id": "0c08fed5-cd5a-44be-b083-ab950e8c93e8",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 10,
+            "height": 14
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let data = `*:/Sysdb/hardware/archer/xcvr/status/all/*`\nlet xcvrStatus = data | map(_value | mapne(_value, _value | field(\"goVendorInfo\") | field(\"vendorSn\")))\nlet xcvrStatus = xcvrStatus | map(_value | mapne(_value[0], _value))\n\nlet filteredXcvrStat = newDict()\n\nfor deviceKey, deviceValue in xcvrStatus {\n    filteredXcvrStat[deviceKey] = newDict()\n    for interfaceKey, interfaceValue in deviceValue {\n        if reMatch(interfaceValue, _regexInput){\n            filteredXcvrStat[deviceKey][interfaceKey] = interfaceValue\n\n        }\n    }\n    if length(filteredXcvrStat[deviceKey]) == 0 {\n        dictRemove(filteredXcvrStat, deviceKey)\n    }\n}\n\nfilteredXcvrStat\n",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "85920a17-dd18-47b0-a315-ba350f6f0a6d",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "regexInput",
+            "inputType": "FreeForm",
+            "variableType": "String"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1696513262320,
+      "lastUpdatedBy": "cvpadmin"
+    }
+  ]
+}
