@@ -13,3 +13,4 @@ Interface States Examples
 
 .. include:: port_utilization.rst
 
+.. include:: intf_counter_rate_sum_per_dev.rst

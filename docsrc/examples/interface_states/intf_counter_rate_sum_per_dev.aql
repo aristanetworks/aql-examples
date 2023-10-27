@@ -1,0 +1,14 @@
+# Get the 1 minute aggregate rate counters for the selected device
+let data = `analytics:/Devices/<_device>/versioned-data/interfaces/data/*/aggregate/rates/1m`[_timeWindowStart:_timeWindowEnd]
+
+# Filter out the rate counters to only contain the inOctets and outOctets key in two separate objects
+let intfRatesInFiltered = data | map(_value | field("inOctets") | field("avg")) | where(dictHasKey(_interfaces, _key))
+let intfRatesOutFiltered = data | map(_value | field("outOctets") | field("avg")) | where(dictHasKey(_interfaces, _key))
+
+# Sum up the aggregates
+let sumInOctets = aggregate(intfRatesInFiltered, "sum")
+let sumOutOctets = aggregate(intfRatesOutFiltered, "sum")
+
+# Add the result into a dictionary of timeseries for horizon graphs
+# and divide the sum by 125000 to show the value in Mbps
+newDict() | setFields(_device + " inOctets rates", sumInOctets/125000, _device + " outOctets rates", sumOutOctets/125000)
