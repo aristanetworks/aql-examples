@@ -7,7 +7,7 @@ Interface counters sum per interface list per device
 .. literalinclude:: intf_counter_rate_sum_per_dev.aql
    :language: aql
 
-.. image:: intf_coutner_rate_sum_per_dev.png
+.. image:: intf_counter_rate_sum_per_dev.png
    :width: 600
    :alt: Interface counters per interface list per device
 
