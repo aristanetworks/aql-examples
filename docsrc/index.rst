@@ -15,4 +15,5 @@ The AQL language can be used with Arista's CloudVision to configure dashboards, 
    index_quicklearn
    index_doc
    index_stdlib
+   changelog
    index_examples
