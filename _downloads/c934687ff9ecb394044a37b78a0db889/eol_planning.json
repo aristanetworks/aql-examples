@@ -1,0 +1,57 @@
+{
+  "dashboards": [
+    {
+      "key": "0800417e-e4be-41c0-a4a7-c5e8fd033c6e",
+      "createdAt": [
+        952882732,
+        1574
+      ],
+      "createdBy": "cvpadmin",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "EoL Planning Table",
+      "description": "",
+      "widgets": [
+        {
+          "id": "9b129c35-a1ff-4951-8c1a-e3f144fa359d",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 18,
+            "height": 25
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let inventory = `analytics:/DatasetInfo/Devices`\nlet hardware = `analytics:/lifecycles/hardware`[0][-1]\nlet softwareLife = `analytics:/lifecycles/software`[0][-1]\nlet software = `analytics:/lifecycles/devices/software`[0][-1]\nlet skus = `analytics:/BugAlerts/skus`[0][-1]\n\nlet filteredSkus = newDict()\nfor key, val in skus {\n    if  strContains(key, \"DCS-\") {\n        filteredSkus[key] = newDict()\n        let relNum = \"\"\n        if str(val[\"releaseDeprecated\"]) != \"[]\" {\n            let deprecatedReleaseNum = strSplit(str(val[\"releaseDeprecated\"]),\",\")[0]\n            let deprecatedReleaseNum = strReplace(deprecatedReleaseNum, \"[\",\"\")\n            let deprecatedReleaseNum = strReplace(deprecatedReleaseNum, \"]\",\"\")\n            let deprecatedReleaseNum = strReplace(deprecatedReleaseNum, \"\\\"\",\"\")\n            let deprecatedReleaseNum = strSplit(deprecatedReleaseNum,\".\")\n            let relNum = deprecatedReleaseNum[0]+\".\"+str(num(deprecatedReleaseNum[1])-1)\n        }\n        filteredSkus[key][\"releaseDeprecated\"] = relNum\n    }\n}\nlet inv = newDict()\nfor deviceUpdate, device in inventory {\n    for deviceSN, deviceData in device {\n        inv[deviceSN] = newDict()\n        inv[deviceSN][\"Hostname\"] = deviceData[\"hostname\"]\n        inv[deviceSN][\"ModelName\"] = deviceData[\"modelName\"]\n        inv[deviceSN][\"Version\"] = deviceData[\"eosVersion\"]\n        inv[deviceSN][\"TerminAttr\"] = deviceData[\"terminAttrVersion\"]\n        for hw, hwEol in hardware {\n            if  deviceData[\"modelName\"] == hw {\n                inv[deviceSN][\"Hardware EndOfSale\"] = hwEol[\"endOfSale\"]\n                inv[deviceSN][\"Hardware EndOfTACSupport\"] = hwEol[\"endOfTACSupport\"]\n                inv[deviceSN][\"Hardware EndOfRMARequests\"] = hwEol[\"endOfHardwareRMARequests\"]\n                inv[deviceSN][\"Hardware EndOfLife\"] = hwEol[\"endOfLife\"]\n            }\n        }\n        for switch, switchEol in software {\n            if  switch == deviceSN {\n                inv[deviceSN][\"Current Software EndOfLife\"] = switchEol[\"endOfSupport\"]\n            }\n        }\n        for skuKey, skuVal in filteredSkus {\n            if  strContains(skuKey, deviceData[\"modelName\"]) {\n                inv[deviceSN][\"Last Supported Software Train\"] = skuVal[\"releaseDeprecated\"]\n            }\n        }\n        for sw, swEol in softwareLife {\n            if  dictHasKey(inv[deviceSN],\"Last Supported Software Train\") && sw == inv[deviceSN][\"Last Supported Software Train\"] {\n                inv[deviceSN][\"Last Supported Software Train EndOfLife\"] = swEol[\"endOfSupport\"]\n            }\n        }\n    }\n}\ninv\n",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Hostname"
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "styles": {
+            "hideTitle": true,
+            "backgroundColor": "",
+            "hideHorizontalBar": false,
+            "titleSize": 14
+          },
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691026823906,
+      "lastUpdatedBy": "cvpadmin"
+    }
+  ]
+}

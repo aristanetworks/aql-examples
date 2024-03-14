@@ -1,0 +1,42 @@
+{
+    "dashboards": [
+      {
+        "key": "ab46a6ac-57e8-4321-ae2e-16468ede5902",
+        "createdAt": [
+          60535775,
+          1561
+        ],
+        "createdBy": "tamas",
+        "metaData": {
+          "schemaVersion": "3",
+          "legacyKey": "",
+          "legacyVersion": "",
+          "fromPackage": ""
+        },
+        "name": "Number of ARP entries across all devices",
+        "description": "",
+        "widgets": [
+          {
+            "id": "d52c1fda-efa1-481d-9404-8e1eb08d99d5",
+            "name": "Number of ARP entries across all devices",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 5,
+              "height": 7
+            },
+            "type": "aql-query-widget",
+            "inputs": {
+              "expression": "let data = `*:/Smash/arp/status/_counts` \nsum(data | map(merge(_value)) | where(dictHasKey(_value, \"arpEntry\")) | map(_value[\"arpEntry\"]))\n",
+              "visualization": "singleValue"
+            },
+            "location": "main"
+          }
+        ],
+        "lastUpdated": 1676171600753,
+        "lastUpdatedBy": "tamas"
+      }
+    ]
+  }
