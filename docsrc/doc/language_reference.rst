@@ -49,6 +49,10 @@ Example:
     # return value of the script
     mean(temperaturePerIntf)
 
+.. raw:: html
+
+    <iframe width="996" height="560" src="https://www.youtube.com/embed/UT6rZjS-F6c?si=XlcXtiAlwVCvW-gH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 
 Basic statements
 ----------------
