@@ -5,6 +5,11 @@ This page is the official documentation for the CloudVision Advanced Query Langu
 
 The AQL language can be used with Arista's CloudVision to configure dashboards, query data, configure custom event rules, etc.
 
+.. warning::
+
+   AQL scripts and dashboards may stop working and require a manual update following a hardware upgrade or EOS image update, as data paths may have changed.
+
+
 .. index_quicklearn is for internal use only but sphinx will still be able to build the website without it.
 .. It will only be added by jenkins to build the internal documentation
 
