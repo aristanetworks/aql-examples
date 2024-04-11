@@ -509,7 +509,7 @@ if its result is not empty. This applies to each entry of the filtered :ref:`tim
     }
     >>> _ | map(mean(_value))
     error: cannot compute mean of empty timeseries
-    >>> _ | mapne(_value, mean(_value))
+    >>> _ | mapne(mean(_value), _value)
     dict {
         pathElement1: 2.5
         pathElement2: 6.5
@@ -524,12 +524,13 @@ if its result is not empty. This applies to each entry of the filtered :ref:`tim
     }
     >>> _ | map(mean(_value))
     error: cannot compute mean of empty dict
-    >>> _ | mapne(_value, mean(_value) + 12)
+    >>> _ | mapne(mean(_value) + 12, _value)
     timeseries{
         tstamp1: 14.5
         tstamp2: 14.5
         tstamp4: 14.5
     }
+
 
 .. _recmap:
 
