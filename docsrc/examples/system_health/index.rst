@@ -24,3 +24,5 @@ System Health Examples
 .. include:: varcore.rst
 
 .. include:: xcvr_sn_list.rst
+
+.. include:: xcvr_sn_list_filtered.rst
