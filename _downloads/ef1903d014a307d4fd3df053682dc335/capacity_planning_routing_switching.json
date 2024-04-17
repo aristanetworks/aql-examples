@@ -1,0 +1,528 @@
+{
+  "dashboards": [
+    {
+      "key": "fa602b02-6d82-4744-b8e1-d65cf96109ac",
+      "createdAt": [
+        825221310,
+        1574
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Capacity Planning Routing and Switching",
+      "description": "",
+      "widgets": [
+        {
+          "id": "b1f59da6-eadb-4bd8-a046-25a7088c7c42",
+          "name": "Low Density Leaf Switches Numbers (7020R) Tagged with the LDL Label",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 11,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/LDL/elements`)\r\n\r\nif str(_POD_NAME) == \"\" {\r\n    let macConfigCount =`*:/Sysdb/bridging/config/_counts` | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let macStatusCount =`*:/Smash/bridging/status/_counts` | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let vrfCount =`*:/Sysdb/routing/vrf/config/vrfConfig` | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(length(_value) == 0 ? 0 : _value) \r\n    let arpCount = `*:/Smash/arp/status/_counts`  | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n} else {\r\n    let macConfigCount =`*:/Sysdb/bridging/config/_counts` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let macStatusCount =`*:/Smash/bridging/status/_counts` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let vrfCount =`*:/Sysdb/routing/vrf/config/vrfConfig` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(length(_value) == 0 ? 0 : _value) \r\n    let arpCount = `*:/Smash/arp/status/_counts` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n}\r\n\r\nlet smash = macStatusCount | map(merge(_value) | fields(\"smashFdbStatus\"))\r\nlet nbvlan = macConfigCount | map(merge(_value) | fields(\"vlanConfig\"))\r\nlet nbVRF = vrfCount | map(length(merge(_value)))\r\nlet nbARP = arpCount | map(merge(_value))\r\n\r\nfor deviceKey, deviceValue in nbVRF {\r\n    let nbr = newDict()\r\n    nbr[\"VRF number\"] = deviceValue\r\n    nbVRF[deviceKey] = nbr\r\n}\r\n\r\nfor devicekey, devicevalue in smash {\r\n    smash[devicekey][\"VLAN count\"] = nbvlan[devicekey][\"vlanConfig\"]\r\n    smash[devicekey][\"VRF count\"] = dictHasKey(nbVRF, devicekey)? nbVRF[devicekey][\"VRF number\"] : 0 \r\n    smash[devicekey][\"ARP count\"] = nbARP[devicekey][\"arpEntry\"]\r\n    smash[devicekey][\"ND count\"] = nbARP[devicekey][\"neighborEntry\"]\r\n}\r\n\r\nsmash | map(_value | renameFields(\"smashFdbStatus\",\"MAC count\"))",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Device"
+                },
+                "MAC count": {
+                  "type": "number",
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 200000,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 200000,
+                        "to": 245000,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 245000,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ],
+                  "showDotIndicator": true
+                },
+                "VLAN count": {
+                  "type": "number",
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 75,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 75,
+                        "to": 99,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 100,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ],
+                  "showDotIndicator": true
+                },
+                "VRF count": {
+                  "type": "number",
+                  "showDotIndicator": true,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 4,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 4,
+                        "to": 5,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 5,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "eae97ea6-d545-4d8b-a1f2-f283142d80bb",
+          "name": "High Density Leaf Switches Numbers (7050X3) Tagged with HDL Label",
+          "position": {
+            "x": 0,
+            "y": 10
+          },
+          "dimensions": {
+            "width": 11,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/HDL/elements`)\r\n\r\nif str(_POD_NAME) == \"\" {\r\n    let macConfigCount =`*:/Sysdb/bridging/config/_counts` | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let macStatusCount =`*:/Smash/bridging/status/_counts` | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let vrfCount =`*:/Sysdb/routing/vrf/config/vrfConfig` | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(length(_value) == 0 ? 0 : _value)\r\n    let arpCount = `*:/Smash/arp/status/_counts`  | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n} else {\r\n    let macConfigCount =`*:/Sysdb/bridging/config/_counts` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let macStatusCount =`*:/Smash/bridging/status/_counts` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let vrfCount =`*:/Sysdb/routing/vrf/config/vrfConfig` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(length(_value) == 0 ? 0 : _value)\r\n    let arpCount = `*:/Smash/arp/status/_counts` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n}\r\n\r\nlet smash = macStatusCount | map(merge(_value) | fields(\"smashFdbStatus\"))\r\nlet nbvlan = macConfigCount | map(merge(_value) | fields(\"vlanConfig\"))\r\nlet nbVRF = vrfCount | map(length(merge(_value)))\r\nlet nbARP = arpCount | map(merge(_value))\r\n\r\nfor deviceKey, deviceValue in nbVRF {\r\n    let nbr = newDict()\r\n    nbr[\"VRF number\"]=deviceValue\r\n    nbVRF[deviceKey]= nbr\r\n}\r\n\r\nfor devicekey, devicevalue in smash {\r\n    smash[devicekey][\"VLAN count\"]=nbvlan[devicekey][\"vlanConfig\"]\r\n    smash[devicekey][\"VRF count\"]=nbVRF[devicekey][\"VRF number\"]\r\n    smash[devicekey][\"ARP count\"]=nbARP[devicekey][\"arpEntry\"]\r\n    smash[devicekey][\"ND count\"]=nbARP[devicekey][\"neighborEntry\"]\r\n}\r\n\r\nsmash | map(_value | renameFields(\"smashFdbStatus\",\"MAC count\"))",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Device"
+                },
+                "VLAN count": {
+                  "type": "number",
+                  "showDotIndicator": true,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 500,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 500,
+                        "to": 549,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 550,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "MAC count": {
+                  "type": "number",
+                  "showDotIndicator": true,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 95000,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 95000,
+                        "to": 96000,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 96000,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "VRF count": {
+                  "type": "number",
+                  "showDotIndicator": true,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 4,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 4,
+                        "to": 5,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 5,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "f3177269-8560-49a5-8cac-7a189b534993",
+          "name": "EVPN Gateways Numbers (7280R2)",
+          "position": {
+            "x": 11,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 11,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/EGW/elements`)\r\n\r\nif str(_POD_NAME) == \"\" {\r\n    let macConfigCount =`*:/Sysdb/bridging/config/_counts` | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let macStatusCount =`*:/Smash/bridging/status/_counts` | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let vrfCount =`*:/Sysdb/routing/vrf/config/vrfConfig` | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(length(_value) == 0 ? 0 : _value)\r\n    let arpCount = `*:/Smash/arp/status/_counts`  | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n} else {\r\n    let macConfigCount =`*:/Sysdb/bridging/config/_counts` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let macStatusCount =`*:/Smash/bridging/status/_counts` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    let vrfCount =`*:/Sysdb/routing/vrf/config/vrfConfig` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(length(_value) == 0 ? 0 : _value)\r\n    let arpCount = `*:/Smash/arp/status/_counts` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n}\r\n\r\nlet smash = macStatusCount | map(merge(_value) | fields(\"smashFdbStatus\"))\r\nlet nbvlan = macConfigCount | map(merge(_value) | fields(\"vlanConfig\"))\r\nlet nbVRF = vrfCount | map(length(merge(_value)))\r\nlet nbARP = arpCount | map(merge(_value))\r\n\r\nfor deviceKey, deviceValue in nbVRF {\r\n    let nbr = newDict()\r\n    nbr[\"VRF number\"]=deviceValue\r\n    nbVRF[deviceKey]= nbr\r\n}\r\n\r\nfor devicekey, devicevalue in smash {\r\n    smash[devicekey][\"VLAN count\"]=nbvlan[devicekey][\"vlanConfig\"]\r\n    smash[devicekey][\"VRF count\"]=nbVRF[devicekey][\"VRF number\"]\r\n    smash[devicekey][\"ARP count\"]=nbARP[devicekey][\"arpEntry\"]\r\n    smash[devicekey][\"ND count\"]=nbARP[devicekey][\"neighborEntry\"]\r\n}\r\n\r\nsmash | map(_value | renameFields(\"smashFdbStatus\",\"MAC count\"))",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Device"
+                },
+                "VRF count": {
+                  "type": "number",
+                  "showDotIndicator": true,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 9,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 9,
+                        "to": 10,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 10,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "MAC count": {
+                  "type": "number",
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 760000,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 760000,
+                        "to": 768000,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 768000,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ],
+                  "showDotIndicator": true
+                },
+                "VLAN count": {
+                  "type": "number",
+                  "showDotIndicator": true,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 980,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 980,
+                        "to": 1099,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 1100,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "fcd8e3de-19cb-4960-b2ab-56cd51d42940",
+          "name": "IPv4/IPv6 Routes Count",
+          "position": {
+            "x": 11,
+            "y": 10
+          },
+          "dimensions": {
+            "width": 11,
+            "height": 10
+          },
+          "type": "metrics-widget-table",
+          "inputs": {
+            "components": [],
+            "isTokenSearchEnabled": true,
+            "metricKeys": [
+              "V4_TOTAL_ROUTES_TABLE_SIZE",
+              "V6_TOTAL_ROUTES_TABLE_SIZE"
+            ],
+            "metricSource": "devices",
+            "selectedCustomTags": [
+              "POD_NAME"
+            ],
+            "tags": "",
+            "viewType": "metric"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "f6947f86-4899-4662-a67a-05344ab7dd44",
+          "name": "VXLAN/VNI Numbers",
+          "position": {
+            "x": 0,
+            "y": 20
+          },
+          "dimensions": {
+            "width": 11,
+            "height": 10
+          },
+          "type": "metrics-widget-table",
+          "inputs": {
+            "components": [],
+            "isTokenSearchEnabled": true,
+            "metricKeys": [
+              "VXLAN_REMOTE_MACS_COUNT",
+              "VXLAN_VNIS_COUNT"
+            ],
+            "metricSource": "devices",
+            "selectedCustomTags": [
+              "POD_NAME"
+            ],
+            "tags": "",
+            "viewType": "metric"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "53adc4af-13da-43a5-9280-0417012b00eb",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "POD_NAME",
+            "inputSource": "devices",
+            "selectedCustomTags": [],
+            "tagLabel": "pod_name",
+            "tags": ""
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1690981121727,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}

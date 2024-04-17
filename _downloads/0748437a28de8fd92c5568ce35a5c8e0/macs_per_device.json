@@ -1,0 +1,63 @@
+{
+    "dashboards": [
+      {
+        "key": "fdb63033-da24-49ed-b7d0-64e0c5aba7ab",
+        "createdAt": [
+          62457345,
+          1561
+        ],
+        "createdBy": "tamas",
+        "metaData": {
+          "schemaVersion": "3",
+          "legacyKey": "",
+          "legacyVersion": "",
+          "fromPackage": ""
+        },
+        "name": "MACs learnt per device per interface",
+        "description": "",
+        "widgets": [
+          {
+            "id": "341effe6-9b64-4d0f-9ddb-7b5f25d567ad",
+            "name": "MACs",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 5,
+              "height": 15
+            },
+            "type": "aql-query-widget",
+            "inputs": {
+              "expression": "let data = merge(`<_device>:/Smash/bridging/status/smashFdbStatus`)\nlet numberMAC = newDict()\n\n\nfor deviceKey, deviceValue in data {\n   if dictHasKey(numberMAC, data[deviceKey][\"intf\"]) {\n       numberMAC[data[deviceKey][\"intf\"]][\"MACs\"] = numberMAC[data[deviceKey][\"intf\"]][\"MACs\"] + 1\n   } else {\n       numberMAC[data[deviceKey][\"intf\"]] = newDict()\n       numberMAC[data[deviceKey][\"intf\"]][\"MACs\"] = 1\n   }\n}\n\n\nnumberMAC\n",
+              "visualization": "table"
+            },
+            "location": "main"
+          },
+          {
+            "id": "cb4822fb-3e3e-4a41-85ef-3ab4c5395f83",
+            "name": "",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 4,
+              "height": 2
+            },
+            "type": "input-widget",
+            "inputs": {
+              "defaultValue": "SSJ17371234",
+              "inputName": "device",
+              "inputSource": "devices",
+              "inputWidgetId": "cb4822fb-3e3e-4a41-85ef-3ab4c5395f83",
+              "tagLabel": "device"
+            },
+            "location": "inputs"
+          }
+        ],
+        "lastUpdated": 1676173561773,
+        "lastUpdatedBy": "tamas"
+      }
+    ]
+  }

@@ -1,0 +1,57 @@
+{
+  "dashboards": [
+    {
+      "key": "eb005f37-e4cb-41f9-893b-18b4e8fff7cb",
+      "createdAt": [
+        500143833,
+        1563
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Xcvr inventory",
+      "description": "",
+      "widgets": [
+        {
+          "id": "abe98a7a-57cc-468b-95c6-f16eecb0ad78",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 24,
+            "height": 26
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let xcvrStatus = `*:/Sysdb/hardware/archer/xcvr/status/all/*`\nlet filteredXcvrStat = xcvrStatus | map(_value | mapne(_value, _value | field(\"goVendorInfo\") | field(\"vendorSn\")))\nfilteredXcvrStat | map(_value | mapne(_value, _value[0]))\n",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Hostname"
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "styles": {
+            "hideTitle": true,
+            "backgroundColor": "",
+            "hideHorizontalBar": false,
+            "titleSize": 14
+          },
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691168645813,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}
