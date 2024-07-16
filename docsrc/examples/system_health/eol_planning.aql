@@ -1,8 +1,8 @@
 let inventory = `analytics:/DatasetInfo/Devices`
-let hardware = `analytics:/lifecycles/hardware`[0][-1]
-let softwareLife = `analytics:/lifecycles/software`[0][-1]
-let software = `analytics:/lifecycles/devices/software`[0][-1]
-let skus = `analytics:/BugAlerts/skus`[0][-1]
+let hardware = merge(`analytics:/lifecycles/hardware`)
+let softwareLife = merge(`analytics:/lifecycles/software`)
+let software = merge(`analytics:/lifecycles/devices/software`)
+let skus = merge(`analytics:/BugAlerts/skus`)
 
 let filteredSkus = newDict()
 for key, val in skus {
