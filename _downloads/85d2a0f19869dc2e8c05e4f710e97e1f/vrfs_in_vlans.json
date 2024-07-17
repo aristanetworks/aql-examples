@@ -1,0 +1,139 @@
+{
+  "dashboards": [
+    {
+      "key": "6e20493e-d5d7-460c-8d1e-2527bf1f2c91",
+      "createdAt": [
+        824818590,
+        1574
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "VLANs in VRFs",
+      "description": "This dashboards displays the VLANs configured for the different VRFs and allows also to display VLANs for a specific VRF",
+      "widgets": [
+        {
+          "id": "46fa7d4d-0fe1-4467-b63b-ce93fc303250",
+          "name": "List of Configured VLANs per VRFs",
+          "position": {
+            "x": 0,
+            "y": 9
+          },
+          "dimensions": {
+            "width": 15,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# Get the VRF configuration for all routed interfaces for all devices\nlet data=`*:/Sysdb/l3/intf/config/intfConfig/*`\n\n# Build a new dictionary and select only the SVIs and the VRFs they are configured in\nlet res = newDict()\nlet id = 0\nfor deviceKey, deviceValue in data {\n    for interfaceKey, interfaceValue in deviceValue {\n        if strContains(interfaceKey, \"Vlan\"){\n            let id = id + 1\n            res[id] = newDict()\n            res[id][\"Device\"] = deviceKey\n            res[id][\"Interfaces\"] = interfaceKey\n            res[id][\"VRFs\"] = merge(interfaceValue)[\"vrf\"][\"value\"]\n        }   \n    }\n}\nres\n",
+            "graphConfig": {
+              "columns": {
+                "VRFs": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "default": {
+                          "color": "green",
+                          "index": 0
+                        },
+                        "TENANT": {
+                          "color": "blue",
+                          "index": 1
+                        }
+                      }
+                    }
+                  ],
+                  "unit": "",
+                  "type": "string",
+                  "showDotIndicator": false
+                },
+                "Device": {
+                  "mapToHostname": true
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "0600518b-4e20-420f-8b56-0af695e4a98e",
+          "name": "VLANs in VRF",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 15,
+            "height": 9
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# Get the VRF configuration for all routed interfaces for all devices\nlet data=`*:/Sysdb/l3/intf/config/intfConfig/*`\n\n# Build a new dictionary and select only the SVIs that are configured in a specific VRF\nlet res = newDict()\nlet id = 0\nfor deviceKey, deviceValue in data {\n    for interfaceKey, interfaceValue in deviceValue {\n        if strContains(interfaceKey, \"Vlan\"){\n            let data1 = merge(interfaceValue)\n            if data1[\"vrf\"][\"value\"] == _VRF {\n                let id = id + 1\n                res[id] = newDict()\n                res[id][\"Device\"] = deviceKey\n                res[id][\"Interfaces\"] = interfaceKey\n                res[id][\"VRFs\"] = _VRF\n            }\n        }   \n    }\n}\nres",
+            "graphConfig": {
+              "columns": {
+                "VRFs": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "default": {
+                          "color": "green",
+                          "index": 0
+                        },
+                        "TENANT": {
+                          "color": "blue",
+                          "index": 1
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Device": {
+                  "mapToHostname": true
+                }
+              },
+              "columnOrders": {
+                "key": 1,
+                "Device": 2,
+                "Interfaces": 3,
+                "VRFs": 4
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "fe31ae70-fcd4-4cbc-975a-29e1792b3157",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "default",
+            "inputName": "VRF",
+            "variableType": "String"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1690894662946,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}
