@@ -1,0 +1,16 @@
+let data=`*:/Sysdb/bridging/config/vlanConfig/*`
+let swlist = newDict()
+let res = newDict()
+
+for key, sw in data{
+   swlist[key] = data[key]
+}
+
+let i = 0
+for key, sw in swlist{
+    for vlan in sw{
+    res[i] = newDict() | setFields("SW_NAME", key, "VLAN_ID", vlan[0]["name"], "VLAN_NAME", vlan[0]["configuredName"])
+    let i = i + 1
+    }
+}
+res
