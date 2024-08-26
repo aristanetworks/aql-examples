@@ -12,9 +12,42 @@ AQL Examples
 .. _terminattrStreamingPermitlistNote:
 
 .. note::
-   Some telemetry states are not streamed by default and they would need to be added to the TerminAttr include list using the tastreaming.TerminattrStreaming service API, e.g.:
+   Some telemetry states are not streamed by default and they would need to be added to the TerminAttr include list using the tastreaming.TerminattrStreaming service API, which can be done either through the UI or through the CLI e.g.:
 
-   On-prem example:
+   Using the Service Explorer UI:
+
+   1. Access Service Explorer by going to https://x.x.x.x/cv/settings/service-explorer , where x.x.x.x is the CVP IP/FQDN or the CVaaS regional URL
+
+   2. Fill out the request:
+
+   Service Name: ``tastreaming.TerminattrStreaming``
+
+   Method Name: ``SubscribeTAPaths``
+
+   3. Copy and paste like the screen below:
+
+   Parameters:
+
+   ::
+
+      {
+         "filter": {
+            "app_name": "allowbgpstates",
+            "include_paths": ["/Smash/routing/bgp/bgpPeerInfoStatus/default/bgpPeerStatisticsEntry"],
+            "exclude_paths": []
+         }
+      }
+
+   4. Click on ``Send Request`` and check on the right hand side that the result is ``root: {} 0 keys``.
+
+   .. image:: service_explorer_example.png
+      :width: 1400
+      :alt: Service Explorer Example
+      :align: center
+
+   Alternatively, you can use the CLI to add the path to the TerminAttr include list using a cURL request.
+
+   On-prem cURL example:
 
    ::
 
@@ -23,7 +56,7 @@ AQL Examples
 
          -d '{ "filter": { "app_name": "app1", "include_paths": [ "/Sysdb/bridging/igmpsnooping" ]}}'
 
-   CVaaS example:
+   CVaaS cURL example:
 
    ::
 

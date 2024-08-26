@@ -1,47 +1,77 @@
-let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
-let bgpPeerInfoStatusEntry = `*:/Sysdb/cell/1/routing/bgp/export/vrfBgpPeerInfoStatusEntryTable/default/bgpPeerInfoStatusEntry/*`
-if str(_POD_NAME) == "" {
-    let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`
-} else {
-    let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*` | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")))
-}
-let bgpPeerStatisticsEntry = `*:/Smash/routing/bgp/bgpPeerInfoStatus/default/bgpPeerStatisticsEntry`
+# set vars
 let afis = newDict()
 let afi_name = newDict()
 let bgpPeerAfiSafiActive = newDict() | setFields("l2vpnEvpn", 3, "ipv4Unicast", 1)
 let bgpPeerAfiSafiActiveName = newDict() | setFields("l2vpnEvpn","L2VPN EVPN", "ipv4Unicast", "IPv4 Unicast")
 
+# Get all devices from a specific site
+let devices = merge(`analytics:/tags/labels/devices/site_name/value/<_SITE_NAME>/elements`)
+
+let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/*/bgpPeerInfoStatusEntry/*`
+if _device != "" {
+    let bgpNeighbors = bgpNeighbors | fields(_device)
+} else {
+    if str(_SITE_NAME) != "" {
+        let bgpNeighbors = bgpNeighbors | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")))
+    }
+}
+
+let bgpPeerInfoStatusEntry = `*:/Sysdb/cell/1/routing/bgp/export/vrfBgpPeerInfoStatusEntryTable/*/bgpPeerInfoStatusEntry/*`
+let bgpPeerStatisticsEntry = `*:/Smash/routing/bgp/bgpPeerInfoStatus/*/bgpPeerStatisticsEntry`
+
 # This is the table
 let result = newDict()
 let id = 0
 # Lets loop over every device
-for device, deviceSessions in bgpNeighbors{
+for deviceKey, deviceSessions in bgpNeighbors{
     # And each session on the devices
-    for ip, sessionData in deviceSessions{
-        let data = merge(sessionData)
-        # Add one to the ID
-        let id = id + 1
-        result[id] = newDict()
-        # This is where we add the various columns
-        result[id]["0. Device"] = device
-        result[id]["1. Status"] = data["bgpState"]["Name"]
-        result[id]["2. Peering Address"] = data["bgpPeerLocalAddr"]
-        result[id]["3. Neighbor Address"] = data["key"]
-        result[id]["4. Neighbor AS"] = data["bgpPeerAs"]["value"]
-        if dictHasKey(bgpPeerInfoStatusEntry, device) && dictHasKey(bgpPeerStatisticsEntry, device) {
-            let test = merge(bgpPeerInfoStatusEntry[device][ip])
-            for kafi, kval in test["bgpPeerAfiSafiActive"]{
-                if kval == true {
-                    afis[device] = bgpPeerAfiSafiActive[kafi]
-                    afi_name[device] = bgpPeerAfiSafiActiveName[kafi]
+    if _device == "" || deviceKey == _device {
+        for vrfKey, vrfValue in deviceSessions{
+            # Check if _vrf is empty or if the current vrfKey is in _vrf
+            if length(_vrf) == 0 || _vrf == vrfKey {
+                for ip, sessionData in vrfValue {
+                    let data = merge(sessionData)
+                    # Add one to the ID
+                    let id = id + 1
+                    result[id] = newDict()
+                    # This is where we add the various columns
+                    result[id]["0. Device"] = deviceKey
+                    result[id]["1. Status"] = data["bgpState"]["Name"]
+                    result[id]["2. Peering Address"] = data["bgpPeerLocalAddr"]
+                    result[id]["3. Neighbor Address"] = data["key"]
+                    result[id]["4. Neighbor AS"] = data["bgpPeerAs"]["value"]
+                    result[id]["6. VRF"] = vrfKey
+                    if dictHasKey(bgpPeerInfoStatusEntry, deviceKey) && dictHasKey(bgpPeerStatisticsEntry, deviceKey) {
+                        if dictHasKey(bgpPeerInfoStatusEntry[deviceKey], vrfKey) {
+                            let test = merge(bgpPeerInfoStatusEntry[deviceKey][vrfKey][ip])
+                            for kafi, kval in test["bgpPeerAfiSafiActive"]{
+                                if kval == true {
+                                    afis[deviceKey] = bgpPeerAfiSafiActive[kafi]
+                                    afi_name[deviceKey] = bgpPeerAfiSafiActiveName[kafi]
+                                    result[id]["7. AFI/SAFI"] = afi_name[deviceKey]
+                                }
+                            }
+                            result[id]["5. Peer Description"] = test["bgpPeerDescription"]
+                        }
+                        if dictHasKey(bgpPeerStatisticsEntry[deviceKey], vrfKey) {
+                            let bgpPeerAfiSafiStats = merge(bgpPeerStatisticsEntry[deviceKey][vrfKey])
+                            if dictHasKey(afis, deviceKey) && dictHasKey(bgpPeerAfiSafiStats, ip){
+                                result[id]["8. PfxRcd"] = bgpPeerAfiSafiStats[ip]["bgpPeerAfiSafiStats"][afis[deviceKey]]["prefixIn"]
+                                result[id]["9. PfxAcc"] = bgpPeerAfiSafiStats[ip]["bgpPeerAfiSafiStats"][afis[deviceKey]]["prefixAcceptedIn"]
+                            }
+                        }
+
+
+                    } else {
+                        # need to figure out why sometimes there's no prefix info
+                        result[id]["8. PfxRcd"] = "N/A"
+                        result[id]["9. PfxAcc"] = "N/A"
+                    }
+                    if dictHasKey(data, "bgpPeerIntoOrOutOfEstablishedTime") {
+                        result[id]["10. Up/Down"] = str(duration(1000000000*round(num(now() - time(data["bgpPeerIntoOrOutOfEstablishedTime"]*1000000000))/1000000000)))
+                    }
                 }
             }
-            let bgpPeerAfiSafiStats = merge(bgpPeerStatisticsEntry[device])
-            if dictHasKey(afis, device){
-                result[id]["6. PfxRcd"] = bgpPeerAfiSafiStats[ip]["bgpPeerAfiSafiStats"][afis[device]]["prefixIn"]
-                result[id]["7. PfxAcc"] = bgpPeerAfiSafiStats[ip]["bgpPeerAfiSafiStats"][afis[device]]["prefixAcceptedIn"]
-            }
-            result[id]["8. Up/Down"] = str(duration(1000000000*round(num(now() - time(data["bgpPeerIntoOrOutOfEstablishedTime"]*1000000000))/1000000000)))
         }
     }
 }
