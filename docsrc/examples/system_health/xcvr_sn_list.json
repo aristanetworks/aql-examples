@@ -29,7 +29,7 @@
           },
           "type": "aql-query-widget",
           "inputs": {
-            "expression": "let xcvrStatus = `*:/Sysdb/hardware/archer/xcvr/status/all/*`\nlet filteredXcvrStat = xcvrStatus | map(_value | mapne(_value, _value | field(\"goVendorInfo\") | field(\"vendorSn\")))\nfilteredXcvrStat | map(_value | mapne(_value, _value[0]))\n",
+            "expression": "let xcvrStatus = `*:/Sysdb/hardware/archer/xcvr/status/all/*`\nlet filteredXcvrStat = xcvrStatus | map(_value | mapne(_value, _value | field(\"actualIdEepromContents\") | field(\"vendorSn\")))\nfilteredXcvrStat | map(_value | mapne(_value, _value[0]))\n",
             "graphConfig": {
               "columns": {
                 "key": {

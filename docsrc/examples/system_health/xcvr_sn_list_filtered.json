@@ -29,7 +29,7 @@
           },
           "type": "aql-query-widget",
           "inputs": {
-            "expression": "let data = `*:/Sysdb/hardware/archer/xcvr/status/all/*`\nlet xcvrStatus = data | map(_value | mapne(_value, _value | field(\"goVendorInfo\") | field(\"vendorSn\")))\nlet xcvrStatus = xcvrStatus | map(_value | mapne(_value[0], _value))\n\nlet filteredXcvrStat = newDict()\n\nfor deviceKey, deviceValue in xcvrStatus {\n    filteredXcvrStat[deviceKey] = newDict()\n    for interfaceKey, interfaceValue in deviceValue {\n        if reMatch(interfaceValue, _regexInput){\n            filteredXcvrStat[deviceKey][interfaceKey] = interfaceValue\n\n        }\n    }\n    if length(filteredXcvrStat[deviceKey]) == 0 {\n        dictRemove(filteredXcvrStat, deviceKey)\n    }\n}\n\nfilteredXcvrStat\n",
+            "expression": "let data = `*:/Sysdb/hardware/archer/xcvr/status/all/*`\nlet xcvrStatus = data | map(_value | mapne(_value, _value | field(\"actualIdEepromContents\") | field(\"vendorSn\")))\nlet xcvrStatus = xcvrStatus | map(_value | mapne(_value[0], _value))\n\nlet filteredXcvrStat = newDict()\n\nfor deviceKey, deviceValue in xcvrStatus {\n    filteredXcvrStat[deviceKey] = newDict()\n    for interfaceKey, interfaceValue in deviceValue {\n        if reMatch(interfaceValue, _regexInput){\n            filteredXcvrStat[deviceKey][interfaceKey] = interfaceValue\n\n        }\n    }\n    if length(filteredXcvrStat[deviceKey]) == 0 {\n        dictRemove(filteredXcvrStat, deviceKey)\n    }\n}\n\nfilteredXcvrStat\n",
             "graphConfig": {
               "columns": {
                 "key": {
