@@ -3,8 +3,9 @@ let hardware = merge(`analytics:/lifecycles/hardware`)
 let softwareLife = merge(`analytics:/lifecycles/software`)
 let software = merge(`analytics:/lifecycles/devices/software`)
 let skus = merge(`analytics:/BugAlerts/skus`)
-
+let modular = `analytics:/Devices/*/versioned-data/hardware/inventory/card`
 let filteredSkus = newDict()
+let id = 0
 for key, val in skus {
     if  strContains(key, "DCS-") {
         filteredSkus[key] = newDict()
@@ -23,33 +24,86 @@ for key, val in skus {
 let inv = newDict()
 for deviceUpdate, device in inventory {
     for deviceSN, deviceData in device {
-        inv[deviceSN] = newDict()
-        inv[deviceSN]["Hostname"] = deviceData["hostname"]
-        inv[deviceSN]["ModelName"] = deviceData["modelName"]
-        inv[deviceSN]["Version"] = deviceData["eosVersion"]
-        inv[deviceSN]["TerminAttr"] = deviceData["terminAttrVersion"]
+        inv[id] = newDict()
+        inv[id]["Chassis Serial Number"] = deviceSN
+        inv[id]["Device"] = deviceData["hostname"]
+        inv[id]["Model"] = deviceData["modelName"]
+        inv[id]["Software"] = deviceData["eosVersion"]
+        inv[id]["Streaming Agent"] = deviceData["terminAttrVersion"]
         for hw, hwEol in hardware {
             if  deviceData["modelName"] == hw {
-                inv[deviceSN]["Hardware EndOfSale"] = hwEol["endOfSale"]
-                inv[deviceSN]["Hardware EndOfTACSupport"] = hwEol["endOfTACSupport"]
-                inv[deviceSN]["Hardware EndOfRMARequests"] = hwEol["endOfHardwareRMARequests"]
-                inv[deviceSN]["Hardware EndOfLife"] = hwEol["endOfLife"]
+                inv[id]["Hardware End of Sale"] = hwEol["endOfSale"]
+                inv[id]["Hardware End of Support"] = hwEol["endOfTACSupport"]
+                inv[id]["Hardware End of RMA Request"] = hwEol["endOfHardwareRMARequests"]
+                inv[id]["Hardware End of Life"] = hwEol["endOfLife"]
             }
         }
         for switch, switchEol in software {
             if  switch == deviceSN {
-                inv[deviceSN]["Current Software EndOfLife"] = switchEol["endOfSupport"]
+                inv[id]["Software End of Life"] = switchEol["endOfSupport"]
             }
         }
         for skuKey, skuVal in filteredSkus {
             if  strContains(skuKey, deviceData["modelName"]) {
-                inv[deviceSN]["Last Supported Software Train"] = skuVal["releaseDeprecated"]
+                inv[id]["Last Supported Software Train"] = skuVal["releaseDeprecated"]
             }
         }
         for sw, swEol in softwareLife {
-            if  dictHasKey(inv[deviceSN],"Last Supported Software Train") && sw == inv[deviceSN]["Last Supported Software Train"] {
-                inv[deviceSN]["Last Supported Software Train EndOfLife"] = swEol["endOfSupport"]
+            if  dictHasKey(inv[id],"Last Supported Software Train") && sw == inv[id]["Last Supported Software Train"] {
+                inv[id]["Last Supported Software Train EndOfLife"] = swEol["endOfSupport"]
             }
+        }
+        let id = id + 1
+    }
+}
+let merged_inv = merge(inventory)
+for cardKey, cardVal in modular {
+    for card, cardSlot in merge(cardVal) {
+        inv[id] = newDict()
+        if dictHasKey(cardSlot, "modelName") {
+            if dictHasKey(cardSlot,"serialNum"){
+                let serial_number = cardSlot["serialNum"]
+            } else {
+                let serial_number = ""
+            }
+            if dictHasKey(cardSlot, "lifecycle"){
+                let lifecycle = cardSlot["lifecycle"]
+                if dictHasKey(lifecycle, "endOfLife"){
+                    let eol_date = lifecycle["endOfLife"]
+                } else {
+                    let eol_date = ""
+                }
+                if dictHasKey(lifecycle, "endOfHardwareRMARequests"){
+                    let eol_rma = lifecycle["endOfHardwareRMARequests"]
+                } else {
+                    let eol_rma = ""
+                }
+                if dictHasKey(lifecycle, "endOfSale") {
+                    let eol_sale = lifecycle["endOfSale"]
+                } else {
+                    let eol_sale = ""
+                }
+                if dictHasKey(lifecycle, "endOfTACSupport") {
+                    let eol_tac = lifecycle["endOfTACSupport"]
+                } else {
+                    let eol_tac = ""
+                }
+            } else {
+                let eol_date = ""
+                let eol_rma = ""
+                let eol_sale = ""
+                let eol_tac = ""
+            }
+            inv[id]["Hardware End of Sale"] = eol_sale
+            inv[id]["Hardware End of Support"] = eol_tac
+            inv[id]["Hardware End of RMA Request"] = eol_rma
+            inv[id]["Hardware End of Life"] = eol_date
+            inv[id]["Module Serial Number"] = cardSlot["serialNum"]
+            inv[id]["Module"] = cardSlot["modelName"]
+            inv[id]["Parent Serial Number"] = cardKey
+            inv[id]["Device"] = merged_inv[cardKey]["hostname"]
+            let id = id + 1
+
         }
     }
 }
