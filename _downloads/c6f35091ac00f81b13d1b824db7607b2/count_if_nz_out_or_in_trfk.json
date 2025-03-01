@@ -1,0 +1,42 @@
+{
+  "dashboards": [
+    {
+      "key": "e25ce3b5-240c-4ba2-a7e6-2ce46865bf7c",
+      "createdAt": [
+        57271534,
+        1561
+      ],
+      "createdBy": "cvpadmin",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Count interfaces with non-zero outbound OR inbound traffic (with key existence check)",
+      "description": "",
+      "widgets": [
+        {
+          "id": "67d75b07-a576-45f1-97f5-219f431bb585",
+          "name": "Count interfaces with non-zero outbound OR inbound traffic",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 8,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# Get the latest rates value for all interfaces in the network using widcards and apply merge on the inner timeseries\nlet data = `analytics:/Devices/*/versioned-data/interfaces/data/*/rates`\n\n# keep only entries where the outOctets and inOctets field is present and non-zero\nlet latestRates = data | map(_value | where(dictHasKey(merge(_value), \"inOctets\") && merge(_value)[\"inOctets\"] > 0      \\\n                                     || dictHasKey(merge(_value), \"outOctets\") &&  merge(_value)[\"outOctets\"] > 0))\n\n# count the remaining interfaces (with outbound traffic) for each device and compute the sum to get the number of active interfaces in the entire network\nsum(latestRates | map(length(_value)))",
+            "visualization": "singleValue"
+          },
+          "location": "main"
+        }
+      ],
+      "lastUpdated": 1688672722533,
+      "lastUpdatedBy": "cvpadmin"
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EoL Planning &mdash; CloudVision Advanced Query Language 4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0190abbe" />
+
+  
+    <link rel="canonical" href="https://aql.arista.com/examples/system_health/eol_planning.html" />
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=71af5d5d"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CloudVision Advanced Query Language
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_doc.html">Language Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_stdlib.html">AQL Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Language revisions / Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_examples.html">AQL Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CloudVision Advanced Query Language</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">EoL Planning</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/system_health/eol_planning.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="eol-planning">
+<h1>EoL Planning<a class="headerlink" href="#eol-planning" title="Link to this heading"></a></h1>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">inventory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/DatasetInfo/Devices`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">hardware</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/lifecycles/hardware`</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">softwareLife</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/lifecycles/software`</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">software</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/lifecycles/devices/software`</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">skus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/BugAlerts/skus`</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">modular</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/*/versioned-data/hardware/inventory/card`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">filteredSkus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">let</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="k">for</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">skus</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w">  </span><span class="n">strContains</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DCS-&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">filteredSkus</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">relNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="s">&quot;releaseDeprecated&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;[]&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">deprecatedReleaseNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strSplit</span><span class="p">(</span><span class="k">str</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="s">&quot;releaseDeprecated&quot;</span><span class="p">]),</span><span class="s">&quot;,&quot;</span><span class="p">)[</span><span class="m">0</span><span class="p">]</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">deprecatedReleaseNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strReplace</span><span class="p">(</span><span class="n">deprecatedReleaseNum</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;[&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">deprecatedReleaseNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strReplace</span><span class="p">(</span><span class="n">deprecatedReleaseNum</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;]&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">deprecatedReleaseNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strReplace</span><span class="p">(</span><span class="n">deprecatedReleaseNum</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;\&quot;&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">deprecatedReleaseNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strSplit</span><span class="p">(</span><span class="n">deprecatedReleaseNum</span><span class="p">,</span><span class="s">&quot;.&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">relNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deprecatedReleaseNum</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;.&quot;</span><span class="o">+</span><span class="k">str</span><span class="p">(</span><span class="k">num</span><span class="p">(</span><span class="n">deprecatedReleaseNum</span><span class="p">[</span><span class="m">1</span><span class="p">])</span><span class="o">-</span><span class="m">1</span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">filteredSkus</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;releaseDeprecated&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">relNum</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="k">let</span><span class="w"> </span><span class="n">inv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">for</span><span class="w"> </span><span class="n">deviceUpdate</span><span class="p">,</span><span class="w"> </span><span class="n">device</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">inventory</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">deviceSN</span><span class="p">,</span><span class="w"> </span><span class="n">deviceData</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">device</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">        </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Chassis Serial Number&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceSN</span>
+<span class="w">        </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Device&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceData</span><span class="p">[</span><span class="s">&quot;hostname&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Model&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceData</span><span class="p">[</span><span class="s">&quot;modelName&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Software&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceData</span><span class="p">[</span><span class="s">&quot;eosVersion&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Streaming Agent&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceData</span><span class="p">[</span><span class="s">&quot;terminAttrVersion&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">hw</span><span class="p">,</span><span class="w"> </span><span class="n">hwEol</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">hardware</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w">  </span><span class="n">deviceData</span><span class="p">[</span><span class="s">&quot;modelName&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">hw</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Hardware End of Sale&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwEol</span><span class="p">[</span><span class="s">&quot;endOfSale&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Hardware End of Support&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwEol</span><span class="p">[</span><span class="s">&quot;endOfTACSupport&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Hardware End of RMA Request&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwEol</span><span class="p">[</span><span class="s">&quot;endOfHardwareRMARequests&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Hardware End of Life&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hwEol</span><span class="p">[</span><span class="s">&quot;endOfLife&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">switch</span><span class="p">,</span><span class="w"> </span><span class="n">switchEol</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">software</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w">  </span><span class="n">switch</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">deviceSN</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Software End of Life&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">switchEol</span><span class="p">[</span><span class="s">&quot;endOfSupport&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">skuKey</span><span class="p">,</span><span class="w"> </span><span class="n">skuVal</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">filteredSkus</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w">  </span><span class="n">strContains</span><span class="p">(</span><span class="n">skuKey</span><span class="p">,</span><span class="w"> </span><span class="n">deviceData</span><span class="p">[</span><span class="s">&quot;modelName&quot;</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Last Supported Software Train&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">skuVal</span><span class="p">[</span><span class="s">&quot;releaseDeprecated&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">sw</span><span class="p">,</span><span class="w"> </span><span class="n">swEol</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">softwareLife</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w">  </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">],</span><span class="s">&quot;Last Supported Software Train&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">sw</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Last Supported Software Train&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Last Supported Software Train EndOfLife&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">swEol</span><span class="p">[</span><span class="s">&quot;endOfSupport&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="k">let</span><span class="w"> </span><span class="n">merged_inv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">inventory</span><span class="p">)</span>
+<span class="k">for</span><span class="w"> </span><span class="n">cardKey</span><span class="p">,</span><span class="w"> </span><span class="n">cardVal</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">modular</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">card</span><span class="p">,</span><span class="w"> </span><span class="n">cardSlot</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">cardVal</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">cardSlot</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;modelName&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">cardSlot</span><span class="p">,</span><span class="s">&quot;serialNum&quot;</span><span class="p">){</span>
+<span class="w">                </span><span class="k">let</span><span class="w"> </span><span class="n">serial_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cardSlot</span><span class="p">[</span><span class="s">&quot;serialNum&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">let</span><span class="w"> </span><span class="n">serial_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">cardSlot</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;lifecycle&quot;</span><span class="p">){</span>
+<span class="w">                </span><span class="k">let</span><span class="w"> </span><span class="n">lifecycle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cardSlot</span><span class="p">[</span><span class="s">&quot;lifecycle&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">lifecycle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;endOfLife&quot;</span><span class="p">){</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">eol_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lifecycle</span><span class="p">[</span><span class="s">&quot;endOfLife&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">eol_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">lifecycle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;endOfHardwareRMARequests&quot;</span><span class="p">){</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">eol_rma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lifecycle</span><span class="p">[</span><span class="s">&quot;endOfHardwareRMARequests&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">eol_rma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">lifecycle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;endOfSale&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">eol_sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lifecycle</span><span class="p">[</span><span class="s">&quot;endOfSale&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">eol_sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">lifecycle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;endOfTACSupport&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">eol_tac</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lifecycle</span><span class="p">[</span><span class="s">&quot;endOfTACSupport&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">eol_tac</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">let</span><span class="w"> </span><span class="n">eol_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">                </span><span class="k">let</span><span class="w"> </span><span class="n">eol_rma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">                </span><span class="k">let</span><span class="w"> </span><span class="n">eol_sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">                </span><span class="k">let</span><span class="w"> </span><span class="n">eol_tac</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Hardware End of Sale&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eol_sale</span>
+<span class="w">            </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Hardware End of Support&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eol_tac</span>
+<span class="w">            </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Hardware End of RMA Request&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eol_rma</span>
+<span class="w">            </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Hardware End of Life&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eol_date</span>
+<span class="w">            </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Module Serial Number&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cardSlot</span><span class="p">[</span><span class="s">&quot;serialNum&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Module&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cardSlot</span><span class="p">[</span><span class="s">&quot;modelName&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Parent Serial Number&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cardKey</span>
+<span class="w">            </span><span class="n">inv</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;Device&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merged_inv</span><span class="p">[</span><span class="n">cardKey</span><span class="p">][</span><span class="s">&quot;hostname&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">inv</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/eol_planning.png"><img alt="EoL Planning" src="../../_images/eol_planning.png" style="width: 600px;" />
+</a>
+<p><a class="reference download internal" download="" href="../../_downloads/c934687ff9ecb394044a37b78a0db889/eol_planning.json"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">Dashboard</span> <span class="pre">JSON</span> <span class="pre">here</span></code></a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Arista Networks.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
