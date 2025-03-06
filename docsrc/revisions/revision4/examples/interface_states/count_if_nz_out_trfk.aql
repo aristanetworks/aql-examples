@@ -1,0 +1,8 @@
+# Get the latest rates value for all interfaces in the network using widcards and apply merge on the inner timeseries
+let data = `analytics:/Devices/*/versioned-data/interfaces/data/*/aggregate/rates/15m` | recmap(2, merge(_value))
+
+# keep only entries where the outOctets field is present and avg is non-zero
+let latestRatesByInterface = data | map(_value | where(dictHasKey(_value, "outOctets") && _value["outOctets"]["avg"] > 0))
+
+#count the remaining interfaces (with outbound traffic) for each device and compute the sum to get the number of active interfaces in the entire network
+sum(latestRatesByInterface | map(length(_value)))

@@ -1,0 +1,13 @@
+let data = merge(`<_device>:/Smash/bridging/status/smashFdbStatus`)
+let numberMAC = newDict()
+
+for deviceKey, deviceValue in data {
+   if dictHasKey(numberMAC, data[deviceKey]["intf"]) {
+       numberMAC[data[deviceKey]["intf"]]["MACs"] = numberMAC[data[deviceKey]["intf"]]["MACs"] + 1
+   } else {
+       numberMAC[data[deviceKey]["intf"]] = newDict()
+       numberMAC[data[deviceKey]["intf"]]["MACs"] = 1
+   }
+}
+
+numberMAC

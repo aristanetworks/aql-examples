@@ -1,0 +1,23 @@
+# Get the devices that have the egw (EVPN gateway) tag
+let devices = merge(`analytics:/tags/labels/devices/switch_role/value/egw/elements`)
+
+# Get the L3 hardware capacity for all devices
+let hwCapL3 =`*:/Sysdb/hardware/capacity/status/l3/entry`
+
+# Get the devices that are part of a specific pod
+let podDeviceList = merge(`analytics:/tags/labels/devices/pod_name/value/<_pod_name>/elements`)
+
+# If the POD_NAME variable is not set (none) show the utilization for all pods
+if str(_pod_name) == "" {
+    let filteredHwCapL3 = hwCapL3 | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(merge(_value) )
+} else {
+    let filteredHwCapL3 = hwCapL3 | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(podDeviceList, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(merge(_value) )
+}
+for deviceKey, deviceValue in filteredHwCapL3{
+    filteredHwCapL3[deviceKey]["MAC"] = filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"LEM\", \"feature\": \"MAC\"}")]["used"] / filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"LEM\", \"feature\": \"MAC\"}")]["maxLimit"]*100
+    filteredHwCapL3[deviceKey]["FEC Routing"] = filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"FEC\", \"feature\": \"Routing\"}")]["used"] / filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"\", \"table\":\"FEC\", \"feature\": \"Routing\"}")]["maxLimit"]*100
+    filteredHwCapL3[deviceKey]["Routing1"] = filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"Jericho\", \"table\":\"Routing\", \"feature\": \"Resource1\"}")]["used"] / filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"Jericho\", \"table\":\"Routing\", \"feature\": \"Resource1\"}")]["maxLimit"]*100
+    filteredHwCapL3[deviceKey]["Routing2"] = filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"Jericho\", \"table\":\"Routing\", \"feature\": \"Resource2\"}")]["used"] / filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"Jericho\", \"table\":\"Routing\", \"feature\": \"Resource2\"}")]["maxLimit"]*100
+    filteredHwCapL3[deviceKey]["Routing3"] = filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"Jericho\", \"table\":\"Routing\", \"feature\": \"Resource3\"}")]["used"] / filteredHwCapL3[deviceKey][complexKey("{\"chip\": \"Jericho\", \"table\":\"Routing\", \"feature\": \"Resource3\"}")]["maxLimit"]*100
+}
+filteredHwCapL3 | map(_value | fields("MAC","FEC Routing", "Routing1", "Routing2", "Routing3"))

@@ -1,0 +1,26 @@
+let data =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`[24h]
+let devices = merge(`analytics:/tags/labels/devices/site_name/value/<_SITE_NAME>/elements`)
+let data = data | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")))
+let result = newDict()
+
+for device, deviceValues in data {
+        let establishedNeighbors = newDict()
+        let flapCount = 0
+        for ip, tseries in deviceValues{
+            for timestamp, values in tseries {
+                if dictHasKey(values, "bgpState"){
+                    if values["bgpState"]["Name"] == "Established"{
+                        let flapCount = flapCount +1
+                        establishedNeighbors[ip] = true
+                    }
+                }
+            }
+        }
+        let count = flapCount - length(establishedNeighbors)
+        if count > 0 {
+            result[device] = newDict() | setFields("Flaps", count )
+        }
+
+}
+
+result

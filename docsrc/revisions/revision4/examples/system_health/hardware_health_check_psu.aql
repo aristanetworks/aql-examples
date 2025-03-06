@@ -1,0 +1,31 @@
+let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
+let devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/<_SWITCH_ROLE>/elements`)
+
+
+let powerSupply = `*:/Sysdb/environment/archer/power/status/powerSupply/*`
+let filteredPsuStats = powerSupply | where(dictHasKey(powerSupply, _key) == true) | recmap(2, (merge(_value)["state"]["Name"]))
+
+if str(_POD_NAME) == "" && str(_SWITCH_ROLE) == "" {
+    let result = filteredPsuStats
+} else {
+    if str(_SWITCH_ROLE) == "" {
+        let result = filteredPsuStats | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")))
+    } else {
+        if str(_POD_NAME) == "" {
+            let result = filteredPsuStats | where(dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+        } else {
+            let result = filteredPsuStats | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+        }
+    }
+}
+
+for deviceKey, deviceValue  in result{
+    for powerSupplyKey, powerSupplyValue in deviceValue{
+        if powerSupplyValue=="ok"{
+            result[deviceKey][powerSupplyKey]="✔️"
+        } else{
+            result[deviceKey][powerSupplyKey]="❌"
+        }
+    }
+}
+result

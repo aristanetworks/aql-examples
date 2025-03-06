@@ -1,0 +1,91 @@
+{
+  "dashboards": [
+    {
+      "key": "3b7d1018-1a96-4388-bbd2-13e4542a6171",
+      "createdAt": [
+        585586253,
+        1618
+      ],
+      "createdBy": "cvpadmin",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "EoL Planning",
+      "description": "",
+      "widgets": [
+        {
+          "id": "d2e7f7c4-6e4c-44ca-8486-0551a7bff0ed",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 24,
+            "height": 26
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let inventory = `analytics:/DatasetInfo/Devices`\nlet hardware = merge(`analytics:/lifecycles/hardware`)\nlet softwareLife = merge(`analytics:/lifecycles/software`)\nlet software = merge(`analytics:/lifecycles/devices/software`)\nlet skus = merge(`analytics:/BugAlerts/skus`)\nlet modular = `analytics:/Devices/*/versioned-data/hardware/inventory/card`\nlet filteredSkus = newDict()\nlet id = 0\nfor key, val in skus {\n    if  strContains(key, \"DCS-\") {\n        filteredSkus[key] = newDict()\n        let relNum = \"\"\n        if str(val[\"releaseDeprecated\"]) != \"[]\" {\n            let deprecatedReleaseNum = strSplit(str(val[\"releaseDeprecated\"]),\",\")[0]\n            let deprecatedReleaseNum = strReplace(deprecatedReleaseNum, \"[\",\"\")\n            let deprecatedReleaseNum = strReplace(deprecatedReleaseNum, \"]\",\"\")\n            let deprecatedReleaseNum = strReplace(deprecatedReleaseNum, \"\\\"\",\"\")\n            let deprecatedReleaseNum = strSplit(deprecatedReleaseNum,\".\")\n            let relNum = deprecatedReleaseNum[0]+\".\"+str(num(deprecatedReleaseNum[1])-1)\n        }\n        filteredSkus[key][\"releaseDeprecated\"] = relNum\n    }\n}\nlet inv = newDict()\nfor deviceUpdate, device in inventory {\n    for deviceSN, deviceData in device {\n        inv[id] = newDict()\n        inv[id][\"Chassis Serial Number\"] = deviceSN\n        inv[id][\"Device\"] = deviceData[\"hostname\"]\n        inv[id][\"Model\"] = deviceData[\"modelName\"]\n        inv[id][\"Software\"] = deviceData[\"eosVersion\"]\n        inv[id][\"Streaming Agent\"] = deviceData[\"terminAttrVersion\"]\n        for hw, hwEol in hardware {\n            if  deviceData[\"modelName\"] == hw {\n                inv[id][\"Hardware End of Sale\"] = hwEol[\"endOfSale\"]\n                inv[id][\"Hardware End of Support\"] = hwEol[\"endOfTACSupport\"]\n                inv[id][\"Hardware End of RMA Request\"] = hwEol[\"endOfHardwareRMARequests\"]\n                inv[id][\"Hardware End of Life\"] = hwEol[\"endOfLife\"]\n            }\n        }\n        for switch, switchEol in software {\n            if  switch == deviceSN {\n                inv[id][\"Software End of Life\"] = switchEol[\"endOfSupport\"]\n            }\n        }\n        for skuKey, skuVal in filteredSkus {\n            if  strContains(skuKey, deviceData[\"modelName\"]) {\n                inv[id][\"Last Supported Software Train\"] = skuVal[\"releaseDeprecated\"]\n            }\n        }\n        for sw, swEol in softwareLife {\n            if  dictHasKey(inv[id],\"Last Supported Software Train\") && sw == inv[id][\"Last Supported Software Train\"] {\n                inv[id][\"Last Supported Software Train EndOfLife\"] = swEol[\"endOfSupport\"]\n            }\n        }\n        let id = id + 1\n    }\n}\nlet merged_inv = merge(inventory)\nfor cardKey, cardVal in modular {\n    for card, cardSlot in merge(cardVal) {\n        inv[id] = newDict()\n        if dictHasKey(cardSlot, \"modelName\") {\n            if dictHasKey(cardSlot,\"serialNum\"){\n                let serial_number = cardSlot[\"serialNum\"]\n            } else {\n                let serial_number = \"\"\n            }\n            if dictHasKey(cardSlot, \"lifecycle\"){\n                let lifecycle = cardSlot[\"lifecycle\"]\n                if dictHasKey(lifecycle, \"endOfLife\"){\n                    let eol_date = lifecycle[\"endOfLife\"]\n                } else {\n                    let eol_date = \"\"\n                }\n                if dictHasKey(lifecycle, \"endOfHardwareRMARequests\"){\n                    let eol_rma = lifecycle[\"endOfHardwareRMARequests\"]\n                } else {\n                    let eol_rma = \"\"\n                }\n                if dictHasKey(lifecycle, \"endOfSale\") {\n                    let eol_sale = lifecycle[\"endOfSale\"]\n                } else {\n                    let eol_sale = \"\"\n                }\n                if dictHasKey(lifecycle, \"endOfTACSupport\") {\n                    let eol_tac = lifecycle[\"endOfTACSupport\"]\n                } else {\n                    let eol_tac = \"\"\n                }\n            } else {\n                let eol_date = \"\"\n                let eol_rma = \"\"\n                let eol_sale = \"\"\n                let eol_tac = \"\"\n            }\n            inv[id][\"Hardware End of Sale\"] = eol_sale\n            inv[id][\"Hardware End of Support\"] = eol_tac\n            inv[id][\"Hardware End of RMA Request\"] = eol_rma\n            inv[id][\"Hardware End of Life\"] = eol_date\n            inv[id][\"Module Serial Number\"] = cardSlot[\"serialNum\"]\n            inv[id][\"Module\"] = cardSlot[\"modelName\"]\n            inv[id][\"Parent Serial Number\"] = cardKey\n            inv[id][\"Device\"] = merged_inv[cardKey][\"hostname\"]\n            let id = id + 1\n            \n        }\n    }\n}\ninv",
+            "graphConfig": {
+              "defaultSort": {
+                "key": "Device"
+              },
+              "columnOrders": {
+                "key": 1,
+                "Hostname": 2,
+                "Current Software EndOfLife": 10,
+                "Hardware EndOfLife": 15,
+                "Hardware EndOfRMARequests": 13,
+                "Hardware EndOfSale": 12,
+                "Hardware EndOfTACSupport": 14,
+                "Last Supported Software Train": 15,
+                "ModelName": 9,
+                "Parent SN": 6,
+                "SN": 7,
+                "TerminAttr": 4,
+                "Version": 3,
+                "Software": 3,
+                "Streaming Agent": 4,
+                "Chassis Serial Number": 6,
+                "Card Serial Number": 6,
+                "Parent Serial Number": 9,
+                "Model": 5,
+                "Module": 7,
+                "Hardware End of Life": 13,
+                "Hardware End of RMA Request": 12,
+                "Hardware End of Sale": 10,
+                "Hardware End of Support": 11,
+                "Software End of Life": 14,
+                "Device": 2,
+                "Module Serial Number": 8
+              },
+              "columns": {
+                "key": {
+                  "hide": true
+                },
+                "Parent Serial Number": {
+                  "hide": true
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "styles": {
+            "hideTitle": false,
+            "backgroundColor": "",
+            "hideHorizontalBar": false,
+            "titleSize": 16
+          },
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1738704936590,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}

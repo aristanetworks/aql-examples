@@ -1,0 +1,34 @@
+let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
+let devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/HDL/elements`)
+
+if str(_POD_NAME) == "" {
+    let macConfigCount =`*:/Sysdb/bridging/config/_counts` | where(dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+    let macStatusCount =`*:/Smash/bridging/status/_counts` | where(dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+    let vrfCount =`*:/Sysdb/routing/vrf/config/vrfConfig` | where(dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(length(_value) == 0 ? 0 : _value)
+    let arpCount = `*:/Smash/arp/status/_counts`  | where(dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+} else {
+    let macConfigCount =`*:/Sysdb/bridging/config/_counts` | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+    let macStatusCount =`*:/Smash/bridging/status/_counts` | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+    let vrfCount =`*:/Sysdb/routing/vrf/config/vrfConfig` | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}"))) | map(length(_value) == 0 ? 0 : _value)
+    let arpCount = `*:/Smash/arp/status/_counts` | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+}
+
+let smash = macStatusCount | map(merge(_value) | fields("smashFdbStatus"))
+let nbvlan = macConfigCount | map(merge(_value) | fields("vlanConfig"))
+let nbVRF = vrfCount | map(length(merge(_value)))
+let nbARP = arpCount | map(merge(_value))
+
+for deviceKey, deviceValue in nbVRF {
+    let nbr = newDict()
+    nbr["VRF number"]=deviceValue
+    nbVRF[deviceKey]= nbr
+}
+
+for devicekey, devicevalue in smash {
+    smash[devicekey]["VLAN count"]=nbvlan[devicekey]["vlanConfig"]
+    smash[devicekey]["VRF count"]=nbVRF[devicekey]["VRF number"]
+    smash[devicekey]["ARP count"]=nbARP[devicekey]["arpEntry"]
+    smash[devicekey]["ND count"]=nbARP[devicekey]["neighborEntry"]
+}
+
+smash | map(_value | renameFields("smashFdbStatus","MAC count"))

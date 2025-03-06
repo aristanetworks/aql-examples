@@ -1,0 +1,66 @@
+# Requires a variable input named PortDescription
+
+# Get the interface names and descriptions
+let intfConfig = `*:/Sysdb/interface/config/eth/phy/slice/1/intfConfig/*` | recmap(2, merge(_value))
+let i = 0
+let result = newDict()
+for deviceKey, deviceVal in intfConfig {
+    for interfaceKey, interfaceVal in deviceVal {
+        if reMatch(interfaceVal["description"], _PortDescription) {
+            result[i] = newDict()
+            result[i]["Switch"] = deviceKey
+            result[i]["Interface"] = interfaceKey
+            result[i]["Port Description"] = interfaceVal["description"]
+            let i = i + 1
+        }
+    }
+}
+
+# Get the LLDP Neighbour Information
+let lldpPeers = `*:/Sysdb/l2discovery/lldp/status/local/1/portStatus/*/remoteSystem/*` | recmap(3, merge(_value))
+for deviceKey, deviceVal in result {
+    for lldpKey, lldpVal in lldpPeers {
+        if lldpKey == deviceVal["Switch"] {
+            for interfaceKey, interfaceVal in lldpVal {
+                if interfaceKey == deviceVal["Interface"] {
+                    let values = interfaceVal[dictKeys(interfaceVal)[0]]
+                    result[deviceKey]["Remote LLDP Hostname"] = values["sysName"]["value"]["value"]
+                    result[deviceKey]["Remote LLDP PortID"] = values["msap"]["portIdentifier"]["portId"]
+                    result[deviceKey]["Chassis Identifier"] = values["msap"]["chassisIdentifier"]["chassisId"]
+                }
+            }
+        }
+    }
+}
+
+# Get the L2 Interface Information (VLAN Info, etc)
+let switchIntfConfig = `*:/Sysdb/bridging/switchIntfConfig/switchIntfConfig/*` | recmap(2, merge(_value))
+for deviceKey, deviceVal in result {
+    for switchKey, switchVal in switchIntfConfig {
+        if switchKey == deviceVal["Switch"] {
+            for interfaceKey, interfaceVal in switchVal {
+                if interfaceKey == deviceVal["Interface"] {
+                    result[deviceKey]["Switchport Mode"] = interfaceVal["switchportMode"]["Name"]
+                    result[deviceKey]["Access VLAN"] = interfaceVal["accessVlan"]["value"]
+                    result[deviceKey]["Trunked VLANs"] = interfaceVal["trunkAllowedVlans"]
+                }
+            }
+        }
+    }
+}
+
+# Get the Interface Status Info
+let intfStatus = `*:/Sysdb/interface/status/eth/phy/slice/1/intfStatus/*` | recmap(2, merge(_value))
+for deviceKey, deviceVal in result {
+    for switchKey, switchVal in intfStatus {
+        if switchKey == deviceVal["Switch"] {
+            for intfKey, intfVal in switchVal {
+                if intfKey == deviceVal["Interface"] {
+                    result[deviceKey]["Status"] = intfVal["operStatus"]["Name"]
+                    result[deviceKey]["Speed"] = intfVal["speedEnum"]["Name"]
+                }
+            }
+        }
+    }
+}
+result

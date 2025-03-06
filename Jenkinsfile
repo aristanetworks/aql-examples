@@ -51,7 +51,7 @@ pipeline {
                 container('artools') {
                     dir("${WORKSPACE}") {
                         sh "pip install -r requirements.txt"
-                        sh "sphinx-build docsrc _build"
+                        sh "make all"
 
                         publishHTML (target: [
                             allowMissing: false,

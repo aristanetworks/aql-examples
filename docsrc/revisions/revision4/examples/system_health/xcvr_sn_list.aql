@@ -1,0 +1,3 @@
+let xcvrStatus = `*:/Sysdb/hardware/archer/xcvr/status/all/*`
+let filteredXcvrStat = xcvrStatus | map(_value | mapne(_value, _value | field("vendorInfo") | field("vendorSn")))
+filteredXcvrStat | map(_value | mapne(_value, _value[0]))

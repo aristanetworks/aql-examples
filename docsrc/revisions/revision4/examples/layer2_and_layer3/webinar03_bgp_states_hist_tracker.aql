@@ -1,0 +1,17 @@
+# BGP Session historical state tracker
+let data = `analytics:/Devices/<_bgpDevice>/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`[4h]
+let res = newDict()
+for ip, tseries in data {
+    for timestamp, values in tseries {
+        # only show selected neighbors or all if none selected
+        if length(_NeighborIP) == 0 || dictHasKey(_NeighborIP, ip){
+
+            if !dictHasKey(res, str(timestamp)) {
+                res[str(timestamp)] = newDict() | setFields(ip, dictHasKey(values, "bgpState") ? values["bgpState"]["Name"] : 0)
+            } else {
+                res[str(timestamp)][ip]  = dictHasKey(values, "bgpState") ? values["bgpState"]["Name"] : 0
+            }
+        }
+    }
+}
+res

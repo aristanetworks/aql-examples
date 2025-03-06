@@ -1,0 +1,11 @@
+let powerSupply = `analytics:/Devices/*/versioned-data/environment/power/aggregate/*/out/15m`[48h]
+let result = newDict()
+for key, value in _device{
+
+    if dictHasKey(powerSupply,key) {
+         for psk,psv in powerSupply[key]{
+             result[key+"-"+psk] = powerSupply[key][psk] | field("value") | field("avg")
+         }
+    }
+}
+result

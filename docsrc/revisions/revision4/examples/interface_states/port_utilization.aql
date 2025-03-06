@@ -1,0 +1,35 @@
+# Get devices with tag label "switch_role" and default value of "hdl".
+# To choose another tag value, select from the input's dropdown.
+
+# Load all interface configurations
+let devs = merge(`analytics:/tags/labels/devices/switch_role/value/<_switch_role>/elements`)
+let devices = newDict()
+
+for deviceIDstr, val in devs {
+    let devId = strSplit(str(deviceIDstr), ":")[1]
+    let devId = strReplace(devId,"\"", "")
+    let devId = strReplace(devId, "}", "")
+    devices[devId] = val
+}
+
+let data = `*:/Sysdb/interface/config/eth/phy/slice/1/intfConfig/*` | recmap(2,merge(_value) | fields("description")) | map(_value | where(strContains(_key, "Ethernet")))| where( dictHasKey(devices, _key))
+let result = `*:/Sysdb/interface/config/eth/phy/slice/1/intfConfig/*` | recmap(2,merge(_value) | fields("description")) | map(_value | where(strContains(_key, "Ethernet")))| where( dictHasKey(devices, _key))
+
+for deviceKey, deviceValue in data {
+    let nbPorts = 0
+    let nbUnusedPorts = 0
+    for portKey, portValue in deviceValue {
+       if (portValue["description"]=="UNUSED"){
+        let nbUnusedPorts = nbUnusedPorts+1
+       }
+        let nbPorts = nbPorts+1
+        result[deviceKey]["Number of Unused Ports"] = nbUnusedPorts
+        result[deviceKey]["Number of Ports"] = nbPorts
+        if (nbPorts != 0){
+            result[deviceKey]["Port free %"] = nbUnusedPorts / nbPorts * 100
+        } else {
+            result[deviceKey]["Port free %"] = "N/A"
+        }
+    }
+}
+result | map(_value | fields("Number of Unused Ports","Number of Ports","Port free %"))

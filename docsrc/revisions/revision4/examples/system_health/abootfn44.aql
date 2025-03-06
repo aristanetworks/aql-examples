@@ -1,0 +1,54 @@
+let fixed = `*:/Sysdb/hardware/entmib/fixedSystem`
+let chassis = `*:/Sysdb/hardware/entmib/chassis/cardSlot/*/card`
+let result = newDict()
+
+for deviceKey, deviceValue in fixed{
+    let fx_temp = merge(deviceValue)
+    if dictHasKey(fx_temp , "firmwareRev") && fx_temp["firmwareRev"] != ""{
+        result[deviceKey] = newDict() | setFields("Aboot version", fx_temp["firmwareRev"])
+    }
+
+}
+for deviceKey, deviceValue in chassis {
+    let cx_tmp = chassis[deviceKey] | map(merge(_value))
+    for card in cx_tmp{
+        if dictHasKey(card, "firmwareRev") && card["firmwareRev"] != "" {
+            result[deviceKey] = newDict() | setFields("Aboot version", card["firmwareRev"])
+        }
+    }
+
+}
+
+let re = "Aboot-norcal\d+-(\d+)\.(\d+)\.(\d+).*"
+
+for deviceKey, deviceValue in result{
+    let aboot =  reFindCaptures(deviceValue["Aboot version"], re)
+    if length(aboot) > 0 {
+
+        if num(aboot[0][1]) == 4 {
+            if num(aboot[0][2]) == 0 && num(aboot[0][3]) < 7  {
+                result[deviceKey]["affected"] = "🔥 True"
+            }
+            if num(aboot[0][2]) == 1 && num(aboot[0][3]) < 1 {
+                result[deviceKey]["affected"] = "🔥 True"
+            }
+        }
+        if num(aboot[0][1]) == 6 {
+            if num(aboot[0][2]) == 0 && num(aboot[0][3]) < 9  {
+                result[deviceKey]["affected"] = "🔥 True"
+            }
+            if num(aboot[0][2]) == 1 && num(aboot[0][3]) < 7 {
+                result[deviceKey]["affected"] = "🔥 True"
+            } else {
+                result[deviceKey]["affected"] = "✅ False"
+            }
+        } else {
+            result[deviceKey]["affected"] = "✅ False"
+        }
+
+    } else {
+        result[deviceKey]["affected"] = "✅ False"
+    }
+
+}
+result

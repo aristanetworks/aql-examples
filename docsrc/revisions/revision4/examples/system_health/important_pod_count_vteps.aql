@@ -1,0 +1,14 @@
+let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
+let devicesInCPOD1 = merge(`analytics:/tags/labels/devices/pod_name/value/CPOD1/elements`)
+
+if str(_POD_NAME) == "" {
+    let vteps = (length(devicesInCPOD1) - 2 ) / 2
+} else {
+    if strContains(str(_POD_NAME), "SPOD") {
+        let vteps = ((length(devices) - 3) / 2)+1
+    } else {
+    let vteps = (length(devices) - 2) / 2
+    }
+}
+
+vteps

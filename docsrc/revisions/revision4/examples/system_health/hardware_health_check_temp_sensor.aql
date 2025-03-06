@@ -1,0 +1,30 @@
+let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
+let devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/<_SWITCH_ROLE>/elements`)
+
+let temperature = `*:/Sysdb/environment/archer/temperature/status/cell/1/*`
+let filteredTemperatureStats = temperature | where(dictHasKey(temperature, _key) == true) | recmap(2, (merge(_value)["alertRaised"]))
+
+if str(_POD_NAME) == "" && str(_SWITCH_ROLE) == "" {
+    let result = filteredTemperatureStats
+} else {
+    if str(_SWITCH_ROLE) == "" {
+        let result = filteredTemperatureStats | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")))
+    } else {
+        if str(_POD_NAME) == "" {
+            let result = filteredTemperatureStats | where(dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+        } else {
+            let result = filteredTemperatureStats | where(dictHasKey(devices, complexKey("{\"deviceID\": \""+_key+"\"}")) && dictHasKey(devicesSwitchLabel, complexKey("{\"deviceID\": \""+_key+"\"}")))
+        }
+    }
+}
+
+for deviceKey, deviceValue  in result{
+    for sensorKey, sensorValue in deviceValue{
+        if sensorValue==false{
+            result[deviceKey][sensorKey]="✔️"
+        } else{
+            result[deviceKey][sensorKey]="❌"
+        }
+    }
+}
+result

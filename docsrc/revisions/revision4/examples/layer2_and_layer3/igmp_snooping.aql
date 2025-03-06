@@ -1,0 +1,20 @@
+let igmpSnooping = `<_device>:/Sysdb/bridging/igmpsnooping/forwarding/status/vlanStatus/*/ethGroup/*/intf`
+let filteredIgmpSnooping = igmpSnooping | recmap(2, merge(_value))
+let result = newDict()
+for vlanKey, macAddrIntf in filteredIgmpSnooping {
+    for macAddr, intfState in macAddrIntf {
+        # Create a list of interfaces a vlan is mapped to
+        let interfaceList = ""
+        if length(intfState) > 1{
+            for interface, intfBool in intfState {
+                let interfaceList = interfaceList + str(interface) + ", "
+            }
+        } else {
+            # if there is only 1 interface no need to add a comma
+            let interfaceList = str(dictKeys(intfState)[0])
+        }
+        let vlan = reFindCaptures(str(vlanKey), "{\"value\":(\d+)}")[0][1]
+        result[macAddr] = newDict() | setFields("VLAN", vlan, "Members", interfaceList)
+    }
+}
+result

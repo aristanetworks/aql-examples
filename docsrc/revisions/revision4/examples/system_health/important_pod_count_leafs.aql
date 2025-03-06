@@ -1,0 +1,10 @@
+let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)
+let devicesInCPOD1 = merge(`analytics:/tags/labels/devices/pod_name/value/CPOD1/elements`)
+
+if str(_POD_NAME) == "" {
+    let leafs = length(devicesInCPOD1) - 2
+} else {
+    let leafs = length(devices) - 2
+}
+
+leafs

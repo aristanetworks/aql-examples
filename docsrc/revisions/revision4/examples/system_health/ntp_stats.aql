@@ -1,0 +1,9 @@
+let ntpData = `*:/NTP/status/system/variables` | map(merge(_value))
+let output = newDict()
+for devID,devData in ntpData{
+    output[devID] = newDict()
+    output[devID]["peer"]= devData["refid"]
+    output[devID]["Stratum"]=devData["stratum"]
+    output[devID]["OffSet"]=devData["offset"]
+    }
+output

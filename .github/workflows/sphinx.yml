@@ -13,7 +13,7 @@ jobs:
         pip install -r requirements.txt
     - name: Sphinx build
       run: |
-        sphinx-build docsrc _build
+        sphinx-build docsrc/revisions/latest _build
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/master'

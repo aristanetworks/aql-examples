@@ -1,0 +1,13 @@
+let data = `<_device>:/Sysdb/interface/config/eth/phy/slice/*/intfConfig/*`
+let res = newDict()
+for cell in data{
+    for interface, value in cell{
+        let status = merge(value)["adminEnabledStateLocal"]["Name"]
+        # if an interface was never shutdown the state is unknownEnabledState
+        if status == "unknownEnabledState"{
+            let status = "enabled"
+        }
+        res[interface] = newDict() | setFields("Status", status)
+    }
+}
+res

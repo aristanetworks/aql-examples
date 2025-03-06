@@ -1,0 +1,8 @@
+let devices = `analytics:/Devices/*/versioned-data/Device` | map(merge(_value)["hostname"])
+let result = newDict()
+let deviceDiskStats = `*:/Kernel/vfs/stat/\/var\/core` | map(merge(_value))
+let deviceDiskStats = deviceDiskStats | where(dictHasKey(_value, "blocks") && dictHasKey(_value, "bfree") && _value["blocks"] != _value["bfree"])
+for device, diskStat in deviceDiskStats {
+    result[devices[device]] = newDict() | setFields("value", true)
+}
+result
