@@ -10,10 +10,12 @@ jobs:
     - uses: actions/setup-python@v3
     - name: Install dependencies
       run: |
+        sudo apt update -qy
+        sudo apt install -y --no-install-recommends --fix-missing build-essential
         pip install -r requirements.txt
     - name: Sphinx build
       run: |
-        sphinx-build docsrc/revisions/latest _build
+        make latest
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/master'
