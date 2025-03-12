@@ -21,7 +21,7 @@ serve: latest oldrevisions revisionsindex
 	$(PYTHON3) -m http.server --directory $(BUILDDIR) $(SERVEPORT)
 
 oldrevisions:
-	SPHINX=${SPHINX} REVISIONDIR=$${rev} SOURCEDIR=${SOURCEDIR} BUILDDIR=${BUILDDIR} ./build_old_revisions.sh
+	SPHINX="${SPHINX}" REVISIONDIR=$${rev} SOURCEDIR=${SOURCEDIR} BUILDDIR=${BUILDDIR} ./build_old_revisions.sh
 
 clean:
 	rm -rf $(BUILDDIR)
