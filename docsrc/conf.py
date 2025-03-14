@@ -47,7 +47,7 @@ autosectionlabel_prefix_document = True
 
 # -- Lexer for AQL Syntax Highlighting----------------------------------------
 
-from pygments.lexer import RegexLexer
+from pygments.lexer import RegexLexer, bygroups
 from pygments import token
 from sphinx.highlighting import lexers
 
@@ -72,7 +72,7 @@ stdAQLTokens = [
     (r'[]{}:(),;?[]', token.Punctuation),
     (r'`.*`', token.Literal),
     (r'"[^"\\]*(?:\\.[^"\\]*)*"', token.String),
-    (r"'[^'\\]*(?:\\.[^'\\]*)*'", token.String),
+    (r"(')([^:]+:)([^'\\]*(?:\\.[^'\\]*)*')", bygroups(token.String, token.Operator, token.String)),
     (r'#.*$', token.Comment),
     (r'[a-zA-Z_]\w*', token.Name),
     (r'[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h)', token.String),
