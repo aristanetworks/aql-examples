@@ -72,6 +72,7 @@ stdAQLTokens = [
     (r'[]{}:(),;?[]', token.Punctuation),
     (r'`.*`', token.Literal),
     (r'"[^"\\]*(?:\\.[^"\\]*)*"', token.String),
+    (r"'[^'\\]*(?:\\.[^'\\]*)*'", token.String),
     (r'#.*$', token.Comment),
     (r'[a-zA-Z_]\w*', token.Name),
     (r'[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h)', token.String),
