@@ -1,0 +1,134 @@
+{
+  "dashboards": [
+    {
+      "key": "84676f53-d1aa-434d-b1b4-d89332f22f9f",
+      "createdAt": [
+        782155240,
+        1574
+      ],
+      "createdBy": "cvpadmin",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Port Utilization",
+      "description": "",
+      "widgets": [
+        {
+          "id": "99f5d7c5-b1db-4c3b-afd0-91a692137188",
+          "name": "Port Utilization",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "dimensions": {
+            "width": 17,
+            "height": 12
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# Get devices with tag label \"switch_role\" and default value of \"hdl\".\n# To choose another tag value, select from the input's dropdown.\n\n# Load all interface configurations\nlet devs = merge(`analytics:/tags/labels/devices/switch_role/value/<_switch_role>/elements`)\nlet devices = newDict()\n\nfor deviceIDstr, val in devs {\n    let devId = strSplit(str(deviceIDstr), \":\")[1]\n    let devId = strReplace(devId,\"\\\"\", \"\")\n    let devId = strReplace(devId, \"}\", \"\")\n    devices[devId] = val\n}\n\nlet data = `*:/Sysdb/interface/config/eth/phy/slice/1/intfConfig/*` | recmap(2,merge(_value) | fields(\"description\")) | map(_value | where(strContains(_key, \"Ethernet\")))| where( dictHasKey(devices, _key))\nlet result = `*:/Sysdb/interface/config/eth/phy/slice/1/intfConfig/*` | recmap(2,merge(_value) | fields(\"description\")) | map(_value | where(strContains(_key, \"Ethernet\")))| where( dictHasKey(devices, _key))\n\nfor deviceKey, deviceValue in data {\n    let nbPorts = 0\n    let nbUnusedPorts = 0\n    for portKey, portValue in deviceValue {\n       if (portValue[\"description\"]==\"UNUSED\"){\n        let nbUnusedPorts = nbUnusedPorts+1\n       } \n        let nbPorts = nbPorts+1\n        result[deviceKey][\"Number of Unused Ports\"] = nbUnusedPorts\n        result[deviceKey][\"Number of Ports\"] = nbPorts\n        if (nbPorts != 0){\n            result[deviceKey][\"Port free %\"] = nbUnusedPorts / nbPorts * 100\n        } else {\n            result[deviceKey][\"Port free %\"] = \"N/A\"\n        }\n    }\n}\nresult | map(_value | fields(\"Number of Unused Ports\",\"Number of Ports\",\"Port free %\"))",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true
+                },
+                "Port free %": {
+                  "unit": "%",
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 25,
+                        "to": 100,
+                        "result": {
+                          "color": "green9",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 15,
+                        "to": 25,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 15,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "mode": "standard",
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "95511a7b-1d02-4485-aa41-dcc153b01f23",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 17,
+            "height": 4
+          },
+          "type": "text-widget",
+          "inputs": {
+            "textContent": "# Port Utilization\n\nThe count of the ports is based on the port description.\nAll unused ports have the \"UNUSED\" description."
+          },
+          "location": "main",
+          "styles": {
+            "hideTitle": true,
+            "backgroundColor": "",
+            "hideHorizontalBar": false,
+            "titleSize": 14
+          },
+          "parent": ""
+        },
+        {
+          "id": "96f80c5b-97b9-47c1-9fd5-fbb748ac3072",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "hdl",
+            "inputName": "switch_role",
+            "inputSource": "devices",
+            "tagLabel": "switch_role"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1690887530533,
+      "lastUpdatedBy": "cvpadmin"
+    }
+  ]
+}

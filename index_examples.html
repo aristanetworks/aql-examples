@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AQL Examples &mdash; CloudVision Advanced Query Language 4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0190abbe" />
+
+  
+    <link rel="canonical" href="https://aql.arista.com/index_examples.html" />
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=71af5d5d"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Interface States Examples" href="examples/interface_states/index.html" />
+    <link rel="prev" title="Language revisions / Change log" href="changelog.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CloudVision Advanced Query Language
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_doc.html">Language Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_stdlib.html">AQL Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Language revisions / Change log</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AQL Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/interface_states/index.html">Interface States Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html">Layer 2 and Layer 3 examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html">System Health Examples</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CloudVision Advanced Query Language</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">AQL Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index_examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aql-examples">
+<h1>AQL Examples<a class="headerlink" href="#aql-examples" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/interface_states/index.html">Interface States Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/interface_states/index.html#admin-state-of-interfaces-per-device">Admin state of interfaces per device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/interface_states/index.html#count-interfaces-with-non-zero-outbound-traffic">Count interfaces with non-zero outbound traffic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/interface_states/index.html#count-interfaces-with-non-zero-outbound-or-inbound-traffic-with-key-existence-check">Count interfaces with non-zero outbound OR inbound traffic (with key existence check)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/interface_states/index.html#interface-information-wtih-a-filter-on-port-description">Interface Information wtih a filter on Port Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/interface_states/index.html#lanz-queue-size-information-filtering-the-null-values">LANZ queue Size information filtering the null-values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/interface_states/index.html#port-utilization">Port Utilization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/interface_states/index.html#interface-counters-sum-per-interface-list-per-device">Interface counters sum per interface list per device</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/layer2_and_layer3/index.html">Layer 2 and Layer 3 examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html#number-of-arp-entries-across-all-devices">Number of ARP entries across all devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html#bgp-states">BGP States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html#tac-webinar03-2023-bgp-states">TAC Webinar03 2023 - BGP States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html#capacity-planning-routing-and-switching">Capacity Planning Routing and Switching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html#igmp-snooping-table">IGMP Snooping Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html#number-of-mac-addresses-across-all-devices">Number of MAC addresses across all devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html#number-of-macs-per-device-per-interface">Number of MACs per device per interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html#list-of-configured-vlans-per-vrfs">List of Configured VLANs per VRFs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/system_health/index.html">System Health Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#listing-of-devices-affected-by-fn44">Listing of devices affected by FN44</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#eol-planning">EoL Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#listing-of-devices-affected-by-fn72">Listing of devices affected by FN72</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#hardware-health-check">Hardware Health Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#important-pod-count">Important Pod Count</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#ntp-stats">NTP Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#powersupply-output">PowerSupply Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#system-health-check">System Health Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#tcam-capacity">TCAM Capacity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#listing-devices-that-have-a-file-in-var-core">Listing Devices that have a file in /var/core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#list-the-serial-numbers-for-all-transceivers">List the serial numbers for all transceivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html#list-the-transceiver-serial-numbers-that-match-the-input-regex">List the transceiver serial numbers that match the input regex</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="admonition note" id="terminattrstreamingpermitlistnote">
+<p class="admonition-title">Note</p>
+<p>Some telemetry states are not streamed by default and they would need to be added to the TerminAttr include list using the tastreaming.TerminattrStreaming service API, which can be done either through the UI or through the CLI e.g.:</p>
+<p>Using the Service Explorer UI:</p>
+<ol class="arabic simple">
+<li><p>Access Service Explorer by going to <a class="reference external" href="https://x.x.x.x/cv/settings/service-explorer">https://x.x.x.x/cv/settings/service-explorer</a> , where x.x.x.x is the CVP IP/FQDN or the CVaaS regional URL</p></li>
+<li><p>Fill out the request:</p></li>
+</ol>
+<p>Service Name: <code class="docutils literal notranslate"><span class="pre">tastreaming.TerminattrStreaming</span></code></p>
+<p>Method Name: <code class="docutils literal notranslate"><span class="pre">SubscribeTAPaths</span></code></p>
+<ol class="arabic simple" start="3">
+<li><p>Copy and paste like the screen below:</p></li>
+</ol>
+<p>Parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+   <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;app_name&quot;</span><span class="p">:</span> <span class="s2">&quot;allowbgpstates&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;include_paths&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;/Smash/routing/bgp/bgpPeerInfoStatus/default/bgpPeerStatisticsEntry&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;exclude_paths&quot;</span><span class="p">:</span> <span class="p">[]</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Click on <code class="docutils literal notranslate"><span class="pre">Send</span> <span class="pre">Request</span></code> and check on the right hand side that the result is <code class="docutils literal notranslate"><span class="pre">root:</span> <span class="pre">{}</span> <span class="pre">0</span> <span class="pre">keys</span></code>.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/service_explorer_example.png"><img alt="Service Explorer Example" class="align-center" src="_images/service_explorer_example.png" style="width: 1400px;" />
+</a>
+<p>Alternatively, you can use the CLI to add the path to the TerminAttr include list using a cURL request.</p>
+<p>On-prem cURL example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>curl -sS -kX POST --header &#39;Accept: application/json&#39; -b access_token=`cat token` \
+   &#39;https://192.0.2.1/api/v3/services/tastreaming.TerminattrStreaming/SubscribeTAPaths&#39; \
+
+   -d &#39;{ &quot;filter&quot;: { &quot;app_name&quot;: &quot;app1&quot;, &quot;include_paths&quot;: [ &quot;/Sysdb/bridging/igmpsnooping&quot; ]}}&#39;
+</pre></div>
+</div>
+<p>CVaaS cURL example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>curl -sS -kX POST --header &#39;Accept: application/json&#39; -b access_token=`cat token` \
+   &#39;https://www.arista.io/api/v3/services/tastreaming.TerminattrStreaming/SubscribeTAPaths&#39; \
+
+   -d &#39;{ &quot;filter&quot;: { &quot;app_name&quot;: &quot;app1&quot;, &quot;include_paths&quot;: [ &quot;/Sysdb/bridging/igmpsnooping&quot; ]}}&#39;
+</pre></div>
+</div>
+<p>Result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[{}]</span>
+</pre></div>
+</div>
+<p>For CVaaS please make sure to use the correct regional URL:</p>
+<ul class="simple">
+<li><p>United States 1a: <strong>www.cv-prod-us-central1-a.arista.io</strong></p></li>
+<li><p>United States 1c: <strong>www.cv-prod-us-central1-c.arista.io</strong></p></li>
+<li><p>Japan: <strong>www.cv-prod-apnortheast-1.arista.io</strong></p></li>
+<li><p>Germany: <strong>www.cv-prod-euwest-2.arista.io</strong></p></li>
+<li><p>Australia: <strong>www.cv-prod-ausoutheast-1.arista.io</strong></p></li>
+<li><p>Canada: <strong>www.cv-prod-na-northeast1-b.arista.io</strong></p></li>
+<li><p>United Kingdom: <strong>www.cv-prod-uk-1.arista.io</strong></p></li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="changelog.html" class="btn btn-neutral float-left" title="Language revisions / Change log" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples/interface_states/index.html" class="btn btn-neutral float-right" title="Interface States Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Arista Networks.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

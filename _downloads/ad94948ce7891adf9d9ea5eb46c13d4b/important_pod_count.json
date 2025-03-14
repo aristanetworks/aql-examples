@@ -1,0 +1,194 @@
+{
+  "dashboards": [
+    {
+      "key": "b412d588-e30f-43cb-a6ab-d7c376ae2f77",
+      "createdAt": [
+        27367582,
+        1575
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Important POD Counts",
+      "description": "",
+      "widgets": [
+        {
+          "id": "a1121ce4-1f33-4e32-9546-b47053d408a9",
+          "name": "Total VLAN Count",
+          "position": {
+            "x": 0,
+            "y": 12
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 8
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesInCPOD1 = merge(`analytics:/tags/labels/devices/pod_name/value/CPOD1/elements`)\r\n\r\nif str(_POD_NAME) == \"\" {\r\n    let vlanConfig = `*:/Sysdb/bridging/config/vlanConfig` | where(dictHasKey(devicesInCPOD1, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value))\r\n} else {\r\n    let vlanConfig = `*:/Sysdb/bridging/config/vlanConfig` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value))\r\n}\r\n\r\nlet numberVlan = newDict()\r\n\r\nfor deviceKey, deviceValue in vlanConfig {\r\n    for vlanKey, vlanValue in deviceValue{\r\n        numberVlan[vlanKey[\"value\"]] = 1\r\n    }\r\n}\r\n\r\nlength(numberVlan)",
+            "graphConfig": {
+              "fontColor": "purple",
+              "fontSize": 120
+            },
+            "visualization": "singleValue"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "9181bf71-bf0a-499b-b5f2-ce0e6e251e62",
+          "name": "Number of Leaf Switches",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 8
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesInCPOD1 = merge(`analytics:/tags/labels/devices/pod_name/value/CPOD1/elements`)\r\n\r\nif str(_POD_NAME) == \"\" {\r\n    let leafs = length(devicesInCPOD1) - 2\r\n} else {\r\n    let leafs = length(devices) - 2\r\n}\r\n\r\nleafs",
+            "graphConfig": {
+              "fontColor": "#e29385",
+              "fontSize": 120,
+              "description": "Each POD is composed of Leaf switches and 2 Spine switches. So here, we count the number of devices in the POD and subtract 2 to the total."
+            },
+            "visualization": "singleValue"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "c60342ef-1827-4e73-81f6-96f10cb2f658",
+          "name": "Number of VTEPs",
+          "position": {
+            "x": 6,
+            "y": 4
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 8
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesInCPOD1 = merge(`analytics:/tags/labels/devices/pod_name/value/CPOD1/elements`)\r\n\r\nif str(_POD_NAME) == \"\" {\r\n    let vteps = (length(devicesInCPOD1) - 2 ) / 2\r\n} else {\r\n    if strContains(str(_POD_NAME), \"SPOD\") {\r\n        let vteps = ((length(devices) - 3) / 2)+1\r\n    } else {\r\n    let vteps = (length(devices) - 2) / 2\r\n    }\r\n}\r\n\r\nvteps",
+            "graphConfig": {
+              "fontColor": "#9477ff",
+              "fontSize": 120,
+              "description": "The Leaf switches are all deployed in MLAG in this case."
+            },
+            "visualization": "singleValue"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "54117741-d5f8-49d1-8314-8550047b9d8c",
+          "name": "Max Size of the Floodlist",
+          "position": {
+            "x": 6,
+            "y": 12
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 8
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesInCPOD1 = merge(`analytics:/tags/labels/devices/pod_name/value/CPOD1/elements`)\r\n\r\nif str(_POD_NAME) == \"\" {\r\n    let vteps = (length(devicesCPOD1) -2) / 2\r\n    let vlanConfig = `*:/Sysdb/bridging/config/vlanConfig` | where(dictHasKey(devicesInCPOD1, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value))\r\n} else {\r\n    if strContains(str(_POD_NAME), \"SPOD\") {\r\n        let vteps = ((length(devices) - 3) / 2)+1\r\n        let vlanConfig = `*:/Sysdb/bridging/config/vlanConfig` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value))\r\n    } else {\r\n    let vteps = (length(devices) -2) / 2\r\n    let vlanConfig = `*:/Sysdb/bridging/config/vlanConfig` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value))\r\n    }\r\n}\r\n\r\nlet numberVlan = newDict()\r\n\r\nfor deviceKey, deviceValue in vlanConfig {\r\n    for vlanKey, vlanValue in deviceValue{\r\n        numberVlan[vlanKey[\"value\"]] = 1\r\n    }\r\n}\r\n\r\nlet vlans = length(numberVlan)\r\n\r\nvteps*vlans",
+            "graphConfig": {
+              "type": "number",
+              "colorMappings": [
+                {
+                  "type": "range",
+                  "options": {
+                    "from": 0,
+                    "to": 180000,
+                    "result": {
+                      "color": "green3",
+                      "index": 0
+                    }
+                  }
+                },
+                {
+                  "type": "range",
+                  "options": {
+                    "from": 180000,
+                    "to": 210000,
+                    "result": {
+                      "color": "yellow",
+                      "index": 1
+                    }
+                  }
+                },
+                {
+                  "type": "range",
+                  "options": {
+                    "from": 210000,
+                    "result": {
+                      "color": "red",
+                      "index": 2
+                    }
+                  }
+                }
+              ],
+              "description": "If every VLAN would be configured on every VTEP in this POD, that would be the floodlist size.\nIn this case:\nFlood list = Number of VTEPs *  Total VLAN Count",
+              "fontSize": 120
+            },
+            "visualization": "singleValue"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "aab0c6e4-e4b5-4f85-8e44-31256606db85",
+          "name": "Note",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 12,
+            "height": 4
+          },
+          "type": "text-widget",
+          "inputs": {
+            "textContent": "If no POD is chosen in the list above, the numbers for CPOD1 will be shown below."
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "4aaf08f5-9997-47ed-95ff-c3e8f96382c1",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "CPOD1",
+            "inputName": "POD_NAME",
+            "inputSource": "devices",
+            "selectedCustomTags": [],
+            "tagLabel": "pod_name",
+            "tags": ""
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691171503238,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}
