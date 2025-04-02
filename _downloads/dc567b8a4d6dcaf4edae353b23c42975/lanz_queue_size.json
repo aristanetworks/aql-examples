@@ -1,0 +1,101 @@
+{
+  "dashboards": [
+    {
+      "key": "b049996e-78e3-4e02-9b04-30288b6e2eec",
+      "createdAt": [
+        60975042,
+        1553
+      ],
+      "createdBy": "marissa",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "LANZ",
+      "description": "",
+      "widgets": [
+        {
+          "id": "f90bae68-3ad1-49b8-8323-1f107677019a",
+          "name": "LANZ Queue Length",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 16,
+            "height": 18
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# Section to get a Serial-number to hostname dict (SNToHostnameDict)\nlet SNToHostnameDict = newDict()\nlet dataDeviceAnalytics = `analytics:/Devices/*/versioned-data/Device`\nfor device, deviceData in dataDeviceAnalytics {\n   let mergedDeviceData = merge(deviceData)\n   if (dictHasKey(mergedDeviceData, \"hostname\")) {\n        SNToHostnameDict[device] = mergedDeviceData[\"hostname\"]\n   }\n}\n\n\nlet data = `analytics:/Devices/*/versioned-data/interfaces/data/*/lanz/aggregate-congestion/*`[24h]\nlet result = newDict()\nfor deviceSN, deviceData in data {\n    for interface, interfaceData in deviceData {\n        for intervalKey, aggData in interfaceData {\n            let empty = true\n            for timestamp, timeseriesData in aggData {\n                if (dictHasKey(timeseriesData, _queue) && timeseriesData[_queue][\"avg\"] > 0 && intervalKey == _interval && strHasPrefix(interface, \"Ethernet\")) {\n                    let empty = false\n                }\n            }\n            if (!empty) {\n                let deviceHostname = SNToHostnameDict[deviceSN]\n                result[interface + \" on \" + deviceHostname + \" (\" + intervalKey + \")\"] = aggData | map(_value[_queue][\"avg\"])\n            }\n            \n        }\n    }\n}\n\nresult",
+            "graphConfig": {
+              "mapToHostname": true
+            },
+            "visualization": "horizonGraph"
+          },
+          "location": "main"
+        },
+        {
+          "id": "d9fc8dec-a374-415e-9562-d7ca6f4a0819",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "queueSize",
+            "inputName": "queue",
+            "inputType": "SingleSelect",
+            "inputWidgetId": "d9fc8dec-a374-415e-9562-d7ca6f4a0819",
+            "selectData": {
+              "manualOptions": [
+                "queueSize",
+                "qDropCount",
+                "txLatency"
+              ]
+            },
+            "variableType": "String"
+          },
+          "location": "inputs"
+        },
+        {
+          "id": "1b50cb61-3a1d-4ca8-bd3a-81839a8ef972",
+          "name": "",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "10s",
+            "inputName": "interval",
+            "inputType": "SingleSelect",
+            "inputWidgetId": "1b50cb61-3a1d-4ca8-bd3a-81839a8ef972",
+            "selectData": {
+              "manualOptions": [
+                "10s",
+                "1m",
+                "1ms"
+              ]
+            },
+            "variableType": "String"
+          },
+          "location": "inputs"
+        }
+      ],
+      "lastUpdated": 1667932191812,
+      "lastUpdatedBy": "marissa"
+    }
+  ]
+}
