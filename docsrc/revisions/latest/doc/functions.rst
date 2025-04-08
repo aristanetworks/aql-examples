@@ -23,8 +23,9 @@ length
 :guilabel:`Added in revision 1`
 
 Function ``length`` returns the number of elements in a :ref:`str`, a :ref:`timeseries` or a :ref:`dict`.
+Since revision 5, ``length`` can also be used with complex keys (type `unknown`) of type list or map.
 
-* The first and only argument is a :ref:`str`, :ref:`timeseries` or :ref:`dict`
+* The first and only argument is a :ref:`str`, :ref:`timeseries`, :ref:`dict` or complex key (type :ref:`unknown`)
 
 .. code:: aqlp
 
@@ -52,6 +53,30 @@ Function ``merge`` returns a union of all the :ref:`dicts <dict>` contained in a
 	>>> merge(_)
 	dict{key1: val4, key2: val5, key: val3}
 
+.. _mergeDicts:
+
+mergeDicts
+**********
+
+:guilabel:`Added in revision 5`
+
+Function ``mergeDicts`` returns a union of all the :ref:`dicts <dict>` contained in a :ref:`dict`. In case of key collision, the entry kept is chosen randomly among
+the :ref:`dicts <dict>`.
+
+* The first and only argument is a :ref:`dict` of :ref:`dicts <dict>`
+
+.. code:: aqlp
+
+	>>> let d = newDict()
+	>>> d["a"] = newDict() | setFields("1", 1)
+	>>> d["b"] = newDict() | setFields("2", 2)
+	>>> d["c"] = newDict() | setFields("3", 3)
+	>>> mergeDicts(d)
+	dict{
+			1: 1
+			2: 2
+			3: 3
+	}
 
 .. _deletes:
 
@@ -121,8 +146,30 @@ For all cases except float64 (:ref:`num`) and :ref:`bool`, the returned value wi
 	>>> complexKey("[1, 2, true]")
 	[1,2,true] # AQL type is unknown
 
-Dicts functions
-^^^^^^^^^^^^^^^
+.. _errvl:
+
+errvl
+*****
+
+:guilabel:`Added in revision 5`
+
+Function ``errvl`` returns the result of the evaluation of the first parameter if its evaluation succeeds, or
+returns the result of the evaluation of the second parameter if the evaluation of the first one returned an error.
+
+It takes 2 expression arguments.
+
+.. code:: aqlp
+
+	>>> let a = 89
+	>>> errvl(a, "test")
+	89
+	>>> errvl(notDeclaredVar, "test")
+	test
+
+.. _dictTsManipFunctions:
+
+Dicts and Timeseries manipulation functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. _newDict:
 
@@ -184,6 +231,32 @@ Function ``dictHasKey`` returns :ref:`true <bool>` if a dict contains the specif
 	true
 	>>> dictHasKey(d, "key3")
 	false
+
+.. _dictValue:
+
+dictValue
+*********
+
+:guilabel:`Added in revision 5`
+
+Function ``dictValue`` returns the value associated with a specific key in a :ref:`dict`
+if a dict contains the specified key, otherwise default value is returned.
+
+* The first parameter is the :ref:`dict`
+* The second parameter is the key
+* The third parameter is the default value returned if a dict doesn't contain the specified key
+
+.. code:: aqlp
+
+	>>> let d = newDict()
+	>>> d["key"] = 1
+	>>> d["key2"] = 2
+	>>> d
+	dict{"key": 1, "key2": 2}
+	>>> dictValue(d, "key", 15)
+	1
+	>>> dictValue(d, "key3", 14)
+	14
 
 .. _dictKeys:
 
@@ -414,6 +487,211 @@ the :ref:`timeseries`' values. The input data is typically what a query using ``
 			2022-08-16 17:15:00 +0200 CEST: dict{FF: dict{EE: dict{BB: 3.2909}}}
 			2022-08-16 17:16:00 +0200 CEST: dict{FF: dict{EE: dict{BB: 3.2909}}}
 		}
+
+.. _jsonToDict:
+
+jsonToDict
+**********
+
+:guilabel:`Added in revision 5`
+
+Function ``jsonToDict`` converts a json string into a standard AQL :ref:`dict`.
+
+The only argument is the json string.
+
+.. code:: aqlp
+
+	>>> jsonToDict("{\"k1\": 1, \"k2\": true, \"k3\": \"foo\", \"k4\": [1,3,5]}")
+	dict{
+		k1: 1
+		k2: true
+		k3: foo
+		k4: [1,3,5]
+	}
+	>>> jsonToDict("{\"simple\": 1, \"nested\": {\"k1\":1,\"k2\":2}}")
+	dict{
+		nested: dict{
+				k1: 1
+				k2: 2
+		}
+		simple: 1
+	}
+	>>> jsonToDict("[12,13,14]")
+	dict{
+		0: 12
+		1: 13
+		2: 14
+	}
+
+.. _dictToJson:
+
+dictToJson
+**********
+
+:guilabel:`Added in revision 5`
+
+Function ``dictToJson`` converts a :ref:`dict` into a json string.
+
+* The first argument is the :ref:`dict`
+* The second argument (optional) of type :ref:`str` specifies additional options:
+ * k: store non-string keys under ``_key`` label (not stringified)
+ * w: wrap non-string keys with {} (to distinguish from string)
+
+.. code:: aqlp
+
+	>>> let d = newDict() | setFields(0, false, true, "1", "two", 2, 3, "three", "str", "foo")
+	>>> dictToJson(d)
+	{"0":false,"true":"1","two":2,"3":"three","str":"foo"}
+	>>> dictToJson(d,"kw")
+	{"str":"foo","two":2,"{0}":{"_key":0,"value":false},"{3}":{"_key":3,"value":"three"},"{true}":{"_key":true,"value":"1"}}
+
+.. _listToTimeseries:
+
+listToTimeseries
+****************
+
+:guilabel:`Added in revision 5`
+
+Function ``listToTimeseries`` converts a complex key (type :ref:`unknown`) of type list into a standard AQL :ref:`timeseries`.
+
+* The first argument is the "list" complex key to convert.
+* The second argument (optional) is the start time (:ref:`time`)
+* The third argument (optional) is the timestamp offset (:ref:`duration`)
+
+.. code:: aqlp
+
+	>>> listToTimeseries(complexKey("[1, \"2\", true]"))
+	timeseries{
+		start: 1970-01-01 01:00:00.000000000 +0100 CET
+		end: 1970-01-01 01:00:00.000000003 +0100 CET
+		1970-01-01 01:00:00.000000000 +0100 CET: 1
+		1970-01-01 01:00:00.000000001 +0100 CET: 2
+		1970-01-01 01:00:00.000000002 +0100 CET: true
+	}
+	>>> listToTimeseries(complexKey("[1, \"2\", true]"),time("2020-05-02T17:04:05+02:00"), 1h)
+	timeseries{
+		start: 2020-05-02 17:04:05.000000000 +0200 CEST
+		end: 2020-05-02 20:04:05.000000000 +0200 CEST
+		2020-05-02 17:04:05.000000000 +0200 CEST: 1
+		2020-05-02 18:04:05.000000000 +0200 CEST: 2
+		2020-05-02 19:04:05.000000000 +0200 CEST: true
+	}
+
+.. _timeAtIndex:
+
+timeAtIndex
+***********
+
+:guilabel:`Added in revision 5`
+
+Function ``timeAtIndex`` returns the time associated to an index (type :ref:`num`) in a :ref:`timeseries`.
+
+* The first argument is the :ref:`timeseries`
+* The second argument is the index (:ref:`num`)
+
+.. code:: aqlp
+
+    >>> let data = `dataset:/some/path` | field("numberKey")
+    >>> data
+    timeseries{
+            start: 2025-03-11 17:18:21.512198000 +0000 GMT
+            end: 2025-03-11 17:23:21.512198000 +0000 GMT
+            2025-03-11 17:18:21.512198000 +0000 GMT: 1
+            2025-03-11 17:19:21.512198000 +0000 GMT: 2
+            2025-03-11 17:20:21.512198000 +0000 GMT: 3
+            2025-03-11 17:21:21.512198000 +0000 GMT: 4
+            2025-03-11 17:22:21.512198000 +0000 GMT: 5
+            2025-03-11 17:23:21.512198000 +0000 GMT: 6
+    }
+    >>> data[2]
+    3
+    >>> _bracketTime
+    2025-03-11 17:20:21.512198 +0000 GMT m=-388.396045249
+    >>> timeAtIndex(data, 2)
+    2025-03-11 17:20:21.512198 +0000 GMT m=-388.396045249
+    >>> timeAtIndex(data, 3)
+    2025-03-11 17:21:21.512198 +0000 GMT m=-328.396045249
+
+
+.. _timeseriesStart:
+
+timeseriesStart
+***************
+
+:guilabel:`Added in revision 5`
+
+Function ``timeseriesStart`` returns the start :ref:`time` of a :ref:`timeseries`.
+
+This is not always the time of the first entry, but the "metadata" start value of the timeseries, which
+usually corresponds to the beginning of the queried time range. The :ref:`timeseries` can contain
+older entries that usually correspond to the state at the start time. See `Number of updates <index_doc.html#number-of-updates>`_
+for more information.
+
+* The only argument is the :ref:`timeseries`
+
+.. code:: aqlp
+
+    >>> let data = `dataset:/some/path` | field("numberKey")
+    >>> data
+    timeseries{
+            start: 2025-01-30 18:43:22.000000000 +0000 GMT
+            end: 2025-03-11 17:50:53.000000000 +0000 GMT
+            2024-12-18 11:06:04.684761143 +0000 GMT: 0
+            2025-01-30 18:43:22.317492646 +0000 GMT: 1
+            2025-01-30 18:47:54.195887550 +0000 GMT: 2
+            2025-01-30 18:47:54.195905979 +0000 GMT: 3
+            2025-01-30 18:47:54.196054106 +0000 GMT: 4
+            2025-01-30 18:47:54.196113842 +0000 GMT: 5
+            2025-01-30 18:54:56.952268810 +0000 GMT: 6
+            2025-01-30 18:54:58.060447701 +0000 GMT: 7
+            2025-01-30 18:54:58.060539255 +0000 GMT: 8
+            2025-01-30 18:54:58.064195963 +0000 GMT: 9
+            2025-01-30 18:54:58.064339938 +0000 GMT: 10
+            2025-01-30 19:04:30.836181934 +0000 GMT: 11
+    }
+    >>> timeAtIndex(data, 0)
+    2024-12-18 11:06:04.684761143 +0000 UTC # time of the first entry
+    >>> timeseriesStart(data)
+    2025-01-30 18:43:22 +0000 UTC # "Start" time from metadata
+
+.. _timeseriesEnd:
+
+timeseriesEnd
+*************
+
+:guilabel:`Added in revision 5`
+
+Function ``timeseriesEnd`` returns the end :ref:`time` of a :ref:`timeseries`.
+
+This is not always the time of the last entry, but the "metadata" end value of the :ref:`timeseries`, which
+usually corresponds to the end of the queried window (the current time if no window end is specified).
+
+* The only argument is the :ref:`timeseries`
+
+.. code:: aqlp
+
+    >>> let data = `dataset:/some/path` | field("numberKey")
+    >>> data
+    timeseries{
+            start: 2025-01-30 18:43:22.000000000 +0000 GMT
+            end: 2025-03-11 17:50:53.000000000 +0000 GMT
+            2024-12-18 11:06:04.684761143 +0000 GMT: 0
+            2025-01-30 18:43:22.317492646 +0000 GMT: 1
+            2025-01-30 18:47:54.195887550 +0000 GMT: 2
+            2025-01-30 18:47:54.195905979 +0000 GMT: 3
+            2025-01-30 18:47:54.196054106 +0000 GMT: 4
+            2025-01-30 18:47:54.196113842 +0000 GMT: 5
+            2025-01-30 18:54:56.952268810 +0000 GMT: 6
+            2025-01-30 18:54:58.060447701 +0000 GMT: 7
+            2025-01-30 18:54:58.060539255 +0000 GMT: 8
+            2025-01-30 18:54:58.064195963 +0000 GMT: 9
+            2025-01-30 18:54:58.064339938 +0000 GMT: 10
+            2025-01-30 19:04:30.836181934 +0000 GMT: 11
+    }
+    >>> timeAtIndex(data, length(data)-1)
+    2025-01-30 19:04:30.836181934 +0000 UTC # time of the last entry
+    >>> timeseriesEnd(data)
+    2025-03-11 17:50:53 +0000 UTC # "End" time from metadata
 
 
 Data Analysis Functions
@@ -989,6 +1267,78 @@ precision.
 	8444249301319680p-49
 	>>> type(_)
 	str
+
+.. _parseInt:
+
+parseInt
+********
+
+:guilabel:`Added in revision 5`
+
+Function ``parseInt`` converts a :ref:`str` describing an integer in the given base into a :ref:`num`.
+The :ref:`str` may begin with either ``+`` or ``-``. If the specified base is :math:`0`, the base is
+defined by the :ref:`str`'s prefix: :math:`2` (binary) for ``0b``, :math:`8` for ``0`` or ``0o``, :math:`16`
+(hexadecimal) for ``0x``, and :math:`10` (decimal) otherwise.
+
+* The first argument is the :ref:`str` to parse
+* The second argument is the base (:ref:`num`)
+
+.. note::
+
+    For base :math:`10`, :ref:`parseInt` is equivalent to simply casting the :ref:`str` to :ref:`num`.
+
+.. code:: aqlp
+
+    >>> parseInt("-5f8a", 16)
+    -24458
+    >>> parseInt("0x5f8a", 0)
+    24458
+    >>> parseInt("100011001", 2)
+    281
+    >>> parseInt("0b100011001", 0)
+    281
+    >>> parseInt("0b100011001", 2)
+    error: input:1:1: failed to parse integer `0b100011001`: invalid syntax
+    >>> parseInt("12", 0)
+    12
+    >>> parseInt("12", 10) == num("12")
+    true
+    >>> parseInt("012", 0)
+    10
+    >>> parseInt("012", 10)
+    12
+    >>> parseInt("12", 10)
+    12
+
+.. _formatBits:
+
+formatBits
+***********
+:guilabel:`Added in revision 5`
+
+The function ``formatBits`` formats a number (:ref:`num`) of bits (or bytes) into a human-readable :ref:`str` using units such as kilo ("K"), mega ("M") etc., based on the given precision
+
+* The first argument is the size (:ref:`num`) to convert
+* The second argument is a :ref:`num` specifying the precision, i.e., the number of digits after the decimal point
+
+.. code:: aqlp
+
+    >>> formatBits(1000, 2)
+    1.00 K
+    >>> formatBits(1000, 0)
+    1 K
+    >>> formatBits(1000, 0)
+    1 K
+    >>> formatBits(1000000, 0)
+    1 M
+    >>> formatBits(1000000000, 0)
+    1 G
+    >>> formatBits(3141592653589, 5)
+    3.14159 T
+    >>> formatBits(2718281828459, 6)
+    2.718282 T
+    >>> formatBits(8000000/8, 0) + "B" # turn bits into bytes
+    1 MB
 
 Stats functions
 ^^^^^^^^^^^^^^^
@@ -1731,6 +2081,26 @@ Negative indexes start from the end of the input :ref:`str`.
 	234567
 	>>> strCut("abcd", 1, 3)
 	bc
+
+.. _strJoin:
+
+strJoin
+*******
+
+:guilabel:`Added in revision 5`
+
+Function ``strJoin`` joins a :ref:`dict` or :ref:`timeseries` of :ref:`str` into a single :ref:`str` with a separator.
+
+* The first argument: a :ref:`dict` or :ref:`timeseries` of :ref:`str`
+* The second argument: a separator :ref:`str`
+
+.. code:: aqlp
+
+	>>> let d = newDict() | setFields("a", "aa", "b", "bb", "c", "cc")
+	>>> strJoin(d, ", ")
+	"aa, bb, cc"
+	>>> "{" + strJoin(d | map(str(_key)), "; ") + " }"
+	"{ a; b; c }"
 
 .. _reFindAll:
 

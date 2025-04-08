@@ -53,7 +53,6 @@ Example:
 
     <iframe width="996" height="560" src="https://www.youtube.com/embed/UT6rZjS-F6c?si=XlcXtiAlwVCvW-gH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-
 Basic statements
 ----------------
 
@@ -154,8 +153,7 @@ str
 The ``str`` type is a string of characters.
 
 The syntax of its literal is any string of character surrounded with double-quotes. To insert a double-quote
-within the literal, it can be prefixed with a backslash ``\\``.
-Single-quote strings are not supported in AQL.
+within the literal, it can be prefixed with a backslash ``\``.
 
 All types can be cast to ``str``.
 
@@ -167,6 +165,21 @@ All types can be cast to ``str``.
     12
     >>> str(12.1)
     12.1
+
+Since revision 5, it is possible to declare strings with single-quotes. String literals
+with single-quotes have to follow this format: ``'str:<text>'`` and can be used to declare strings
+containing double-quote characters ``"`` without prefixing them with a backslash ``\``.
+
+Example:
+
+.. code-block:: aqlp
+
+    >>> "Be \"happy\"!"
+    Be "happy"!
+
+    >>> 'str:Be "happy"!'
+    Be "happy"!
+
 
 .. _time:
 
@@ -254,7 +267,7 @@ specified :ref:`time`, accessing its value will return the latest entry before t
 
 .. code-block:: aqlp
 
-    >>> let a = `analytics:/Devices/JPE17191574/versioned-data/interfaces/data/Ethernet50/aggregate/hardware/xcvr/1m`[5m] | field("temperature") | field("avg")
+    >>> let a = `analytics:/Devices/JPE123456/versioned-data/interfaces/data/Ethernet50/aggregate/hardware/xcvr/1m`[5m] | field("temperature") | field("avg")
     >>> a
     timeseries{
         start: 2021-10-26 14:32:17.167535 +0100 IST
@@ -634,6 +647,60 @@ type-assertions.
     >>> type(false) == bool
     true
 
+JSON support
+------------
+
+:guilabel:`Added in revision 5`
+
+Variables can be declared with JSON syntax. JSON literals have to follow the format:
+``'json:<text>'`` where ``<text>`` must be valid JSON. If the key or value in JSON
+is a string containing a single-quote character (``'``) it must be prefixed with a backslash ``\``.
+
+.. code:: aqlp
+
+    >>> 'json:1'
+    1 # AQL type is unknown (int)
+    >>> 'json:1.2'
+    1.2  # AQL type is num
+    >>> 'json:{"key1": 1, "key2": true}'
+    dict{
+        key1: 1
+        key2: true
+    }
+    >>> 'json:[1, 2, true]'
+    [1,2,true] # AQL type is unknown (list)
+
+Like any string, JSON literals can be defined using multiple lines:
+
+.. code:: aql
+
+    let myDict = 'json:{
+        "key1": "value1",
+        "key2": 2
+    }'
+
+Variable substitution
+^^^^^^^^^^^^^^^^^^^^^
+
+It is possible to insert variables into JSON literals. Variables can be included using this syntax:
+``"$<variable name>"``. It is possible to insert variables both in keys and values.
+
+.. code:: aqlp
+
+    >>> let v = 'json:{"key1": 1, "key2": true}'
+    >>> 'json:{"idx": 1, "val": "$v"}' # value substitution
+    dict{
+        idx: 1
+        val: dict{
+            key1: 1
+            key2: true
+        }
+    }
+    >>> let name="title1"
+    >>> 'json:{"$name": 15}' # key substitution
+    dict{title1: 15}
+
+
 Queries
 -------
 
@@ -641,7 +708,21 @@ AQL can fetch data from the CloudVision database by using queries. The general s
 
 .. code:: aql
 
+    # no range parameter (only current state is queried)
+    `datasetType/datasetName:/path/to/data`
+
+    # ranged query
     `datasetType/datasetName:/path/to/data`[queryParameter]
+
+
+Since AQL revision 5, it is also possible to select which fields to query by adding a list of
+fields surrounded by square brackets between the path part and the parameters part:
+
+.. code:: aql
+
+    `datasetType/datasetName:/path/to/data`{"field1", "field2"}
+    `datasetType/datasetName:/path/to/data`{"field1", "field2"}[queryParameter]
+
 
 Dataset
 ^^^^^^^
@@ -808,6 +889,77 @@ For a dataset wildcard, the result is built with the same structure. The syntax 
     `user/*:/some/path`[queryParameter] # This will get data for all `user` datasets
     `*:/some/path`[queryParameter] # This will get data for all `device` datasets
 
+.. _filteredwildcards:
+
+Filtered wildcards
+******************
+
+:guilabel:`Added in revision 5`
+
+A query with `wildcards <#wcards>`_ fetches the data at all the paths matching the wildcarded path.
+It is possible to restrict query results to a subset of the matching paths by replacing the wildcard
+(``*``) with the following syntax:
+``*filteredWildcardName`` or ``*_filteredWildcardName``, where ``filteredWildcardName`` is the name
+of an input variable which holds a list of values. The query will fetch only the paths for which
+the wildcarded path element is part of that list.
+
+For each filtered wildcard, the query will exit with an error if the associated input variable is missing.
+It is possible to modify this behaviour and make a filtered wildcard behave like a regular wildcard when its
+variable is not defined by adding a question mark (``?``) at the end of the variable's name.
+
+Example:
+
+Regular wildcard:
+
+.. code:: aql
+
+    let data = `analytics:/Devices/*/versioned-data/interfaces/data/*/rates`[1m]
+    data # This contains the data for all datasets (type = dict of timeseries)
+
+Filtered wildcard:
+
+.. code:: aql
+
+    let data = `analytics:/Devices/*_devices/versioned-data/interfaces/data/*/rates`[1m]
+    data # This contains only the data for defined datasets (type = dict of timeseries)
+
+If the ``_devices`` variable is defined as an array of devices names: ``{"_devices": ["JPE1234567", "JPE7654321"]}``,
+the result will contain only data for devices ``JPE1234567`` and ``JPE7654321``.
+
+Variables can be defined as either a list (complex key, type :ref:`unknown`) or a :ref:`dict` with
+the selected path elements as keys. The following two examples are equivalent:
+
+* ``{"_devices": ["JPE1234567", "JPE7654321"]}``
+* ``{"_devices": {"JPE1234567":0, "JPE7654321":0}``
+
+Variables used for filtered wildcards can only be input variables (defined outside of the scope of
+the AQL script), using an input panel on CloudVision Dashboards, or a CLI argument using the AQL
+interpreter from the CLI.
+
+For more information about how to define filtered values, please refer to section `Manual user input <#manualuserinput>`_.
+
+.. note::
+
+    Filtered wildcards reduce the amount of requested data and therefore make queries cheaper and faster.
+
+Example:
+
+.. code:: aql
+
+    let data = `analytics:/Devices/*_Devices/versioned-data/aggregate/rates/1h/stats`{"inOctets", "outOctets"}
+
+    data | map(merge(_value)["inOctets"]["max"] != 0 || merge(_value)["outOctets"]["max"] != 0 ? 'json:{"status":"active"}' : 'json:{"status":"inactive"}')
+
+This query marks devices as "enabled" if they received or sent any traffic within the past hour.
+
+.. image:: images/filtered_wildcards1.png
+   :width: 600
+   :alt: Filtered wildcard with multiple devices selected
+
+.. image:: images/filtered_wildcards2.png
+   :width: 600
+   :alt: Filtered wildcard with single device selected
+
 
 .. _complex-pathelts:
 
@@ -860,13 +1012,12 @@ Map value
 *********
 
 A map can be input using the JSON syntax (curly brackets and comma-separated colon-linked pairs).
-JSON does not know the difference between floats and ints, so a numerical value with a nil decimal
-part will be interpreted as an int, and one with a non-nil decimal part will be interpreted as a
-float. Can contain nested lists and maps.
+
+Can contain nested lists and maps.
 
 .. code:: aqlp
 
-    >>> `myDataset:/foo/{"key": 1.0}/bar` # map("key": int(1)) path element
+    >>> `myDataset:/foo/{"key": 1.0}/bar` # map("key": float(1)) path element
     >>> `myDataset:/foo/{"key": 1}/bar` # map("key": int(1)) path element
     >>> `myDataset:/foo/{"key": 1.1}/bar` # map("key": float(1.1)) path element
     >>> `myDataset:/foo/{"key": "val", "keyb": true}/bar` # map("key": str("val"), "keyb": bool(true))
@@ -884,7 +1035,104 @@ contain nested lists and maps
     >>> `myDataset:/foo/[1.0, 1, 1.1]/bar` # list(int(1), int(1), float(1.1)) path element
     >>> `myDataset:/foo/[true, "str", {"subkey": "subval"}, [1]]/bar` # list(bool(true), str("str"), map("subkey": str("subval")), list([int(1)]))
 
-Query parameter
+.. _perfieldquery
+
+Fields
+^^^^^^
+
+:guilabel:`Added in revision 5`
+
+The fields section of the query is the list of keys that should be queried at the specified path.
+It is optional, and placed after the closing backtick of the dataset and path part of the query, and
+before the range parameter.
+
+Like every other components of the query, the keys must be statically defined, which means they have
+to be either literals or input variables. They cannot use locally defined variables because queries
+are executed before the evaluation of the AQL code.
+
+.. note::
+
+    Selecting the fields can make the query faster and cheaper. It is optional but strongly recommended
+    when only a part of the data at the requested path is needed.
+
+.. code:: aqlp
+
+    >>> `analytics:/Devices/JPE123456/versioned-data/counts/operStatus`
+    timeseries{
+            start: 2023-02-03 01:44:20.325212627 +0000 GMT
+            end: 2024-10-22 17:10:48.032887000 +0100 IST
+            2023-02-03 01:44:20.325212627 +0000 GMT: dict{
+                    intfOperDormant: 0
+                    intfOperLowerLayerDown: 0
+                    intfOperTesting: 0
+                    intfOperUnknown: 0
+            }
+            2024-05-31 23:08:25.618306414 +0100 IST: dict{intfOperNotPresent: 26}
+            2024-09-13 20:48:16.681354596 +0100 IST: dict{
+                    intfOperDown: 45
+                    intfOperUp: 2
+            }
+    }
+    >>> `analytics:/Devices/JPE123456/versioned-data/counts/operStatus`{"intfOperDormant"}
+    timeseries{
+            start: 2023-02-03 01:44:20.325212627 +0000 GMT
+            end: 2024-10-22 17:12:58.284038000 +0100 IST
+            2023-02-03 01:44:20.325212627 +0000 GMT: dict{intfOperDormant: 0}
+    }
+    >>> `analytics:/Devices/JPE123456/versioned-data/counts/operStatus`{"intfOperDormant", "intfOperUp"}
+    timeseries{
+            start: 2023-02-03 01:44:20.325212627 +0000 GMT
+            end: 2024-10-22 17:14:00.495112000 +0100 IST
+            2023-02-03 01:44:20.325212627 +0000 GMT: dict{intfOperDormant: 0}
+            2024-09-13 20:48:16.681354596 +0100 IST: dict{intfOperUp: 2}
+    }
+    >>> `JPE123456:/Sysdb/environment/archer/power/status/powerSupply/*`{"name", "outputCurrentSensorName", "inputPower"}
+    dict{
+            PowerSupply1: timeseries{
+                    start: 2024-10-22 03:55:32.374691383 +0100 IST
+                    end: 2024-10-22 17:31:36.497902000 +0100 IST
+                    2024-10-22 03:55:32.374691383 +0100 IST: dict{
+                            inputPower: dict{value: 158}
+                            name: PowerSupply1
+                            outputCurrentSensorName: CurrentSensorP1/2
+                    }
+            }
+            PowerSupply2: timeseries{
+                    start: 2024-10-22 03:55:33.299529483 +0100 IST
+                    end: 2024-10-22 17:31:36.497902000 +0100 IST
+                    2024-10-22 03:55:33.299529483 +0100 IST: dict{
+                            inputPower: dict{value: 153}
+                            name: PowerSupply2
+                            outputCurrentSensorName: CurrentSensorP2/2
+                    }
+            }
+    }
+    >>> `JPE123456:/Sysdb/environment/archer/power/status/powerSupply/*`{"inputPower"}[5]
+    dict{
+            PowerSupply1: timeseries{
+                    start: 2024-10-18 12:42:39.861044576 +0100 IST
+                    end: 2024-10-22 17:32:04.895275000 +0100 IST
+                            2024-10-18 12:42:39.861044576 +0100 IST: dict{inputPower: dict{value: 159.25}}
+                            2024-10-18 13:45:18.838676763 +0100 IST: dict{inputPower: dict{value: 161.25}}
+                            2024-10-21 03:01:37.514025317 +0100 IST: dict{inputPower: dict{value: 158.5}}
+                            2024-10-21 06:43:41.769409904 +0100 IST: dict{inputPower: dict{value: 160.75}}
+                            2024-10-22 03:07:27.974992986 +0100 IST: dict{inputPower: dict{value: 154}}
+                            2024-10-22 03:55:32.374691383 +0100 IST: dict{inputPower: dict{value: 158}}
+            }
+            PowerSupply2: timeseries{
+                    start: 2024-10-18 12:42:39.401834480 +0100 IST
+                    end: 2024-10-22 17:32:04.895275000 +0100 IST
+                            2024-10-18 12:42:39.401834480 +0100 IST: dict{inputPower: dict{value: 149}}
+                            2024-10-18 13:45:18.834509980 +0100 IST: dict{inputPower: dict{value: 151.5}}
+                            2024-10-21 03:01:37.510128194 +0100 IST: dict{inputPower: dict{value: 151.75}}
+                            2024-10-21 06:43:41.765597171 +0100 IST: dict{inputPower: dict{value: 153.5}}
+                            2024-10-22 03:07:27.971122700 +0100 IST: dict{inputPower: dict{value: 153.25}}
+                            2024-10-22 03:55:33.299529483 +0100 IST: dict{inputPower: dict{value: 153}}
+            }
+    }
+
+
+Range parameter
 ^^^^^^^^^^^^^^^
 
 The query parameter is specified within the square brackets attached to the query. It determines
@@ -1231,6 +1479,19 @@ This operator also allows for setting values in the :ref:`dict`.
     >>> d
     dict{key: value}
 
+Complex Keys
+^^^^^^^^^^^^
+
+Since revision 5, the square bracket operator allows accessing inner values in complex keys.
+
+.. code:: aqlp
+
+    >>> let a = 'json:[1,2,3]'
+    >>> a
+    [1,2,3]
+    >>> a[0]
+    1
+
 If/Else
 -------
 
@@ -1361,7 +1622,9 @@ AQL supports two kinds of loops: :ref:`for <for-loop>` and :ref:`while <while-lo
 For loop
 ^^^^^^^^
 
-The for loop iterates over an existing collection (:ref:`dict` or :ref:`timeseries`). The syntax is as follows:
+The for loop iterates over an existing collection (:ref:`dict` or :ref:`timeseries`).
+Since revision 5, for loops can also be used with complex keys (type `unknown`) of type list or map.
+The syntax is as follows:
 
 .. code:: aql
 
@@ -1628,13 +1891,18 @@ outputs. The user only has to manage data for one single dataset within the AQL 
 For the regular wildcard, the AQL script runs only once, and contains the data of a datasets in a dict.
 The user has to deal with the data of all the datasets manually.
 
+.. _manualuserinput:
 
 Manual user input
 ^^^^^^^^^^^^^^^^^
+.. note::
+
+    User defined input variables are used to control behaviour of `Named wildcards <#namedwildcards>`_
+    as well as `Filtered wildcards <#filteredwildcards>`_.
 
 When running AQL scripts through CLI, the Service API, or directly using the AQL interpreter library,
-it is possible to pass input variables to manually control the multiple runs of named wildcards from
-outside the scope of the AQL script.
+it is possible to pass input variables to manually control the multiple runs of named or filtered
+wildcards from outside the scope of the AQL script.
 
 In the AQL library, this is handled through the ``inputVars`` parameter, in the Service API, through the
 ``varsets`` field.
@@ -1643,11 +1911,11 @@ In any case, the field is a list that defines the list of times the query will b
 Each element of the list is a list or map of the variables that the interpreter will set in the environment
 before running the AQL script.
 
-If these varsets contain values that match the variable name of a named wildcard, the interpreter will
-not perform the global GET on this named wildcard and instead run the query one or several times, following
+If these varsets contain values that match the variable name of a named/filtered wildcard, the interpreter will
+not perform the global GET on all defined values and instead run the query one or several times, following
 the runs defined in the varset.
 
-Example:
+Example with named wildcards:
 
 With these input variable sets:
 
@@ -1667,3 +1935,99 @@ the first time and ``Ethernet6`` the second), and once for device ``JPE654321``,
     let interfaceData = `<d>:/Sysdb/hardware/archer/xcvr/status/all/<i>`[10m]
     let deviceAndInterfaceNames = _d + " " + _i # This is just a string containing the device and interface name
     interfaceData # This is a timeseries containing the last 10 mins of data for the current intf and device
+
+Example with filtered wildcards:
+
+With these input variable sets:
+
+.. code:: json
+
+    [
+        {"_dv": ["JPE123456", "HSH123456"], "_int": ["Ethernet1","Ethernet5"]},
+        {"_dv": "JPE654321", "_int": ["Ethernet1","Ethernet3"]}
+    ]
+
+The following query will run two times, once for devices ``JPE123456`` and ``HSH123456``
+(with interfaces ``Ethernet1``and ``Ethernet5``), and once for device ``JPE654321``
+(with interfaces ``Ethernet1`` and ``Ethernet3``).
+
+.. code:: aql
+
+    `*:/Sysdb/hardware/archer/xcvr/status/all/*i`[10m]
+
+    # Execution 1 (varset = {_dv: [JPE123456 HSH123456], _int: [Ethernet1 Ethernet5]}):
+    dict{
+        JPE123456: dict{
+            Ethernet1: timeseries{
+                start: 2024-11-13 17:33:40.662701881 +0100 CET
+                end: 2024-12-06 15:46:10.248705559 +0100 CET
+                2024-11-13 17:33:40.662701881 +0100 CET: dict{
+                    presence: true
+                    transceiverType: 1000BaseT
+                    vendorName: Arista Networks
+                }
+            }
+            Ethernet5: timeseries{
+                start: 2024-11-13 17:33:40.662701881 +0100 CET
+                end: 2024-12-06 15:46:10.248705559 +0100 CET
+                2024-11-13 17:33:40.662701881 +0100 CET: dict{
+                    presence: true
+                    transceiverType: 1000BaseT
+                    vendorName: Arista Networks
+                }
+            }
+        }
+        HSH123456: dict{
+            Ethernet1: timeseries{
+                start: 2024-11-13 18:29:05.331186322 +0100 CET
+                end: 2024-12-06 15:46:10.248705559 +0100 CET
+                2024-11-13 18:29:05.331186322 +0100 CET: dict{
+                    presence: true
+                    serialNumber: XMD1145MC095
+                    transceiverType: 1000BaseT
+                    vendorName: Arista Networks
+                }
+            }
+            Ethernet5: timeseries{
+                start: 2024-11-13 18:29:05.341094729 +0100 CET
+                end: 2024-12-06 15:46:10.248705559 +0100 CET
+                2024-11-13 18:29:05.341094729 +0100 CET: dict{
+                    presence: true
+                    serialNumber: XMD1239MCJAH
+                    transceiverType: 1000BaseT
+                    vendorName: Arista Networks
+                }
+            }
+        }
+    }
+
+    # Execution 2 (varset = {_dv: [JPE654321], _int: [Ethernet1 Ethernet3]}):
+    dict{
+        JPE654321: dict{
+            Ethernet1: timeseries{
+                start: 2024-11-13 13:19:27.069039503 +0100 CET
+                end: 2024-12-06 15:46:10.248705559 +0100 CET
+                2024-11-13 13:19:27.069039503 +0100 CET: dict{presence: false}
+            }
+            Ethernet3: timeseries{
+                start: 2024-11-13 13:19:27.218098594 +0100 CET
+                end: 2024-12-06 15:46:10.248705559 +0100 CET
+                2024-11-13 13:19:27.218098594 +0100 CET: dict{presence: false}
+            }
+        }}
+
+
+For the following input variable sets:
+
+.. code:: json
+
+    [
+        {"_dv": ["JPE123456", "JPE654321"], "_int": ["Ethernet1", "Ethernet5","Ethernet6"]}
+    ]
+
+The previous query will search for all combinations of given devices and interfaces with one run.
+
+.. note::
+
+    It is possible to mix filtered and named wildcards but with uniq names!
+

@@ -147,7 +147,7 @@ Usable metavariables in the expression are:
 
     .. code:: aqlp
 
-        >>> let a = `analytics:/tags/BugAlerts/Query/gNMIEnabled`[5]
+        >>> let a = `analytics:/tags/BugAlerts/SubscriptionQueryTag.v1/gNMIEnabled`[5]
         >>> a
         timeseries{
             start: 2021-03-17 02:48:58.205235103 +0100 CET
@@ -404,7 +404,8 @@ map
 
 :guilabel:`Added in revision 1`
 
-Filter ``map`` returns a :ref:`timeseries` or :ref:`dict` containing the results of the expression passed as parameter applied to each entry of the filtered :ref:`timeseries` or :ref:`dict`.
+Filter ``map`` returns a :ref:`timeseries` or :ref:`dict` consisting of the results of
+applying the given expression to each entry of the filtered :ref:`timeseries` or :ref:`dict`.
 
 * The first and only parameter is the expression. Its value can be of any type after evaluation.
 
@@ -464,8 +465,8 @@ mapne
 
 :guilabel:`Added in revision 1`
 
-Filter ``mapne`` (map-not-empty) returns a :ref:`timeseries` or :ref:`dict` containing the results of the
-expression passed as first parameter applied to the result of the expression passed as second parameter
+Filter ``mapne`` (map-not-empty) returns a :ref:`timeseries` or :ref:`dict` consisting of the results of
+applying the expression given as the first parameter applied to the result of the expression given as second parameter
 if its result is not empty. This applies to each entry of the filtered :ref:`timeseries` or :ref:`dict`.
 
 * The first parameter is the main expression. Its value can be of any type after evaluation.
@@ -477,7 +478,7 @@ if its result is not empty. This applies to each entry of the filtered :ref:`tim
     * ``_value`` or ``_3``: result of the second expression applied to the current element
     * ``_src`` or ``_4`` (revision 4+): reference to the :ref:`timeseries` or :ref:`dict` being filtered
 
-  Usable metavariables in the expression for :ref:`dict`s are:
+  Usable metavariables in the expression for :ref:`dicts <dict>` are:
 
     * ``_key`` or ``_1``: key of the current element
     * ``_value`` or ``_2``: result of the second expression applied to the current element
@@ -487,7 +488,7 @@ if its result is not empty. This applies to each entry of the filtered :ref:`tim
 
   Usable metavariables in the expression for :ref:`timeseries` are:
 
-    * ``_index`` or ``_1``: index of the current element (starting at 0)
+    * ``_index`` or ``_1``: index of the current element (starting at :math:`0`)
     * ``_time`` or ``_2``: timestamp of the current element
     * ``_value`` or ``_3``: value of the current element
     * ``_src`` or ``_4`` (revision 4+): reference to the :ref:`timeseries` or :ref:`dict` being filtered
@@ -531,6 +532,84 @@ if its result is not empty. This applies to each entry of the filtered :ref:`tim
         tstamp4: 14.5
     }
 
+.. _mapkv:
+
+mapkv
+^^^^^
+
+:guilabel:`Added in revision 5`
+
+Filter ``mapkv`` returns a :ref:`timeseries` or :ref:`dict` whose timestamps/keys and values are the result of
+applying the provided mapping expressions to each entry of the filtered :ref:`timeseries` or :ref:`dict`.
+
+* The first parameter is the new timestamp or key expression. Its value must be of type :ref:`time`
+  for :ref:`timeseries` and any valid dict key type for :ref:`dict` after evaluation.
+
+  Usable metavariables in the expression for :ref:`timeseries` are:
+
+    * ``_index`` or ``_1``: index of the current element (starting at :math:`0`)
+    * ``_time`` or ``_2``: timestamp of the current element (before update)
+    * ``_value`` or ``_3``: value of the the current element (before update)
+    * ``_src`` or ``_4``: reference to the :ref:`timeseries` or :ref:`dict` being filtered
+
+  Usable metavariables in the expression for :ref:`dicts <dict>` are:
+
+    * ``_key`` or ``_1``: key of the current element (before update)
+    * ``_value`` or ``_2``: value of the the current element (before update)
+    * ``_src`` or ``_4``: reference to the :ref:`timeseries` or :ref:`dict` being filtered
+
+* the second parameter is the new value expression. Its value can be of any type after evaluation.
+
+  Usable metavariables in the expression for :ref:`timeseries` are:
+
+    * ``_index`` or ``_1``: index of the current element (starting at :math:`0`)
+    * ``_time`` or ``_2``: timestamp of the current element (before update)
+    * ``_value`` or ``_3``: value of the current element (before update)
+    * ``_src`` or ``_4``: reference to the :ref:`timeseries` or :ref:`dict` being filtered
+
+  Usable metavariables in the expression for :ref:`dicts <dict>` are:
+
+    * ``_key`` or ``_1``: key of the current element (before update)
+    * ``_value`` or ``_3`` value of the current element (before update)
+    * ``_src`` or ``_4`` : reference to the :ref:`timeseries` or :ref:`dict` being filtered
+
+.. code:: aqlp
+
+    >>> let d = newDict() | setFields("k1", "v1", "k2", "v2", "k3", "v3")
+    >>> d
+    dict{
+        k1: v1
+        k2: v2
+        k3: v3
+    }
+    >>> d | mapkv(_key + _value, _value + _key)
+    dict{
+        k1v1: v1k1
+        k2v2: v2k2
+        k3v3: v3k3
+    }
+
+    >>> reFindCaptures("foobarbaztootartaz", "([ft])(oo)")
+    timeseries{
+        start: 1970-01-01 01:00:00 +0100 CET
+        end: 1970-01-01 01:00:00.000000002 +0100 CET
+        1970-01-01 01:00:00.000000001 +0100 CET: ["foo","f","oo"]
+        1970-01-01 01:00:00.000000002 +0100 CET: ["too","t","oo"]
+    }
+    >>> _ | mapkv(_time + 1h, _value)
+    timeseries{
+        start: 1970-01-01 02:00:00.000000001 +0100 CET
+        end: 1970-01-01 02:00:00.000000002 +0100 CET
+        1970-01-01 02:00:00.000000001 +0100 CET: ["foo","f","oo"]
+        1970-01-01 02:00:00.000000002 +0100 CET: ["too","t","oo"]
+    }
+    >>> _ | mapkv(_time + 15m, length(_value))
+    timeseries{
+        start: 1970-01-01 02:15:00.000000001 +0100 CET
+        end: 1970-01-01 02:15:00.000000002 +0100 CET
+        1970-01-01 02:15:00.000000001 +0100 CET: 3
+        1970-01-01 02:15:00.000000002 +0100 CET: 3
+    }
 
 .. _recmap:
 
@@ -539,8 +618,8 @@ recmap
 
 :guilabel:`Added in revision 1`
 
-Filter ``recmap`` returns a :ref:`timeseries` or :ref:`dict` containing the results of the expression passed as parameter applied to each
-entry of the filtered :ref:`timeseries` or :ref:`dict`, at the specified depth.
+Filter ``recmap`` returns a :ref:`timeseries` or :ref:`dict` consisting of the results of
+applying the given expression to each entry of the filtered :ref:`timeseries` or :ref:`dict`, at the specified depth.
 
 * The first parameter is the recursion depth (:ref:`num`).
 * The second parameter is the expression. Its value can be of any type after evaluation.
@@ -768,9 +847,9 @@ deepmap
 
 :guilabel:`Added in revision 1`
 
-Filter ``deepmap`` returns a :ref:`timeseries` or :ref:`dict` containing the results of the expression
-passed as parameter applied to each entry of the filtered :ref:`timeseries` or :ref:`dict`, which can
-contain nested :ref:`timeseries` or :ref:`dicts <dict>`.
+Filter ``deepmap`` returns a :ref:`timeseries` or :ref:`dict` consisting of the results of
+applying the given expression to each entry of the filtered :ref:`timeseries` or :ref:`dict`
+which can contain nested :ref:`timeseries` or :ref:`dicts <dict>`.
 
 * The first and only parameter is the expression. Its value can be of any type after evaluation.
 * Metavariables are applicable to the collection containing the leaf node to which the expression is applied, which can be nested under several layers.

@@ -13,6 +13,7 @@ all: latest oldrevisions revisionsindex
 
 latest:
 	$(SPHINX) -c $(SOURCEDIR) -a -E $(SOURCEDIR)/revisions/latest $(BUILDDIR)
+	cp -r $(SOURCEDIR)/revisions/latest/doc/images $(BUILDDIR)/images
 
 revisionsindex:
 	$(SPHINX) -c $(SOURCEDIR) -a -E $(SOURCEDIR)/revisions_index $(BUILDDIR)/revisions_index
