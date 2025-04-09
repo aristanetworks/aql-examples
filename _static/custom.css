@@ -1,0 +1,121 @@
+.wy-nav-content {
+    max-width: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont,
+        'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+        Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-size: 16px;
+}
+
+.wy-side-nav-search > a {
+    font-size: 30px;
+}
+
+.wy-side-nav-search > .icon::before {
+    display: none;
+}
+
+h2, h3, h4, h5, h6 {
+    font-family: "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+    text-rendering: optimizeLegibility;
+    line-height: 110% !important;
+    margin: 2.5rem 0 1.5rem 0;
+}
+
+h1 {
+    font-family: "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+    text-align: center;
+    text-transform: uppercase;
+    color: #222;
+    font-size: 3.25rem;
+    text-rendering: optimizeLegibility;
+    font-weight: 100;
+}
+
+h2 {
+    font-size: 2.5rem;
+    margin-top: 4rem;
+}
+
+h3 {
+    font-size: 2rem;
+}
+
+h4 {
+    font-size: 1.7rem;
+}
+
+h5 {
+    font-size: 1.3rem;
+}
+
+h6 {
+    font-size: 1.2rem;
+}
+
+pre, code {
+    font-size: 15px !important;
+    font-family: "Consolas", menlo, monospace;
+}
+
+.rst-footer-buttons {
+    margin-top: 2.5rem;
+}
+
+.highlight .k {
+    color: #00a8c8;
+}
+
+.highlight .s {
+    color: #991919;
+}
+
+.highlight .m {
+    color: #008e0e
+}
+
+.highlight .l { /* AQL query */
+    color: #aa55ff;
+}
+
+.highlight .o { /* operators */
+    color: #f92672;
+}
+
+.highlight .esc {
+    color: #d88200;
+}
+
+a.reference.internal > .std-ref, .xref.std-ref {
+    color: #e74c3c;
+    white-space: normal;
+    box-sizing: border-box;
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,Courier,monospace;
+    border: 1px solid #e1e4e5;
+    padding: 2px 5px;
+    background-color: #fff;
+}
+
+.math {
+    white-space: normal;
+    box-sizing: border-box;
+    border: 1px solid #e1e4e5;
+    padding: 2px 5px;
+    background-color: #fff;
+}
+
+a.reference.internal > .std-ref::after {
+    content: '🔗';
+    font-size: 11px;
+    padding-left: 2px;
+}
+
+.sectnum {
+    font-size: 80%;
+}
+
+h1 > .sectnum {
+    display: none;
+}

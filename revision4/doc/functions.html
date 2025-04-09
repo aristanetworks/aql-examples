@@ -1,0 +1,1718 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>General functions &mdash; CloudVision Advanced Query Language 4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=0190abbe" />
+
+  
+    <link rel="canonical" href="https://aql.arista.com/doc/functions.html" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=71af5d5d"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CloudVision Advanced Query Language - Revision 4
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index_doc.html">Language Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_stdlib.html">AQL Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Language revisions / Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_examples.html">AQL Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CloudVision Advanced Query Language - Revision 4</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">General functions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/doc/functions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="general-functions">
+<h1>General functions<a class="headerlink" href="#general-functions" title="Link to this heading"></a></h1>
+<section id="now">
+<span id="id1"></span><h2>now<a class="headerlink" href="#now" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">now</span></code> returns the current <a class="reference internal" href="../index_doc.html#time"><span class="std std-ref">time</span></a>. Time is constant across all the script, so that all operations and queries have the same reference time.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">now</span><span class="p">()</span>
+2019-09-01T14:05:10Z
+</pre></div>
+</div>
+</section>
+<section id="length">
+<span id="id2"></span><h2>length<a class="headerlink" href="#length" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">length</span></code> returns the number of elements in a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>, a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>, <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">0</span><span class="p">])</span>
+1
+</pre></div>
+</div>
+</section>
+<section id="merge">
+<span id="id3"></span><h2>merge<a class="headerlink" href="#merge" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">merge</span></code> returns a union of all the <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dicts</span></a> contained in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>. In case of key collision, the latest entry is kept.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dicts</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">1</span><span class="p">]</span>
+timeseries{
+        tstamp1: dict{key1: val1, key2: val2, key3: val3}
+        tstamp2: dict{key1: val4, key2: val5}
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+dict{key1: val4, key2: val5, key: val3}
+</pre></div>
+</div>
+</section>
+<section id="deletes">
+<span id="id4"></span><h2>deletes<a class="headerlink" href="#deletes" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">deletes</span></code> returns a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dicts</span></a> used as sets of the delete keys from the input <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.
+Only works with unfiltered <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, as most filters remove the deletes entries. An empty <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> as value means the update is a DeleteAll</p>
+<ul class="simple">
+<li><p>The first and only parameter is the <cite>timeseries</cite></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">deletes</span><span class="p">(</span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">200</span><span class="p">])</span>
+timeseries{
+        tstamp1: dict{key1: nil, key2: nil}
+        tstamp2: dict{} # this deletes all keys
+}
+</pre></div>
+</div>
+</section>
+<section id="equal">
+<span id="id5"></span><h2>equal<a class="headerlink" href="#equal" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">equal</span></code> performs a cross-type equality check on the given arguments using type coercions.</p>
+<ul class="simple">
+<li><p>The first argument is a value of any type</p></li>
+<li><p>The second argument is a value of any type</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">equal</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+true
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">equal</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="k">true</span><span class="p">)</span>
+true
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">equal</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="k">true</span><span class="p">)</span>
+false
+</pre></div>
+</div>
+</section>
+<section id="complexkey">
+<span id="id6"></span><h2>complexKey<a class="headerlink" href="#complexkey" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">complexKey</span></code> parses a string containing a literal or json object.
+Numerical values without floating-point will produce an integer.
+Numerical values with a floating point will produce a float64 (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>).
+Boolean literals will produce a boolean (<a class="reference internal" href="../index_doc.html#bool"><span class="std std-ref">bool</span></a>).
+Values surrounded with {} or [] will be parsed as JSON.
+For all cases except float64 (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) and <a class="reference internal" href="../index_doc.html#bool"><span class="std std-ref">bool</span></a>, the returned value will be of type <a class="reference internal" href="../index_doc.html#unknown"><span class="std std-ref">unknown</span></a> (internal interpreter type), but can be used to access complex keys in dicts.</p>
+<ul class="simple">
+<li><p>The first and only parameter is the <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> to parse</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+int(1) # AQL type is unknown
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;1.2&quot;</span><span class="p">)</span>
+float64(1.2) # AQL type is num
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;key1\&quot;: 1, \&quot;key2\&quot;: true}&quot;</span><span class="p">)</span>
+{&quot;key1&quot;:1,&quot;key2&quot;:true}# AQL type is unknown
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;[1, 2, true]&quot;</span><span class="p">)</span>
+[1,2,true] # AQL type is unknown
+</pre></div>
+</div>
+</section>
+</section>
+<section id="dicts-functions">
+<h1>Dicts functions<a class="headerlink" href="#dicts-functions" title="Link to this heading"></a></h1>
+<section id="newdict">
+<span id="id7"></span><h2>newDict<a class="headerlink" href="#newdict" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">newDict</span></code> returns a new empty <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+dict{}
+</pre></div>
+</div>
+</section>
+<section id="dictremove">
+<span id="id8"></span><h2>dictRemove<a class="headerlink" href="#dictremove" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dictRemove</span></code> removes a given key from a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.</p>
+<ul class="simple">
+<li><p>The first argument is the <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a></p></li>
+<li><p>The second argument is the key to remove</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{&quot;key&quot;: 1, &quot;key2&quot;: 2}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dictRemove</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{&quot;key2&quot;: 2}
+</pre></div>
+</div>
+</section>
+<section id="dicthaskey">
+<span id="id9"></span><h2>dictHasKey<a class="headerlink" href="#dicthaskey" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dictHasKey</span></code> returns <a class="reference internal" href="../index_doc.html#bool"><span class="std std-ref">true</span></a> if a dict contains the specified key, <a class="reference internal" href="../index_doc.html#bool"><span class="std std-ref">false</span></a> if it doesn’t.</p>
+<ul class="simple">
+<li><p>The first parameter is the <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a></p></li>
+<li><p>The second parameter is the key</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{&quot;key&quot;: 1, &quot;key2&quot;: 2}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p">)</span>
+true
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;key3&quot;</span><span class="p">)</span>
+false
+</pre></div>
+</div>
+</section>
+<section id="dictkeys">
+<span id="id10"></span><h2>dictKeys<a class="headerlink" href="#dictkeys" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dictKeys</span></code> returns a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> with the list of keys in a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only parameter is the <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{&quot;key&quot;: 1, &quot;key2&quot;: 2}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dictKeys</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: &quot;key&quot;
+        0000-00-00 00:00:00.000000002: &quot;key2&quot;
+}
+</pre></div>
+</div>
+</section>
+<section id="unnesttimeseries">
+<span id="id11"></span><h2>unnestTimeseries<a class="headerlink" href="#unnesttimeseries" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 4</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">unnestTimeseries</span></code> merges multiple <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> nested in <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dicts</span></a>, pushes them to the top level,
+and returns a single flattened <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> where the former top-level <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dicts</span></a> are now nested within
+the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>’ values. The input data is typically what a query using <code class="docutils literal notranslate"><span class="pre">*</span></code> wildcards would return.</p>
+<ul class="simple">
+<li><p>The first and only parameter is a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> that contains <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, either directly in the value, or nested in more levels of <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.</p></li>
+</ul>
+<details class="summary-example">
+<summary>Example</summary><div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">ts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/*/versioned-data/interfaces/data/*/aggregate/hardware/xcvr/1m`</span><span class="p">[</span><span class="s">1m</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">recmap</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">_value</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;temperature&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;avg&quot;</span><span class="p">))</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;AA&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ts</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{AA: dict{
+                HSH14280171: dict{
+                        Ethernet50: timeseries{
+                                start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                2022-08-16 17:10:00 +0200 CEST: 34.184087816704434
+                                2022-08-16 17:11:00 +0200 CEST: 34.18519049983288
+                        }
+                        Ethernet51: timeseries{
+                                start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                2022-08-16 17:10:00 +0200 CEST: 34.84759166533158
+                                2022-08-16 17:11:00 +0200 CEST: 34.84247911778802
+                        }
+                }
+                JAS17070003: dict{
+                        Ethernet50: timeseries{
+                                start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                2022-08-16 17:10:00 +0200 CEST: 30.65325390983907
+                                2022-08-16 17:11:00 +0200 CEST: 30.65664047328105
+                        }
+                        Ethernet51: timeseries{
+                                start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                2022-08-16 17:10:00 +0200 CEST: 27.58473123455124
+                                2022-08-16 17:11:00 +0200 CEST: 27.597529745280074
+                        }
+                }
+        }}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">unnestTimeseries</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+timeseries{
+        start: 2022-08-16 17:10:21.217673 +0200 CEST
+        end: 2022-08-16 17:11:21.217673 +0200 CEST
+        2022-08-16 17:10:00 +0200 CEST: dict{AA: dict{
+                        HSH14280171: dict{
+                                Ethernet50: 34.184087816704434
+                                Ethernet51: 34.84759166533158
+                        }
+                        JAS17070003: dict{
+                                Ethernet50: 30.65325390983907
+                                Ethernet51: 27.58473123455124
+                        }
+                }}
+        2022-08-16 17:11:00 +0200 CEST: dict{AA: dict{
+                        HSH14280171: dict{
+                                Ethernet50: 34.18519049983288
+                                Ethernet51: 34.84247911778802
+                        }
+                        JAS17070003: dict{
+                                Ethernet50: 30.65664047328105
+                                Ethernet51: 27.597529745280074
+                        }
+                }}
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE17191574/versioned-data/interfaces/data/Ethernet50/aggregate/hardware/xcvr/1m`</span><span class="p">[</span><span class="s">2m</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;voltage&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;max&quot;</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">dd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;BB&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">ddd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;DD&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ts</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;EE&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">dd</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;FF&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">ddd</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{
+        AA: dict{
+                HSH14280171: dict{
+                        Ethernet50: timeseries{
+                                start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                2022-08-16 17:10:00 +0200 CEST: 34.184087816704434
+                                2022-08-16 17:11:00 +0200 CEST: 34.18519049983288
+                        }
+                        Ethernet51: timeseries{
+                                start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                2022-08-16 17:10:00 +0200 CEST: 34.84759166533158
+                                2022-08-16 17:11:00 +0200 CEST: 34.84247911778802
+                        }
+                }
+                JAS17070003: dict{
+                        Ethernet50: timeseries{
+                                start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                2022-08-16 17:10:00 +0200 CEST: 30.65325390983907
+                                2022-08-16 17:11:00 +0200 CEST: 30.65664047328105
+                        }
+                        Ethernet51: timeseries{
+                                start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                2022-08-16 17:10:00 +0200 CEST: 27.58473123455124
+                                2022-08-16 17:11:00 +0200 CEST: 27.597529745280074
+                        }
+                }
+        }
+        FF: dict{
+                DD: dict{
+                        HSH14280171: dict{
+                                Ethernet50: timeseries{
+                                        start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                        end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                        2022-08-16 17:10:00 +0200 CEST: 34.184087816704434
+                                        2022-08-16 17:11:00 +0200 CEST: 34.18519049983288
+                                }
+                                Ethernet51: timeseries{
+                                        start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                        end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                        2022-08-16 17:10:00 +0200 CEST: 34.84759166533158
+                                        2022-08-16 17:11:00 +0200 CEST: 34.84247911778802
+                                }
+                        }
+                        JAS17070003: dict{
+                                Ethernet50: timeseries{
+                                        start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                        end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                        2022-08-16 17:10:00 +0200 CEST: 30.65325390983907
+                                        2022-08-16 17:11:00 +0200 CEST: 30.65664047328105
+                                }
+                                Ethernet51: timeseries{
+                                        start: 2022-08-16 17:10:21.217673 +0200 CEST
+                                        end: 2022-08-16 17:11:21.217673 +0200 CEST
+                                        2022-08-16 17:10:00 +0200 CEST: 27.58473123455124
+                                        2022-08-16 17:11:00 +0200 CEST: 27.597529745280074
+                                }
+                        }
+                }
+                EE: dict{BB: timeseries{
+                                start: 2022-08-16 17:14:06.794969 +0200 CEST
+                                end: 2022-08-16 17:16:06.794969 +0200 CEST
+                                2022-08-16 17:14:00 +0200 CEST: 3.2909
+                                2022-08-16 17:15:00 +0200 CEST: 3.2909
+                                2022-08-16 17:16:00 +0200 CEST: 3.2909
+                        }}
+        }
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">unnestTimeseries</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+timeseries{
+        start: 2022-08-16 17:10:21.217673 +0200 CEST
+        end: 2022-08-16 17:16:06.794969 +0200 CEST
+        2022-08-16 17:10:00 +0200 CEST: dict{
+                AA: dict{
+                        HSH14280171: dict{
+                                Ethernet50: 34.184087816704434
+                                Ethernet51: 34.84759166533158
+                        }
+                        JAS17070003: dict{
+                                Ethernet50: 30.65325390983907
+                                Ethernet51: 27.58473123455124
+                        }
+                }
+                FF: dict{DD: dict{
+                                HSH14280171: dict{
+                                        Ethernet50: 34.184087816704434
+                                        Ethernet51: 34.84759166533158
+                                }
+                                JAS17070003: dict{
+                                        Ethernet50: 30.65325390983907
+                                        Ethernet51: 27.58473123455124
+                                }
+                        }}
+        }
+        2022-08-16 17:11:00 +0200 CEST: dict{
+                AA: dict{
+                        HSH14280171: dict{
+                                Ethernet50: 34.18519049983288
+                                Ethernet51: 34.84247911778802
+                        }
+                        JAS17070003: dict{
+                                Ethernet50: 30.65664047328105
+                                Ethernet51: 27.597529745280074
+                        }
+                }
+                FF: dict{DD: dict{
+                                HSH14280171: dict{
+                                        Ethernet50: 34.18519049983288
+                                        Ethernet51: 34.84247911778802
+                                }
+                                JAS17070003: dict{
+                                        Ethernet50: 30.65664047328105
+                                        Ethernet51: 27.597529745280074
+                                }
+                        }}
+        }
+        2022-08-16 17:14:00 +0200 CEST: dict{FF: dict{EE: dict{BB: 3.2909}}}
+        2022-08-16 17:15:00 +0200 CEST: dict{FF: dict{EE: dict{BB: 3.2909}}}
+        2022-08-16 17:16:00 +0200 CEST: dict{FF: dict{EE: dict{BB: 3.2909}}}
+}
+</pre></div>
+</div>
+</details></section>
+</section>
+<section id="data-analysis-functions">
+<h1>Data Analysis Functions<a class="headerlink" href="#data-analysis-functions" title="Link to this heading"></a></h1>
+<section id="groupby">
+<span id="id12"></span><h2>groupby<a class="headerlink" href="#groupby" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">groupby</span></code>, applied to a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, returns a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> with keys corresponding to the ‘group by field’ parameter,
+and values corresponding to the associate method and field.</p>
+<p>The function takes 4 parameters:</p>
+<ul class="simple">
+<li><p>A <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dicts</span></a> to apply this function to</p></li>
+<li><p>The name of the ‘group by field’ (a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>)</p></li>
+<li><p>The name of one of the supported associative methods (a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>)</p></li>
+<li><p>The name of the field whose values will be operated on by the associative method (a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>)</p></li>
+</ul>
+<p>The entries in the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> are grouped by the values of the field from parameter 1.
+For each entry, the value corresponding to the associative field of parameter 4 is obtained.
+This results in a map with entries of the following format:</p>
+<ul class="simple">
+<li><p><em>key</em>:  values of the ‘group by field’</p></li>
+<li><p><em>value</em>: lists of values of the ‘associative field’</p></li>
+</ul>
+<p>On each of these lists, the following associative methods can be applied:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">count</span></code>: returns the length of the list (i.e. the item count)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max</span></code>: returns the max entry in the list</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mean</span></code>: returns the mean of the values in the list</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min</span></code>: returns the min entry in the list</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sum</span></code>: returns the sum of the entries in the list</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span>
+timeseries{
+        tstamp1: dict{&quot;name&quot;: &quot;name1&quot;, &quot;value&quot;: 1}
+        tstamp2: dict{&quot;name&quot;: &quot;name2&quot;, &quot;value&quot;: 10}
+        tstamp3: dict{&quot;name&quot;: &quot;name1&quot;, &quot;value&quot;: 2}
+        tstamp4: dict{&quot;name&quot;: &quot;name2&quot;, &quot;value&quot;: 11}
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">ts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">groupby</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mean&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">)</span>
+dict{
+        &quot;name1&quot;: 1.5
+        &quot;name2&quot;: 10.5
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">groupby</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;count&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">)</span>
+dict{
+        &quot;name1&quot;: 2
+        &quot;name2&quot;: 2
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">groupby</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;sum&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">)</span>
+dict{
+        &quot;name1&quot;: 3
+        &quot;name2&quot;: 21
+}
+</pre></div>
+</div>
+</section>
+<section id="histogram">
+<span id="id13"></span><h2>histogram<a class="headerlink" href="#histogram" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">histogram</span></code>, for a given <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of non-dict values, returns a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> with entries of the following format:</p>
+<ul class="simple">
+<li><p><em>key</em>: value in the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> (range if a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values)</p></li>
+<li><p><em>value</em>: time-weighted frequency in the timeseries</p></li>
+</ul>
+<p>Arguments:</p>
+<ul class="simple">
+<li><p>A <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of non-dict values is the only argument to this function</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;strfield&quot;</span><span class="p">)</span>
+timeseries{
+        start: 2019-08-31 00:00:00
+        end: 2019-08-31 00:12:00
+        2019-08-31 00:00:00: &quot;string1&quot;
+        2019-08-31 00:01:00: &quot;string2&quot;
+        2019-08-31 00:10:00: &quot;string1&quot;
+        2019-08-31 00:11:00: &quot;string1&quot;
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">histogram</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+dict{
+        &quot;string1&quot;: 0.25
+        &quot;string2&quot;: 0.75
+} # the count is weighted accordingly to the intervals
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">5</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        start: 2019-08-31 00:00:00
+        end: 2019-08-31 01:00:00
+        2019-08-31 00:00:00: 1
+        2019-08-31 00:01:00: 1.01
+        2019-08-31 00:10:00: 1.011
+        2019-08-31 00:30:00: 5.2
+        2019-08-31 00:44:00: 5.22
+        2019-08-31 00:56:00: 5.23
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">histogram</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+dict{
+        &quot;1.0-1.011&quot;: 0.5
+        &quot;5.2-5.23&quot;: 0.5
+} # the count is weighted accordingly to the intervals
+</pre></div>
+</div>
+</section>
+<section id="dhistogram">
+<span id="id14"></span><h2>dhistogram<a class="headerlink" href="#dhistogram" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dhistogram</span></code>, has a similar behaviour as <a class="reference internal" href="../index_stdlib.html#histogram"><span class="std std-ref">histogram</span></a> but its result is not time-weighted.
+For a given <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of non-<cite>dict</cite> values, returns a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> with entries of the following format:</p>
+<ul class="simple">
+<li><p><em>key</em>: value in the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> (range if a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values)</p></li>
+<li><p><em>value</em>: frequency (non-weighted count of occurences) in the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a></p></li>
+</ul>
+<p>Arguments:</p>
+<p>A <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of non-dict values is the only argument to this function</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;strfield&quot;</span><span class="p">)</span>
+timeseries{
+        start: 2019-08-31 00:00:00
+        end: 2019-08-31 00:05:00
+        2019-08-31 00:00:00: &quot;string1&quot;
+        2019-08-31 00:01:00: &quot;string2&quot;
+        2019-08-31 00:10:00: &quot;string1&quot;
+        2019-08-31 00:11:00: &quot;string1&quot;
+} # the count does not depend of the time intervals between the updates
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dhistogram</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+dict{
+        &quot;string1&quot;: 3
+        &quot;string2&quot;: 1
+} # the count does not depend of the time intervals between the updates
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">5</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        2019-08-31 00:00:00: 1
+        2019-08-31 00:01:00: 1.01
+        2019-08-31 00:10:00: 1.011
+        2019-08-31 00:30:00: 5.2
+        2019-08-31 00:44:12: 5.22
+        2019-08-31 02:01:34: 5.23
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dhistogram</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+dict{
+        &quot;1.0-1.011&quot;: 3
+        &quot;5.2-5.23&quot;: 3
+} # the count does not depend of the time intervals between the updates
+</pre></div>
+</div>
+</section>
+<section id="aggregate">
+<span id="id15"></span><h2>aggregate<a class="headerlink" href="#aggregate" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 4</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">aggregate</span></code> merges multiple <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> contained in a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> (like the result of a
+wildcarded query) using the associative method specified in the second parameter. The <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> must
+contain <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, all of which must contain identical timestamps.</p>
+<p>If one of the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> is empty, it will be ignored.</p>
+<p>If some values’ timestamps are not matched in all the other non-empty <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of the <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>,
+these timestamp-value pairs will not be present in the output timeseries.</p>
+<p><code class="docutils literal notranslate"><span class="pre">aggregate</span></code> returns a simple <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> with the aggregated data of all the input <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<ul class="simple">
+<li><p>The first argument is the <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> containing <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> to aggregate</p></li>
+<li><p>The second argument is the name of the associative method to apply</p></li>
+</ul>
+<p>Like with <a class="reference internal" href="../index_stdlib.html#groupby"><span class="std std-ref">groupby</span></a>, the following associative methods can be applied:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">count</span></code>: returns the length of the list (i.e. the item count)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max</span></code>: returns the max entry in the list (requires the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> to be numerical)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mean</span></code>: returns the mean of the values in the list (requires the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> to be numerical)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min</span></code>: returns the min entry in the list (requires the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> to be numerical)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sum</span></code>: returns the sum of the entries in the list (requires the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> to be numerical)</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/*/versioned-data/interfaces/data/*/aggregate/hardware/xcvr/15m`</span><span class="p">[</span><span class="s">1h</span><span class="p">]</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">avg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">recmap</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">_value</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;temperature&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;avg&quot;</span><span class="p">))</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">avg</span>
+        JPE123456: dict{
+                Ethernet1: timeseries{
+                        start: 2021-11-09 13:02:18.923904 +0000 GMT
+                        end: 2021-11-09 13:32:18.923904 +0000 GMT
+                        2021-11-09 13:00:00 +0000 GMT: 28.64315689104305
+                        2021-11-09 13:15:00 +0000 GMT: 28.64771549594622
+                        2021-11-09 13:30:00 +0000 GMT: 28.647003241959368
+                }
+                Ethernet2: timeseries{
+                        start: 2021-11-09 13:02:18.923904 +0000 GMT
+                        end: 2021-11-09 13:32:18.923904 +0000 GMT
+                        2021-11-09 13:00:00 +0000 GMT: 26.52073192182222
+                        2021-11-09 13:15:00 +0000 GMT: 26.57132998707
+                        2021-11-09 13:30:00 +0000 GMT: 26.562415784963335
+                }
+                [...]
+        }
+        JPE654321: dict{
+                Ethernet1: timeseries{
+                        start: 2021-11-09 13:02:18.923904 +0000 GMT
+                        end: 2021-11-09 13:32:18.923904 +0000 GMT
+                        2021-11-09 13:00:00 +0000 GMT: 27.872056741171672
+                        2021-11-09 13:15:00 +0000 GMT: 26.422506200403397
+                        2021-11-09 13:30:00 +0000 GMT: 27.889330661612725
+                }
+                Ethernet2: timeseries{
+                        start: 2021-11-09 13:02:18.923904 +0000 GMT
+                        end: 2021-11-09 13:32:18.923904 +0000 GMT
+                        2021-11-09 13:00:00 +0000 GMT: 25.501376131906685
+                        2021-11-09 13:15:00 +0000 GMT: 24.06172043150084
+                        2021-11-09 13:30:00 +0000 GMT: 25.520567819910998
+                }
+                [...]
+        }
+        [...]
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">deviceAvg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">avg</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">aggregate</span><span class="p">(</span><span class="n">_value</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mean&quot;</span><span class="p">))</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">deviceAvg</span>
+        JPE123456: timeseries{
+                start: 2021-11-09 13:02:18.923904 +0000 GMT
+                end: 2021-11-09 13:32:18.923904 +0000 GMT
+                2021-11-09 13:00:00 +0000 GMT: 29.46781924765547
+                2021-11-09 13:15:00 +0000 GMT: 28.739134103556832
+                2021-11-09 13:30:00 +0000 GMT: 29.756429823529587
+        }
+        JPE654321: timeseries{
+                start: 2021-11-09 13:02:18.923904 +0000 GMT
+                end: 2021-11-09 13:32:18.923904 +0000 GMT
+                2021-11-09 13:00:00 +0000 GMT: 27.581944406432633
+                2021-11-09 13:15:00 +0000 GMT: 27.60952274150811
+                2021-11-09 13:30:00 +0000 GMT: 27.60470951346135
+        }
+        [...]
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">aggregate</span><span class="p">(</span><span class="n">deviceAvg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mean&quot;</span><span class="p">)</span><span class="w"> </span><span class="c"># average temp accross all interfaces of all devices</span>
+timeseries{
+        start: 2021-11-09 13:02:18.923904 +0000 GMT
+        end: 2021-11-09 13:32:18.923904 +0000 GMT
+        2021-11-09 13:00:00 +0000 GMT: 33.261383897237806
+        2021-11-09 13:15:00 +0000 GMT: 33.16722874112898
+        2021-11-09 13:30:00 +0000 GMT: 33.37487749955894
+}
+</pre></div>
+</div>
+</section>
+</section>
+<section id="math-functions">
+<h1>Math functions<a class="headerlink" href="#math-functions" title="Link to this heading"></a></h1>
+<section id="abs">
+<span id="id16"></span><h2>abs<a class="headerlink" href="#abs" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">abs</span></code> returns the absolute value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of the given value.</p>
+<ul class="simple">
+<li><p>The first and only argument <span class="math notranslate nohighlight">\(x\)</span> is the value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of which the absolute value <span class="math notranslate nohighlight">\(\lvert x \lvert\)</span> is wanted</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">abs</span><span class="p">(</span><span class="o">-</span><span class="m">11</span><span class="p">)</span>
+11
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">abs</span><span class="p">(</span><span class="m">200</span><span class="p">)</span>
+200
+</pre></div>
+</div>
+</section>
+<section id="ceil">
+<span id="id17"></span><h2>ceil<a class="headerlink" href="#ceil" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">ceil</span></code> returns the closest integer (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) succeeding the given value.</p>
+<ul class="simple">
+<li><p>The first and only argument <span class="math notranslate nohighlight">\(x\)</span> is the value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of which the ceil <span class="math notranslate nohighlight">\(\lceil x \rceil\)</span> is wanted</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ceil</span><span class="p">(</span><span class="m">12</span><span class="p">)</span>
+12
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ceil</span><span class="p">(</span><span class="m">12.1</span><span class="p">)</span>
+13
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ceil</span><span class="p">(</span><span class="o">-</span><span class="m">12.1</span><span class="p">)</span>
+-12
+</pre></div>
+</div>
+</section>
+<section id="floor">
+<span id="id18"></span><h2>floor<a class="headerlink" href="#floor" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">floor</span></code> returns the closest integer (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) preceding the given value.</p>
+<ul class="simple">
+<li><p>The first and only argument <span class="math notranslate nohighlight">\(x\)</span> is the value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of which the floor <span class="math notranslate nohighlight">\(\lfloor x \rfloor\)</span> is wanted</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">floor</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
+3
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">floor</span><span class="p">(</span><span class="m">3.2</span><span class="p">)</span>
+3
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">floor</span><span class="p">(</span><span class="o">-</span><span class="m">3.2</span><span class="p">)</span>
+-4
+</pre></div>
+</div>
+</section>
+<section id="trunc">
+<span id="id19"></span><h2>trunc<a class="headerlink" href="#trunc" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">trunc</span></code> returns the truncated (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) given value.</p>
+<ul class="simple">
+<li><p>The first and only argument is the value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) to be truncated</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">trunc</span><span class="p">(</span><span class="m">2.6</span><span class="p">)</span>
+2
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">trunc</span><span class="p">(</span><span class="o">-</span><span class="m">2.49</span><span class="p">)</span>
+-2
+</pre></div>
+</div>
+</section>
+<section id="exp">
+<span id="id20"></span><h2>exp<a class="headerlink" href="#exp" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">exp</span></code> returns the exponential (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of the given value.</p>
+<ul class="simple">
+<li><p>The first and only argument <span class="math notranslate nohighlight">\(x\)</span> is the value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of which the exp <span class="math notranslate nohighlight">\(e^x\)</span> is wanted</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+1
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">exp</span><span class="p">(</span><span class="m">12.1</span><span class="p">)</span>
+179871.86225375105
+</pre></div>
+</div>
+</section>
+<section id="factorial">
+<span id="id21"></span><h2>factorial<a class="headerlink" href="#factorial" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">factorial</span></code> returns the factorial (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of the given value.</p>
+<ul class="simple">
+<li><p>The first and only argument <span class="math notranslate nohighlight">\(x\)</span> is the value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of which the factorial <span class="math notranslate nohighlight">\(x!\)</span> is wanted</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">factorial</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
+6
+</pre></div>
+</div>
+</section>
+<section id="gcd">
+<span id="id22"></span><h2>gcd<a class="headerlink" href="#gcd" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">gcd</span></code> returns the greatest common divisor (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of two given integers.</p>
+<ul class="simple">
+<li><p>The first two arguments are the integers (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of which the GCD is wanted</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">gcd</span><span class="p">(</span><span class="m">25</span><span class="p">,</span><span class="w"> </span><span class="m">30</span><span class="p">)</span>
+5
+</pre></div>
+</div>
+</section>
+<section id="log">
+<span id="id23"></span><h2>log<a class="headerlink" href="#log" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">log</span></code> returns the natural log (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of the given value.</p>
+<ul class="simple">
+<li><p>The first and only argument <span class="math notranslate nohighlight">\(x\)</span> is the value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of which the natural log <span class="math notranslate nohighlight">\(log_e x\)</span> is wanted</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
+2.302585092994046
+</pre></div>
+</div>
+</section>
+<section id="log10">
+<span id="id24"></span><h2>log10<a class="headerlink" href="#log10" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">log10</span></code> returns the decimal log (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of the given value.</p>
+<ul class="simple">
+<li><p>The first and only argument <span class="math notranslate nohighlight">\(x\)</span> is the value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of which the decimal log <span class="math notranslate nohighlight">\(log_{10} x\)</span> is wanted</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">log10</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
+1
+</pre></div>
+</div>
+</section>
+<section id="pow">
+<span id="id25"></span><h2>pow<a class="headerlink" href="#pow" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">pow</span></code> returns the first given value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) to the power of the second given value.</p>
+<ul class="simple">
+<li><p>The two arguments are the values <span class="math notranslate nohighlight">\(x\)</span> (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>), <span class="math notranslate nohighlight">\(y\)</span> (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>)  used to compute <span class="math notranslate nohighlight">\(x^y\)</span></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+9
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">pow</span><span class="p">(</span><span class="m">9</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
+3
+</pre></div>
+</div>
+</section>
+<section id="round">
+<span id="id26"></span><h2>round<a class="headerlink" href="#round" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">round</span></code> returns the rounded (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) given value.</p>
+<ul class="simple">
+<li><p>The first and only argument <span class="math notranslate nohighlight">\(x\)</span> is the value used to compute <span class="math notranslate nohighlight">\(\lfloor x\rceil\)</span> i.e. the rounded value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>)</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">round</span><span class="p">(</span><span class="m">2.5</span><span class="p">)</span>
+3
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">round</span><span class="p">(</span><span class="m">2.49</span><span class="p">)</span>
+2
+</pre></div>
+</div>
+</section>
+<section id="sqrt">
+<span id="id27"></span><h2>sqrt<a class="headerlink" href="#sqrt" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">sqrt</span></code> returns the square root (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of the given value.</p>
+<ul class="simple">
+<li><p>The first and only argument <span class="math notranslate nohighlight">\(x\)</span> is the value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of which the square root <span class="math notranslate nohighlight">\(\sqrt{x}\)</span> is wanted</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="m">9</span><span class="p">)</span>
+3
+</pre></div>
+</div>
+</section>
+<section id="max">
+<span id="id28"></span><h2>max<a class="headerlink" href="#max" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">max</span></code> returns the max value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">max</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+200
+</pre></div>
+</div>
+</section>
+<section id="min">
+<span id="id29"></span><h2>min<a class="headerlink" href="#min" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">min</span></code> returns the min value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">min</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+1
+</pre></div>
+</div>
+</section>
+<section id="formatint">
+<span id="id30"></span><h2>formatInt<a class="headerlink" href="#formatint" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 4</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">formatInt</span></code> formats a num into a str using the specified base. The num will be treated
+as an integer and any decimal part will be truncated.</p>
+<ul class="simple">
+<li><p>The first argument is the <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> to convert</p></li>
+<li><p>The second argument is the base (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>)</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+100
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="m">4.5</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+100
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="m">33</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+100001
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="m">15</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">)</span>
+f
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="m">29</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">)</span>
+1d
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+str
+</pre></div>
+</div>
+</section>
+<section id="formatfloat">
+<span id="id31"></span><h2>formatFloat<a class="headerlink" href="#formatfloat" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 4</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">formatFloat</span></code> formats a <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> (<code class="docutils literal notranslate"><span class="pre">float64</span></code>) into a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>, according to the specified format and
+precision.</p>
+<ul>
+<li><p>The first argument is the <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> to convert</p></li>
+<li><p>The second argument is a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> of one letter describing the format:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'b'</span></code>: binary exponent</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'e'</span></code>: decimal exponent</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'f'</span></code>: no exponent</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'x'</span></code>: hexadecimal fraction and binary exponent</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The third argument is :ref:a <cite>num</cite> specifying the precision, i.e. the number of digits after the decimal
+point</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">formatFloat</span><span class="p">(</span><span class="m">15682.8729</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;e&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">)</span>
+1.5682872900e+04
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">formatFloat</span><span class="p">(</span><span class="m">15682.8729</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;f&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">)</span>
+15682.8729000000
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">formatFloat</span><span class="p">(</span><span class="m">15</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+0x1.e00p+03
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">formatFloat</span><span class="p">(</span><span class="m">15</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+8444249301319680p-49
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+str
+</pre></div>
+</div>
+</section>
+</section>
+<section id="stats-functions">
+<h1>Stats functions<a class="headerlink" href="#stats-functions" title="Link to this heading"></a></h1>
+<section id="dsum">
+<span id="id32"></span><h2>dsum<a class="headerlink" href="#dsum" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dsum</span></code> returns the non-weighted sum of values (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dsum</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+216
+</pre></div>
+</div>
+</section>
+<section id="dmean">
+<span id="id33"></span><h2>dmean<a class="headerlink" href="#dmean" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dmean</span></code> returns the non-weighted mean value (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dmean</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+54
+</pre></div>
+</div>
+</section>
+<section id="dmedian">
+<span id="id34"></span><h2>dmedian<a class="headerlink" href="#dmedian" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dmedian</span></code> returns the non-weighted median (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dmedian</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+2
+</pre></div>
+</div>
+</section>
+<section id="dpercentile">
+<span id="id35"></span><h2>dpercentile<a class="headerlink" href="#dpercentile" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dpercentile</span></code> returns the non-weighted nth percentile (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<ul class="simple">
+<li><p>The first argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+<li><p>The second argument is a <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> specifying the percentile. If it is greater than 100 or lower than 0, the return value will be 0.</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dpercentile</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">)</span>
+2
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dpercentile</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="m">90</span><span class="p">)</span>
+200
+</pre></div>
+</div>
+</section>
+<section id="dvariance">
+<span id="id36"></span><h2>dvariance<a class="headerlink" href="#dvariance" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dvariance</span></code> returns the non-weighted statistical variance (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dvariance</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+9503.333333333334
+</pre></div>
+</div>
+</section>
+<section id="dstddev">
+<span id="id37"></span><h2>dstddev<a class="headerlink" href="#dstddev" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dstddev</span></code> returns the non-weighted standard deviation (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dstddev</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+97.48504158758581
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">dvariance</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+97.48504158758581
+</pre></div>
+</div>
+</section>
+<section id="dskew">
+<span id="id38"></span><h2>dskew<a class="headerlink" href="#dskew" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dskew</span></code> returns the non-weighted skewness of distribution (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) for data in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dskew</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+0.7431002727844832
+</pre></div>
+</div>
+</section>
+<section id="dkurtosis">
+<h2>dkurtosis<a class="headerlink" href="#dkurtosis" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dkurtosis</span></code> returns the non-weighted kurtosis of distribution (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) for data in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dkurtosis</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+-1.6923313578244437
+</pre></div>
+</div>
+</section>
+<section id="sum">
+<span id="id39"></span><h2>sum<a class="headerlink" href="#sum" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">sum</span></code> returns the sum of the <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.
+If applied to a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, the result is time-weighted.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+216
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">13</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key3&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+216
+</pre></div>
+</div>
+</section>
+<section id="mean">
+<span id="id40"></span><h2>mean<a class="headerlink" href="#mean" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">mean</span></code> returns the mean of the <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>. If applied to a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, the result is time-weighted.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+54 # will be different from dmean if space between the timestamps (weight) is not constant
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">13</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key3&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+54
+</pre></div>
+</div>
+</section>
+<section id="median">
+<span id="id41"></span><h2>median<a class="headerlink" href="#median" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">median</span></code> returns the median of the <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>. If applied to a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, the result is time-weighted.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">median</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+2 # will be different from dmedian if space between the timestamps (weight) is not constant
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">13</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key3&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">median</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+2
+</pre></div>
+</div>
+</section>
+<section id="percentile">
+<span id="id42"></span><h2>percentile<a class="headerlink" href="#percentile" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">percentile</span></code> returns the time-weighted nth percentile (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) of a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.
+If applied to a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, the result is time-weighted.</p>
+<ul class="simple">
+<li><p>The first argument is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+<li><p>The second argument is a <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> specifying the percentile. If it is greater than <span class="math notranslate nohighlight">\(100\)</span> or lower than <span class="math notranslate nohighlight">\(0\)</span>, the return value will be <span class="math notranslate nohighlight">\(0\)</span>.</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">percentile</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="m">90</span><span class="p">)</span>
+200 # will be different from dpercentile if space between the timestamps (weight) is not constant
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">13</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key3&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">percentile</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="m">90</span><span class="p">)</span>
+200
+</pre></div>
+</div>
+</section>
+<section id="variance">
+<span id="id43"></span><h2>variance<a class="headerlink" href="#variance" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">variance</span></code> returns the statistical variance of the <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.
+If applied to a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, the result is time-weighted.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">variance</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+9503.333333333334 # will be different from dvariance if space between the timestamps (weight) is not constant
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">13</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key3&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">variance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="m">90</span><span class="p">)</span>
+9503.33333333
+</pre></div>
+</div>
+</section>
+<section id="stddev">
+<span id="id44"></span><h2>stddev<a class="headerlink" href="#stddev" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">stddev</span></code> returns the standard deviation of the <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.
+If applied to a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, the result is time-weighted.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">stddev</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+97.485041588 # will be different from dstddev if space between the timestamps (weight) is not constant
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">13</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key3&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">stddev</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="m">90</span><span class="p">)</span>
+97.485041588
+</pre></div>
+</div>
+</section>
+<section id="skew">
+<span id="id45"></span><h2>skew<a class="headerlink" href="#skew" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">skew</span></code> returns the skewness of dist.n of the <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.
+If applied to a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, the result is time-weighted. If the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> has exactly one element, <span class="math notranslate nohighlight">\(0\)</span> is returned.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">skew</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+0.7431002727844832 # will be different from dskew if space between the timestamps (weight) is not constant
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">13</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key3&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">skew</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="m">90</span><span class="p">)</span>
+0.7431002727844832
+</pre></div>
+</div>
+</section>
+<section id="kurtosis">
+<span id="id46"></span><h2>kurtosis<a class="headerlink" href="#kurtosis" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">kurtosis</span></code> returns the kurtosis of dist.n of the <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values in a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a>.
+If applied to a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>, the result is time-weighted. If the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> has exactly one element, <span class="math notranslate nohighlight">\(0\)</span> is returned.</p>
+<ul class="simple">
+<li><p>The first and only argument is a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> containing plain <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        tstamp1: 13
+        tstamp2: 1
+        tstamp3: 2
+        tstamp4: 200
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">skew</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+0.7431002727844832 # will be different from dskew if space between the timestamps (weight) is not constant
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">13</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key3&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">200</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">skew</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="m">90</span><span class="p">)</span>
+0.7431002727844832
+</pre></div>
+</div>
+</section>
+<section id="rate">
+<span id="id47"></span><h2>rate<a class="headerlink" href="#rate" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">rate</span></code> returns a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of rates computed from the initial <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>’ <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values.</p>
+<ul class="simple">
+<li><p>The first and only argument is the input <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        2019-08-31 00:00:00: 1
+        2019-08-31 00:01:00: 10
+        2019-08-31 00:02:00: 50
+        2019-08-31 00:03:00: 110
+        2019-08-31 00:04:00: 230
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">rate</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+timeseries{
+        2019-08-31 00:00:00: 0.016666666666666666
+        2019-08-31 00:01:00: 0.15
+        2019-08-31 00:02:00: 0.6666666666666666
+        2019-08-31 00:03:00: 1
+        2019-08-31 00:04:00: 2
+}
+</pre></div>
+</div>
+</section>
+<section id="linregression">
+<span id="id48"></span><h2>linregression<a class="headerlink" href="#linregression" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 3</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">linregression</span></code> produces a linear fit of a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only argument is the input <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a></p></li>
+</ul>
+<p>It returns a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> with  4 entries <code class="docutils literal notranslate"><span class="pre">slope</span></code>, <code class="docutils literal notranslate"><span class="pre">intercept</span></code>, <code class="docutils literal notranslate"><span class="pre">R2</span></code> and <code class="docutils literal notranslate"><span class="pre">fit</span></code>. The <code class="docutils literal notranslate"><span class="pre">fit</span></code> entry is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>
+with <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values corresponding to the fitted line on the input <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>’ timestamps. The <code class="docutils literal notranslate"><span class="pre">slope</span></code>
+and <code class="docutils literal notranslate"><span class="pre">intercept</span></code> are in seconds.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        start: 2021-10-14 13:57:55.000545 +0100 IST
+        end: 2021-10-14 14:02:55.000545 +0100 IST
+        2021-10-14 13:57:00 +0100 IST: 3.801633107494212e-05
+        2021-10-14 13:58:00 +0100 IST: 7.653320559746086e-05
+        2021-10-14 13:59:00 +0100 IST: 3.971200542852744e-05
+        2021-10-14 14:00:00 +0100 IST: 3.981215360110563e-05
+        2021-10-14 14:01:00 +0100 IST: 5.2121957107961934e-05
+        2021-10-14 14:02:00 +0100 IST: 3.838672949594982e-05
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">linregression</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+dict{
+        R2: 0.06273653863866613
+        fit: timeseries{
+                start: 2021-10-14 13:57:00 +0100 IST
+                end: 2021-10-14 14:02:00 +0100 IST
+                2021-10-14 13:57:00 +0100 IST: 5.252194027605128e-05
+                2021-10-14 13:58:00 +0100 IST: 5.0485322987015024e-05
+                2021-10-14 13:59:00 +0100 IST: 4.844870569797877e-05
+                2021-10-14 14:00:00 +0100 IST: 4.641208840183708e-05
+                2021-10-14 14:01:00 +0100 IST: 4.4375471112800824e-05
+                2021-10-14 14:02:00 +0100 IST: 4.2338853823764566e-05
+        }
+        intercept: 55.47126937459381
+        slope: -3.39436215194667e-08
+}
+</pre></div>
+</div>
+</section>
+<section id="ewlinregression">
+<span id="id49"></span><h2>ewlinregression<a class="headerlink" href="#ewlinregression" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 3</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">ewlinregression</span></code> produces a linear fit of a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> using exponentially
+decaying weights. The older the value in the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> the smaller the weight. The latest value is
+always given a weight of <span class="math notranslate nohighlight">\(1\)</span>.</p>
+<ul class="simple">
+<li><p>The first argument is the input <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a></p></li>
+<li><p>The second argument is the desired weight that a point with time x seconds in the past would have</p></li>
+<li><p>the third argument is how long ago that time <span class="math notranslate nohighlight">\(x\)</span> is, in seconds</p></li>
+</ul>
+<p>It returns a <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> with  4 entries <code class="docutils literal notranslate"><span class="pre">slope</span></code>, <code class="docutils literal notranslate"><span class="pre">intercept</span></code>, <code class="docutils literal notranslate"><span class="pre">R2</span></code> and <code class="docutils literal notranslate"><span class="pre">fit</span></code>. The <code class="docutils literal notranslate"><span class="pre">fit</span></code> entry is a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>
+with <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values corresponding to the fitted line on the input <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a>’ timestamps. The <code class="docutils literal notranslate"><span class="pre">slope</span></code>
+and <code class="docutils literal notranslate"><span class="pre">intercept</span></code> are in seconds.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;numfield&quot;</span><span class="p">)</span>
+timeseries{
+        start: 2021-10-14 13:57:55.000545 +0100 IST
+        end: 2021-10-14 14:02:55.000545 +0100 IST
+        2021-10-14 13:57:00 +0100 IST: 3.801633107494212e-05
+        2021-10-14 13:58:00 +0100 IST: 7.653320559746086e-05
+        2021-10-14 13:59:00 +0100 IST: 3.971200542852744e-05
+        2021-10-14 14:00:00 +0100 IST: 3.981215360110563e-05
+        2021-10-14 14:01:00 +0100 IST: 5.2121957107961934e-05
+        2021-10-14 14:02:00 +0100 IST: 3.838672949594982e-05
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">ewlinregression</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="m">0.01</span><span class="p">,</span><span class="w"> </span><span class="m">100.0</span><span class="p">)</span>
+dict{
+        R2: 0.34201204121343765
+        fit: timeseries{
+                start: 2021-10-14 14:03:00 +0100 IST
+                end: 2021-10-14 14:08:00 +0100 IST
+                2021-10-14 14:03:00 +0100 IST: 4.5425229615148055e-05
+                2021-10-14 14:04:00 +0100 IST: 4.4509288322558405e-05
+                2021-10-14 14:05:00 +0100 IST: 4.359334702641604e-05
+                2021-10-14 14:06:00 +0100 IST: 4.267740573382639e-05
+                2021-10-14 14:07:00 +0100 IST: 4.176146444123674e-05
+                2021-10-14 14:08:00 +0100 IST: 4.0845523145094376e-05
+        }
+        intercept: 24.94748623552414
+        slope: -1.526568822982724e-08
+}
+</pre></div>
+</div>
+</section>
+</section>
+<section id="string-manipulation">
+<h1>String manipulation<a class="headerlink" href="#string-manipulation" title="Link to this heading"></a></h1>
+<section id="strtoupper">
+<span id="id50"></span><h2>strToUpper<a class="headerlink" href="#strtoupper" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strToUpper</span></code> returns uppercase version of given <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only parameter is a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> to convert to uppercase</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strToUpper</span><span class="p">(</span><span class="s">&quot;ToUpper&quot;</span><span class="p">)</span>
+&quot;TOUPPER&quot;
+</pre></div>
+</div>
+</section>
+<section id="strtolower">
+<span id="id51"></span><h2>strToLower<a class="headerlink" href="#strtolower" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strToLower</span></code> returns lowercase version of given <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>The first and only parameter is a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> to convert to lowercase</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strToLower</span><span class="p">(</span><span class="s">&quot;ToLower&quot;</span><span class="p">)</span>
+&quot;TOLOWER&quot;
+</pre></div>
+</div>
+</section>
+<section id="strcontains">
+<span id="id52"></span><h2>strContains<a class="headerlink" href="#strcontains" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strContains</span></code> returns whether the first <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> contains the second <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>Both arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strContains</span><span class="p">(</span><span class="s">&quot;thatistext&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;is&quot;</span><span class="p">)</span>
+true
+</pre></div>
+</div>
+</section>
+<section id="strcount">
+<span id="id53"></span><h2>strCount<a class="headerlink" href="#strcount" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strCount</span></code> returns the number of occurrences of the second <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> in the first <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>Both arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strCount</span><span class="p">(</span><span class="s">&quot;tertarter&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;te&quot;</span><span class="p">)</span>
+2
+</pre></div>
+</div>
+</section>
+<section id="strindex">
+<span id="id54"></span><h2>strIndex<a class="headerlink" href="#strindex" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strIndex</span></code> returns the index of the first occurrence of the second <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> in the first <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>, and -1 if it is not present.</p>
+<ul class="simple">
+<li><p>Both arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strIndex</span><span class="p">(</span><span class="s">&quot;thatistext&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;is&quot;</span><span class="p">)</span>
+4
+</pre></div>
+</div>
+</section>
+<section id="strreplace">
+<span id="id55"></span><h2>strReplace<a class="headerlink" href="#strreplace" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strReplace</span></code> returns a copy of the first <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>, where occurrences of the second <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> are replaced by the third <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>The three arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strReplace</span><span class="p">(</span><span class="s">&quot;thatistext&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;is&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;was&quot;</span><span class="p">)</span>
+&quot;thatwastext&quot;
+</pre></div>
+</div>
+</section>
+<section id="strhasprefix">
+<span id="id56"></span><h2>strHasPrefix<a class="headerlink" href="#strhasprefix" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strHasPrefix</span></code> returns whether the first <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> starts with the second <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>Both arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strHasPrefix</span><span class="p">(</span><span class="s">&quot;thatistext&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;is&quot;</span><span class="p">)</span>
+false
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strHasPrefix</span><span class="p">(</span><span class="s">&quot;thatistext&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;that&quot;</span><span class="p">)</span>
+true
+</pre></div>
+</div>
+</section>
+<section id="strhassuffix">
+<span id="id57"></span><h2>strHasSuffix<a class="headerlink" href="#strhassuffix" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strHasSuffix</span></code> returns whether the first <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> ends with the second <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>Both arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strHasSuffix</span><span class="p">(</span><span class="s">&quot;thatistext&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;xt&quot;</span><span class="p">)</span>
+true
+</pre></div>
+</div>
+</section>
+<section id="strsplit">
+<span id="id58"></span><h2>strSplit<a class="headerlink" href="#strsplit" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strSplit</span></code> returns a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>. The function splits the first <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> into substrings, separated by the second <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>Both arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strSplit</span><span class="p">(</span><span class="s">&quot;that./is.text&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;./&quot;</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: &quot;that&quot;
+        0000-00-00 00:00:00.000000002: &quot;is.text&quot;
+}
+</pre></div>
+</div>
+</section>
+<section id="strcut">
+<span id="id59"></span><h2>strCut<a class="headerlink" href="#strcut" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 4</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">strCut</span></code> returns the portion of a <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> between two indexes (excluding ending index).</p>
+<p>Negative indexes start from the end of the input <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>The first argument (<a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>) is the string from which the portion is returned</p></li>
+<li><p>The second argument (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) is the starting index</p></li>
+<li><p>The third argument (<a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a>) is the ending index</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strCut</span><span class="p">(</span><span class="s">&quot;0123456789&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+123
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strCut</span><span class="p">(</span><span class="s">&quot;0123456789&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="m">2</span><span class="p">)</span>
+234567
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">strCut</span><span class="p">(</span><span class="s">&quot;abcd&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+bc
+</pre></div>
+</div>
+</section>
+<section id="refindall">
+<span id="id60"></span><h2>reFindAll<a class="headerlink" href="#refindall" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">reFindAll</span></code> returns a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> which contains matches of the second <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> (regex) in the first <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<ul class="simple">
+<li><p>Both arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">reFindAll</span><span class="p">(</span><span class="s">&quot;i am a string with text&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;i[a-z]+&quot;</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: &quot;ing&quot;
+        0000-00-00 00:00:00.000000002: &quot;ith&quot;
+}
+</pre></div>
+</div>
+</section>
+<section id="rematch">
+<span id="id61"></span><h2>reMatch<a class="headerlink" href="#rematch" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">reMatch</span></code> returns whether the first <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> contains matches of the second <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> (regex).</p>
+<ul class="simple">
+<li><p>Both arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">reMatch</span><span class="p">(</span><span class="s">&quot;i am a string with text&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;i[a-z]+&quot;</span><span class="p">)</span>
+true
+</pre></div>
+</div>
+</section>
+<section id="refindcaptures">
+<span id="id62"></span><h2>reFindCaptures<a class="headerlink" href="#refindcaptures" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">reFindCaptures</span></code> returns a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> lists. Each list contains the full match followed by each capture</p>
+<ul class="simple">
+<li><p>Both arguments to the function are <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>. The first one is the <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a> to match, and the second is the regular expression</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">reFindCaptures</span><span class="p">(</span><span class="s">&quot;foobarbaztootartaz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: [&quot;foo&quot;]
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">reFindCaptures</span><span class="p">(</span><span class="s">&quot;foobarbaztootartaz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;(foo)&quot;</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: [&quot;foo&quot;, &quot;foo&quot;]
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">reFindCaptures</span><span class="p">(</span><span class="s">&quot;foobarbaztootartaz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;f(oo)&quot;</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: [&quot;foo&quot;, &quot;oo&quot;]
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">reFindCaptures</span><span class="p">(</span><span class="s">&quot;foobarbaztootartaz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;(oo)&quot;</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: [&quot;oo&quot;, &quot;oo&quot;]
+        0000-00-00 00:00:00.000000002: [&quot;oo&quot;, &quot;oo&quot;]
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">reFindCaptures</span><span class="p">(</span><span class="s">&quot;foobarbaztootartaz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;[ft](oo)&quot;</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: [&quot;foo&quot;, &quot;oo&quot;]
+        0000-00-00 00:00:00.000000002: [&quot;too&quot;, &quot;oo&quot;]
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">reFindCaptures</span><span class="p">(</span><span class="s">&quot;foobarbaztootartaz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;([ft])(oo)&quot;</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: [&quot;foo&quot;, &quot;f&quot;, &quot;oo&quot;]
+        0000-00-00 00:00:00.000000002: [&quot;too&quot;, &quot;t&quot;, &quot;oo&quot;]
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">reFindCaptures</span><span class="p">(</span><span class="s">&quot;foobarbaztootartaz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;[ft](oo).*(az)&quot;</span><span class="p">)</span>
+timeseries{
+        0000-00-00 00:00:00.000000001: [&quot;foobarbaztootartaz&quot;, &quot;oo&quot;, &quot;az&quot;]
+}
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cli-only-functions">
+<h1>CLI-only Functions<a class="headerlink" href="#cli-only-functions" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The functions described in this section can only be used in CLI. They cannot be called from a service
+or through a Web interface.</p>
+</div>
+<section id="help">
+<span id="id63"></span><h2>help<a class="headerlink" href="#help" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">help</span></code> returns the help of all filters and functions as a formatted <a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">help</span><span class="p">()</span>
+# Functions
+## now
+- Function `now` returns the current time. Time is constant across all the script, so that all operations and queries have the same reference time
+[...]
+</pre></div>
+</div>
+</section>
+<section id="dump">
+<span id="id64"></span><h2>dump<a class="headerlink" href="#dump" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">dump</span></code> attempts to dump variables from the interpreter into a file.</p>
+<ul class="simple">
+<li><p>The first and only argument is the path to the file (<a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>)</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">myVar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dump</span><span class="p">(</span><span class="s">&quot;file.dump&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="load">
+<span id="id65"></span><h2>load<a class="headerlink" href="#load" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">load</span></code> attempts to load variables into the interpreter from a file.</p>
+<ul class="simple">
+<li><p>The first and only argument is the path to the file (<a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>)</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">load</span><span class="p">(</span><span class="s">&quot;file.dump&quot;</span><span class="p">)</span>
+true
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">myVar</span>
+2
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">myVar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">load</span><span class="p">(</span><span class="s">&quot;file.dump&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="esc">...</span><span class="w">     </span><span class="n">myVar</span>
+<span class="esc">...</span><span class="w"> </span><span class="p">}</span>
+2
+</pre></div>
+</div>
+</section>
+<section id="plot">
+<span id="id66"></span><h2>plot<a class="headerlink" href="#plot" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 1</span></p>
+<p>Function <code class="docutils literal notranslate"><span class="pre">plot</span></code> plots a <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> of <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values.</p>
+<ul class="simple">
+<li><p>The first argument is the <a class="reference internal" href="../index_doc.html#timeseries"><span class="std std-ref">timeseries</span></a> or <a class="reference internal" href="../index_doc.html#dict"><span class="std std-ref">dict</span></a> of <a class="reference internal" href="../index_doc.html#num"><span class="std std-ref">num</span></a> values to plot</p></li>
+<li><p>The second argument (optional) is the path (<a class="reference internal" href="../index_doc.html#str"><span class="std std-ref">str</span></a>) to the image PNG file to write the plot to. If not specified, defaults to <code class="docutils literal notranslate"><span class="pre">plot.png</span></code></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">plot</span><span class="p">(</span><span class="n">myTimeseriesOrDict</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;myplotimg.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Arista Networks.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,2006 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Language Specification &mdash; CloudVision Advanced Query Language 4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0190abbe" />
+
+  
+    <link rel="canonical" href="https://aql.arista.com/index_doc.html" />
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=71af5d5d"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="AQL Standard Library" href="index_stdlib.html" />
+    <link rel="prev" title="AQL Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CloudVision Advanced Query Language
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Language Specification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-overview">Quick overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-statements">Basic statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#types">Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#num">num</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bool">bool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#str">str</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time">time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#duration">duration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type">type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#timeseries">timeseries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dict">dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unknown">unknown</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#language-keywords">Language keywords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#language-operators">Language Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comparisons">Comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#operations">Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#boolean-operations">Boolean operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#string-concatenations">String concatenations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#additions-and-subtractions">Additions and Subtractions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiplications-and-divisions">Multiplications and Divisions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modulo">Modulo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#power">Power</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#typecasts">Typecasts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-support">JSON support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#variable-substitution">Variable substitution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#queries">Queries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dataset">Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#path">Path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wcards">Wildcards</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#filtered-wildcards">Filtered wildcards</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#complex-pathelts">Complex path elements</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#numerical-value">Numerical value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#boolean-value">Boolean value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#string-value">String value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#map-value">Map value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-value">List value</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#range-parameter">Range parameter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#no-parameter">No parameter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#number-of-updates">Number of updates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">Duration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fixed-timestamps-range">Fixed timestamps range</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#square-bracket-operator">Square bracket operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Timeseries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">Dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#complex-keys">Complex Keys</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#if-else">If/Else</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ternary-expressions">Ternary expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loops">Loops</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#for-loop">For loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#while-loop">While loop</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">Filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#named-wildcards-and-per-value-execution">Named wildcards and per-value execution</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#default-behaviour">Default behaviour</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#manualuserinput">Manual user input</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_stdlib.html">AQL Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Language revisions / Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_examples.html">AQL Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CloudVision Advanced Query Language</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Language Specification</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index_doc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="language-specification">
+<h1><a class="toc-backref" href="#id22" role="doc-backlink">Language Specification</a><a class="headerlink" href="#language-specification" title="Link to this heading"></a></h1>
+<nav class="contents" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#language-specification" id="id22">Language Specification</a></p>
+<ul>
+<li><p><a class="reference internal" href="#quick-overview" id="id23">Quick overview</a></p></li>
+<li><p><a class="reference internal" href="#basic-statements" id="id24">Basic statements</a></p></li>
+<li><p><a class="reference internal" href="#types" id="id25">Types</a></p>
+<ul>
+<li><p><a class="reference internal" href="#num" id="id26">num</a></p></li>
+<li><p><a class="reference internal" href="#bool" id="id27">bool</a></p></li>
+<li><p><a class="reference internal" href="#str" id="id28">str</a></p></li>
+<li><p><a class="reference internal" href="#time" id="id29">time</a></p></li>
+<li><p><a class="reference internal" href="#duration" id="id30">duration</a></p></li>
+<li><p><a class="reference internal" href="#type" id="id31">type</a></p></li>
+<li><p><a class="reference internal" href="#timeseries" id="id32">timeseries</a></p></li>
+<li><p><a class="reference internal" href="#dict" id="id33">dict</a></p></li>
+<li><p><a class="reference internal" href="#unknown" id="id34">unknown</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#language-keywords" id="id35">Language keywords</a></p></li>
+<li><p><a class="reference internal" href="#language-operators" id="id36">Language Operators</a></p></li>
+<li><p><a class="reference internal" href="#comparisons" id="id37">Comparisons</a></p></li>
+<li><p><a class="reference internal" href="#operations" id="id38">Operations</a></p>
+<ul>
+<li><p><a class="reference internal" href="#boolean-operations" id="id39">Boolean operations</a></p></li>
+<li><p><a class="reference internal" href="#string-concatenations" id="id40">String concatenations</a></p></li>
+<li><p><a class="reference internal" href="#additions-and-subtractions" id="id41">Additions and Subtractions</a></p></li>
+<li><p><a class="reference internal" href="#multiplications-and-divisions" id="id42">Multiplications and Divisions</a></p></li>
+<li><p><a class="reference internal" href="#modulo" id="id43">Modulo</a></p></li>
+<li><p><a class="reference internal" href="#power" id="id44">Power</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#typecasts" id="id45">Typecasts</a></p></li>
+<li><p><a class="reference internal" href="#json-support" id="id46">JSON support</a></p>
+<ul>
+<li><p><a class="reference internal" href="#variable-substitution" id="id47">Variable substitution</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#queries" id="id48">Queries</a></p>
+<ul>
+<li><p><a class="reference internal" href="#dataset" id="id49">Dataset</a></p></li>
+<li><p><a class="reference internal" href="#path" id="id50">Path</a></p></li>
+<li><p><a class="reference internal" href="#wcards" id="id51">Wildcards</a></p></li>
+<li><p><a class="reference internal" href="#complex-pathelts" id="id52">Complex path elements</a></p></li>
+<li><p><a class="reference internal" href="#fields" id="id53">Fields</a></p></li>
+<li><p><a class="reference internal" href="#range-parameter" id="id54">Range parameter</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#square-bracket-operator" id="id55">Square bracket operator</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id14" id="id56">Timeseries</a></p></li>
+<li><p><a class="reference internal" href="#id15" id="id57">Dict</a></p></li>
+<li><p><a class="reference internal" href="#complex-keys" id="id58">Complex Keys</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#if-else" id="id59">If/Else</a></p></li>
+<li><p><a class="reference internal" href="#ternary-expressions" id="id60">Ternary expressions</a></p></li>
+<li><p><a class="reference internal" href="#loops" id="id61">Loops</a></p>
+<ul>
+<li><p><a class="reference internal" href="#for-loop" id="id62">For loop</a></p></li>
+<li><p><a class="reference internal" href="#while-loop" id="id63">While loop</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#functions" id="id64">Functions</a></p></li>
+<li><p><a class="reference internal" href="#id18" id="id65">Filters</a></p></li>
+<li><p><a class="reference internal" href="#directives" id="id66">Directives</a></p></li>
+<li><p><a class="reference internal" href="#named-wildcards-and-per-value-execution" id="id67">Named wildcards and per-value execution</a></p>
+<ul>
+<li><p><a class="reference internal" href="#default-behaviour" id="id68">Default behaviour</a></p></li>
+<li><p><a class="reference internal" href="#manualuserinput" id="id69">Manual user input</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="quick-overview">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">Quick overview</a><a class="headerlink" href="#quick-overview" title="Link to this heading"></a></h2>
+<p>The syntax in AQL is similar to that of scripting languages. However, it is designed to be used like
+a query language. Its types are specifically designed to match the data structures of the CloudVision
+database.</p>
+<p>In interactive mode, each statement is executed independently, and therefore each of their values is
+printed when run. However, when running an AQL script with multiple statements from the CloudVision
+dashboard or from a file, the only displayed value is the value of the script as a whole, which is the
+value of the last statement in the script.</p>
+<p>Example in interactive mode:</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span>
+1
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">2</span>
+3
+</pre></div>
+</div>
+<p>Running it in one go:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="n">a</span>
+<span class="n">a</span><span class="o">+</span><span class="m">2</span>
+</pre></div>
+</div>
+<p>This script simply returns <cite>3</cite>.</p>
+<p>The main features of the language are:</p>
+<ul class="simple">
+<li><p>Queries: quickly fetch data from the CloudVision database</p></li>
+<li><p>Filters: efficiently format and extract the appropriate data from the query results</p></li>
+</ul>
+<p>Example:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="c"># This first statement performs a query to get aggregate data for each interface of device SSJ123456</span>
+<span class="k">let</span><span class="w"> </span><span class="n">hardwareAggs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/SSJ123456/versioned-data/interfaces/data/*/aggregate/hardware/xcvr/1m`</span>
+
+<span class="c"># This statement uses filters to extract the average temperature for each interface</span>
+<span class="k">let</span><span class="w"> </span><span class="n">temperaturePerIntf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hardwareAggs</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">((</span><span class="n">_value</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;temperature&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;avg&quot;</span><span class="p">))[</span><span class="m">0</span><span class="p">])</span>
+
+<span class="c"># This last statement computes the average temperature across all the interfaces in the device and is the</span>
+<span class="c"># return value of the script</span>
+<span class="n">mean</span><span class="p">(</span><span class="n">temperaturePerIntf</span><span class="p">)</span>
+</pre></div>
+</div>
+<iframe width="996" height="560" src="https://www.youtube.com/embed/UT6rZjS-F6c?si=XlcXtiAlwVCvW-gH" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></section>
+<section id="basic-statements">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Basic statements</a><a class="headerlink" href="#basic-statements" title="Link to this heading"></a></h2>
+<p>Statements are separated by new lines.
+Comments start with a <code class="code docutils literal notranslate"><span class="pre">#</span></code> so anything following <code class="code docutils literal notranslate"><span class="pre">#</span></code> is not part of a statement.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">2</span>
+3
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="m">2</span><span class="o">+</span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="m">5</span><span class="p">)</span>
+0.3
+</pre></div>
+</div>
+<p>Values can be assigned into a variable using the <code class="docutils literal notranslate"><span class="pre">let</span></code> keyword.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">myVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="c"># variable myVar1 contains 4</span>
+</pre></div>
+</div>
+<p>The last statement’s value is stored in the metavariable <code class="docutils literal notranslate"><span class="pre">_</span></code>. However, some statements like
+variable assignments do not have a value, so they don’t change the value of <code class="docutils literal notranslate"><span class="pre">_</span></code>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span>
+0.3
+</pre></div>
+</div>
+<p>Variables can be used in expressions.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">12.4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">myVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">-</span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span>
+15.9
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+16.9
+</pre></div>
+</div>
+<p>Variable names must begin with a letter (lower or uppercase). The rest of the name can contain letters
+(lower or uppercase), digits, and underscores.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Variable names that are prefixed with an underscore are metavariables and are set by the interpreter.
+These cannot be reassigned (read-only) but they can be used.</p>
+<p>More details about metavariables defined by named wildcards (<code class="docutils literal notranslate"><span class="pre">&lt;wcName&gt;</span></code>) in the <a class="reference external" href="#namedwildcards">Named wildcards</a>
+section of this document.</p>
+</div>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">myVar_Name2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">myVar_Name2</span>
+1
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">someData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`&lt;d&gt;:/Devices/some/data/path`</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_d</span>
+JPE123456
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">_metavar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">12</span>
+error: input:1:1: illegal variable name: _metavar
+</pre></div>
+</div>
+</section>
+<section id="types">
+<h2><a class="toc-backref" href="#id25" role="doc-backlink">Types</a><a class="headerlink" href="#types" title="Link to this heading"></a></h2>
+<section id="num">
+<span id="id1"></span><h3><a class="toc-backref" href="#id26" role="doc-backlink">num</a><a class="headerlink" href="#num" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">num</span></code> type is a <code class="docutils literal notranslate"><span class="pre">float64</span></code> and is the only numerical type. AQL does not have a native integer type.</p>
+<p>This type can be defined through literals, either an integer or a floating-point value:</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">12</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15.42</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="n">j</span>
+27.42
+</pre></div>
+</div>
+</section>
+<section id="bool">
+<span id="id2"></span><h3><a class="toc-backref" href="#id27" role="doc-backlink">bool</a><a class="headerlink" href="#bool" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">bool</span></code> type is a boolean and can either be true or false.</p>
+<p>The syntax of its literal is either the <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code> keyword.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">false</span>
+false
+</pre></div>
+</div>
+</section>
+<section id="str">
+<span id="id3"></span><h3><a class="toc-backref" href="#id28" role="doc-backlink">str</a><a class="headerlink" href="#str" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">str</span></code> type is a string of characters.</p>
+<p>The syntax of its literal is any string of character surrounded with double-quotes. To insert a double-quote
+within the literal, it can be prefixed with a backslash <code class="docutils literal notranslate"><span class="pre">\</span></code>.</p>
+<p>All types can be cast to <code class="docutils literal notranslate"><span class="pre">str</span></code>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&quot;Don&#39;t \&quot;panic\&quot;!&quot;</span>
+Don&#39;t &quot;panic&quot;!
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="m">12.0</span><span class="p">)</span><span class="w"> </span><span class="c"># this is a cast from num to str</span>
+12
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="m">12.1</span><span class="p">)</span>
+12.1
+</pre></div>
+</div>
+<p>Since revision 5, it is possible to declare strings with single-quotes. String literals
+with single-quotes have to follow this format: <code class="docutils literal notranslate"><span class="pre">'str:&lt;text&gt;'</span></code> and can be used to declare strings
+containing double-quote characters <code class="docutils literal notranslate"><span class="pre">&quot;</span></code> without prefixing them with a backslash <code class="docutils literal notranslate"><span class="pre">\</span></code>.</p>
+<p>Example:</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&quot;Be \&quot;happy\&quot;!&quot;</span>
+Be &quot;happy&quot;!
+
+&gt;&gt;&gt; &#39;str:Be &quot;happy&quot;!&#39;
+Be &quot;happy&quot;!
+</pre></div>
+</div>
+</section>
+<section id="time">
+<span id="id4"></span><h3><a class="toc-backref" href="#id29" role="doc-backlink">time</a><a class="headerlink" href="#time" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">time</span></code> type holds a timestamp. It is the key type in the <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> type returned by queries.</p>
+<p>There are no literals for <code class="docutils literal notranslate"><span class="pre">time</span></code>, but it can be cast from a <a class="reference internal" href="#str"><span class="std std-ref">str</span></a> following the syntax described in RFC 3339.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">time</span><span class="p">(</span><span class="s">&quot;2006-01-02T15:04:05+07:00&quot;</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">t</span>
+2006-01-02 15:04:05 +0700 +0700
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">15s</span>
+2006-01-02 15:04:20 +0700 +0700
+</pre></div>
+</div>
+</section>
+<section id="duration">
+<span id="id5"></span><h3><a class="toc-backref" href="#id30" role="doc-backlink">duration</a><a class="headerlink" href="#duration" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">duration</span></code> type defines a time interval. It can be used to define a time range of data to get
+in queries, and it can be added to or subtracted from <a class="reference internal" href="#time"><span class="std std-ref">time</span></a> values.</p>
+<p>The syntax of its literal is a signed (or not) sequence of decimal numbers followed by a unit suffix.
+It can also be composed of multiple values in different time units: <code class="docutils literal notranslate"><span class="pre">300ms</span></code>, <code class="docutils literal notranslate"><span class="pre">-1.5h</span></code>, <code class="docutils literal notranslate"><span class="pre">2h45m</span></code>.</p>
+<p>Valid time units are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ns</span></code> (nanosecond)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">us</span></code> (microsecond)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ms</span></code> (millisecond)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code> (second)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">m</span></code> (minute)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">h</span></code> (hour)</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">5h30ms</span>
+5h0m0.03s
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">7</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="s">24h</span><span class="w"> </span><span class="c"># week</span>
+168h0m0s
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">time</span><span class="p">(</span><span class="s">&quot;2006-01-02T15:04:05+07:00&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">5h15s</span>
+2006-01-02 15:04:20 +0700 +0700
+</pre></div>
+</div>
+</section>
+<section id="type">
+<span id="id6"></span><h3><a class="toc-backref" href="#id31" role="doc-backlink">type</a><a class="headerlink" href="#type" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> type holds type information. Any value can be cast to <code class="docutils literal notranslate"><span class="pre">type</span></code> to know its type.</p>
+<p>The syntax of its literal is any type name without any quotes or delimiter.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="c"># This is a cast to type `type`</span>
+num
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="s">&quot;Hello World!&quot;</span><span class="p">)</span>
+str
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="k">str</span><span class="p">)</span>
+type
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="s">&quot;Don&#39;t panic!&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">bool</span>
+false
+</pre></div>
+</div>
+</section>
+<section id="timeseries">
+<span id="id7"></span><h3><a class="toc-backref" href="#id32" role="doc-backlink">timeseries</a><a class="headerlink" href="#timeseries" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">timeseries</span></code> type is a list of values (of any type), indexed by timestamps (<a class="reference internal" href="#time"><span class="std std-ref">time</span></a> values).
+Its values can be accessed either by <a class="reference internal" href="#num"><span class="std std-ref">num</span></a> index or <a class="reference internal" href="#time"><span class="std std-ref">time</span></a> index. If there is no exact match for the
+specified <a class="reference internal" href="#time"><span class="std std-ref">time</span></a>, accessing its value will return the latest entry before that time.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are no literals for <code class="docutils literal notranslate"><span class="pre">timeseries</span></code> and they cannot be manually created. It can be returned by some
+functions (see the documentation for <a class="reference internal" href="index_stdlib.html"><span class="doc">Standard Library</span></a> functions), and all AQL queries return a <code class="docutils literal notranslate"><span class="pre">timeseries</span></code>
+(which can be contained in a <a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a>, see sections about <a class="reference external" href="#wcards">Wildcards</a>).</p>
+</div>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE123456/versioned-data/interfaces/data/Ethernet50/aggregate/hardware/xcvr/1m`</span><span class="p">[</span><span class="s">5m</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;temperature&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;avg&quot;</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span>
+timeseries{
+    start: 2021-10-26 14:32:17.167535 +0100 IST
+    end: 2021-10-26 14:37:17.167535 +0100 IST
+    2021-10-26 14:32:00 +0100 IST: 26.77301344308594
+    2021-10-26 14:33:00 +0100 IST: 26.78515625
+    2021-10-26 14:34:00 +0100 IST: 26.64152704258496
+    2021-10-26 14:35:00 +0100 IST: 26.68106989897461
+    2021-10-26 14:36:00 +0100 IST: 26.76746009308496
+    2021-10-26 14:37:00 +0100 IST: 26.78515625
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="m">0</span><span class="p">]</span>
+26.77301344308594
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="k">time</span><span class="p">(</span><span class="s">&quot;2021-10-26T14:34:05+01:00&quot;</span><span class="p">)]</span>
+26.64152704258496
+</pre></div>
+</div>
+</section>
+<section id="dict">
+<span id="id8"></span><h3><a class="toc-backref" href="#id33" role="doc-backlink">dict</a><a class="headerlink" href="#dict" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">dict</span></code> type is a collection of key/value pairs (map).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are no literals for <code class="docutils literal notranslate"><span class="pre">dict</span></code> but an empty <code class="docutils literal notranslate"><span class="pre">dict</span></code> can be created using the <a class="reference internal" href="index_stdlib.html#newdict"><span class="std std-ref">newDict</span></a> function, and
+its fields can be set using the bracket operator assignments or various filters such as <a class="reference internal" href="index_stdlib.html#setfields"><span class="std std-ref">setFields</span></a>.</p>
+</div>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key1&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key2&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{
+    key1: 1
+    key2: 2
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;key2&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;key3&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+dict{
+    key1: 1
+    key2: 0
+    key3: 3
+}
+</pre></div>
+</div>
+</section>
+<section id="unknown">
+<span id="id9"></span><h3><a class="toc-backref" href="#id34" role="doc-backlink">unknown</a><a class="headerlink" href="#unknown" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">unknown</span></code> type is applied to any value that is not a standard AQL type. Some of the data in CloudVision
+can be of a type that does not match any of the native AQL types. There is limited support
+to extract and use these values (they can be used in <a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a> keys and values).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are no literals but some values of that type can be created using the <a class="reference internal" href="index_stdlib.html#complexkey"><span class="std std-ref">complexKey</span></a> function.
+See sections <a class="reference external" href="#complex-pathelts">Complex path elements</a> and <a class="reference internal" href="index_stdlib.html#complexkey"><span class="std std-ref">complexKey</span></a>.</p>
+</div>
+</section>
+</section>
+<section id="language-keywords">
+<h2><a class="toc-backref" href="#id35" role="doc-backlink">Language keywords</a><a class="headerlink" href="#language-keywords" title="Link to this heading"></a></h2>
+<p>Here is a full list of the language keywords in AQL:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">let</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">for</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">if</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">else</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">while</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">in</span></code></p></li>
+<li><p><a class="reference internal" href="#bool"><span class="std std-ref">true</span></a></p></li>
+<li><p><a class="reference internal" href="#bool"><span class="std std-ref">false</span></a></p></li>
+<li><p><a class="reference internal" href="#num"><span class="std std-ref">num</span></a></p></li>
+<li><p><a class="reference internal" href="#bool"><span class="std std-ref">bool</span></a></p></li>
+<li><p><a class="reference internal" href="#str"><span class="std std-ref">str</span></a></p></li>
+<li><p><a class="reference internal" href="#time"><span class="std std-ref">time</span></a></p></li>
+<li><p><a class="reference internal" href="#duration"><span class="std std-ref">duration</span></a></p></li>
+<li><p><a class="reference internal" href="#type"><span class="std std-ref">type</span></a></p></li>
+<li><p><a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a></p></li>
+<li><p><a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a></p></li>
+<li><p><a class="reference internal" href="#unknown"><span class="std std-ref">unknown</span></a></p></li>
+</ul>
+</section>
+<section id="language-operators">
+<h2><a class="toc-backref" href="#id36" role="doc-backlink">Language Operators</a><a class="headerlink" href="#language-operators" title="Link to this heading"></a></h2>
+<p>From lowest to highest precedence:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">=</span></code> (assignment)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">?</span></code> <code class="docutils literal notranslate"><span class="pre">:</span></code> (ternary operations)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">||</span></code> (logical OR)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code> (logical AND)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!=</span></code>  <code class="docutils literal notranslate"><span class="pre">==</span></code> (equality check operators)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;</span></code>  <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>  <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>  <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> (comparison operators)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">+</span></code>  <code class="docutils literal notranslate"><span class="pre">-</span></code>  (addition/concatenation and subtraction)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">*</span></code>  <code class="docutils literal notranslate"><span class="pre">/</span></code>  <code class="docutils literal notranslate"><span class="pre">%</span></code>  (multiplication, division, modulo)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">|</span></code>  (pipe for filters)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">^</span></code>  (power)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!</span></code>  (logical NOT)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[]</span></code>  (access values at a specific index/key/time in <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>/<a class="reference internal" href="#dict"><span class="std std-ref">dicts</span></a>)</p></li>
+</ul>
+</section>
+<section id="comparisons">
+<h2><a class="toc-backref" href="#id37" role="doc-backlink">Comparisons</a><a class="headerlink" href="#comparisons" title="Link to this heading"></a></h2>
+<p>Two values of the same type can be compared.</p>
+<p>Equality operators (<code class="docutils literal notranslate"><span class="pre">==</span></code> and <code class="docutils literal notranslate"><span class="pre">!=</span></code>) work with values of any type, even <a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a> and <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> (but
+both values must be of the same type)</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">true</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">false</span>
+false
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;myString&quot;</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&quot;myString&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s</span>
+true
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">3</span>
+true
+</pre></div>
+</div>
+<p>Values can also be compared using the greater and lower operators (<code class="docutils literal notranslate"><span class="pre">&lt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>). Both compared
+values must have the same type, either <a class="reference internal" href="#str"><span class="std std-ref">str</span></a> (ASCII order), <a class="reference internal" href="#num"><span class="std std-ref">num</span></a>, <a class="reference internal" href="#time"><span class="std std-ref">time</span></a> (before or after), or <a class="reference internal" href="#duration"><span class="std std-ref">duration</span></a>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">myVar1</span>
+4
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">myVar1</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">4</span>
+false
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">myVar1</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">4</span>
+true
+myVar1 == 4
+true
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">myBooleanVar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">5</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">myBooleanVar</span>
+true
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&quot;ab&quot;</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s">&quot;ac&quot;</span>
+true
+</pre></div>
+</div>
+</section>
+<section id="operations">
+<h2><a class="toc-backref" href="#id38" role="doc-backlink">Operations</a><a class="headerlink" href="#operations" title="Link to this heading"></a></h2>
+<section id="boolean-operations">
+<h3><a class="toc-backref" href="#id39" role="doc-backlink">Boolean operations</a><a class="headerlink" href="#boolean-operations" title="Link to this heading"></a></h3>
+<p>Boolean values can be used with <code class="docutils literal notranslate"><span class="pre">!</span></code> (NOT), <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code> (AND), and <code class="docutils literal notranslate"><span class="pre">||</span></code> (OR) for boolean logic</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w">  </span><span class="n">myBooleanVar</span>
+true
+<span class="esc">&gt;&gt;&gt;</span><span class="w">  </span><span class="n">myBooleanVar</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">2</span>
+false
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="n">myBooleanVar</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">_</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">2</span>
+true
+</pre></div>
+</div>
+</section>
+<section id="string-concatenations">
+<h3><a class="toc-backref" href="#id40" role="doc-backlink">String concatenations</a><a class="headerlink" href="#string-concatenations" title="Link to this heading"></a></h3>
+<p>Strings can be concatenated with the <code class="docutils literal notranslate"><span class="pre">+</span></code> operator.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&quot;Hello &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;world&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;!&quot;</span>
+Hello world!
+</pre></div>
+</div>
+</section>
+<section id="additions-and-subtractions">
+<h3><a class="toc-backref" href="#id41" role="doc-backlink">Additions and Subtractions</a><a class="headerlink" href="#additions-and-subtractions" title="Link to this heading"></a></h3>
+<p>Additions (<code class="docutils literal notranslate"><span class="pre">+</span></code>) and subtractions (<code class="docutils literal notranslate"><span class="pre">-</span></code>) can be performed with the following type combinations:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">num</span> <span class="pre">+</span> <span class="pre">num</span></code>: returns a <a class="reference internal" href="#num"><span class="std std-ref">num</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num</span> <span class="pre">-</span> <span class="pre">num</span></code>: returns a <a class="reference internal" href="#num"><span class="std std-ref">num</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">-</span> <span class="pre">time</span></code>: returns a <a class="reference internal" href="#duration"><span class="std std-ref">duration</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">+</span> <span class="pre">duration</span></code>: returns a <a class="reference internal" href="#time"><span class="std std-ref">time</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">-</span> <span class="pre">duration</span></code>: returns a <a class="reference internal" href="#time"><span class="std std-ref">time</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">2</span><span class="o">+</span><span class="m">3.4</span>
+5.4
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="c"># now() returns the current time as a `time` value</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">n</span>
+2021-10-26 15:19:56.184361 +0100
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">n2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="s">15m</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">n2</span>
+2021-10-26 15:04:56.184361 +0100
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">n2</span>
+15m0s
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">n2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">15</span><span class="o">*</span><span class="s">60s</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">n</span>
+true
+</pre></div>
+</div>
+</section>
+<section id="multiplications-and-divisions">
+<h3><a class="toc-backref" href="#id42" role="doc-backlink">Multiplications and Divisions</a><a class="headerlink" href="#multiplications-and-divisions" title="Link to this heading"></a></h3>
+<p>Multiplications (<code class="docutils literal notranslate"><span class="pre">*</span></code>) and divisions (<code class="docutils literal notranslate"><span class="pre">/</span></code>) can be performed with the following type combinations:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">num</span> <span class="pre">*</span> <span class="pre">num</span></code>: returns a <a class="reference internal" href="#num"><span class="std std-ref">num</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num</span> <span class="pre">/</span> <span class="pre">num</span></code>: returns a <a class="reference internal" href="#num"><span class="std std-ref">num</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num</span> <span class="pre">*</span> <span class="pre">duration</span></code>: returns a <a class="reference internal" href="#duration"><span class="std std-ref">duration</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duration</span> <span class="pre">/</span> <span class="pre">num</span></code>: returns a <a class="reference internal" href="#duration"><span class="std std-ref">duration</span></a></p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">3</span><span class="o">*</span><span class="m">3</span>
+9
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">4.4</span><span class="o">/</span><span class="m">4</span>
+1.1
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">3</span><span class="o">*</span><span class="s">60s</span>
+3m0s
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">3m</span><span class="o">/</span><span class="m">180</span>
+1s
+</pre></div>
+</div>
+</section>
+<section id="modulo">
+<h3><a class="toc-backref" href="#id43" role="doc-backlink">Modulo</a><a class="headerlink" href="#modulo" title="Link to this heading"></a></h3>
+<p>The modulo (<code class="docutils literal notranslate"><span class="pre">%</span></code>) operator returns the remainder of a division. It can only be used with two <a class="reference internal" href="#num"><span class="std std-ref">num</span></a> values.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="m">3</span>
+1
+</pre></div>
+</div>
+</section>
+<section id="power">
+<h3><a class="toc-backref" href="#id44" role="doc-backlink">Power</a><a class="headerlink" href="#power" title="Link to this heading"></a></h3>
+<p>The power (<code class="docutils literal notranslate"><span class="pre">^</span></code>) operator returns <code class="docutils literal notranslate"><span class="pre">a</span></code> to the power of <code class="docutils literal notranslate"><span class="pre">b</span></code>. It can only be used with two <a class="reference internal" href="#num"><span class="std std-ref">num</span></a> values.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="m">3</span><span class="o">^</span><span class="m">3</span>
+27
+</pre></div>
+</div>
+</section>
+</section>
+<section id="typecasts">
+<h2><a class="toc-backref" href="#id45" role="doc-backlink">Typecasts</a><a class="headerlink" href="#typecasts" title="Link to this heading"></a></h2>
+<p>It is possible to cast values of a certain type to another using the syntax <code class="docutils literal notranslate"><span class="pre">typename(valueToCast)</span></code>.
+Here is a typecast table defining which types can be cast to which other types.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>FROM  /   TO</p></th>
+<th class="head"><p>num</p></th>
+<th class="head"><p>bool</p></th>
+<th class="head"><p>str</p></th>
+<th class="head"><p>time</p></th>
+<th class="head"><p>duration</p></th>
+<th class="head"><p>type</p></th>
+<th class="head"><p>timeseries</p></th>
+<th class="head"><p>dict</p></th>
+<th class="head"><p>unknown</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>num</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+</tr>
+<tr class="row-odd"><td><p>bool</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+</tr>
+<tr class="row-even"><td><p>str</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+</tr>
+<tr class="row-odd"><td><p>time</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+</tr>
+<tr class="row-even"><td><p>duration</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+</tr>
+<tr class="row-odd"><td><p>type</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+</tr>
+<tr class="row-even"><td><p>timeseries</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+</tr>
+<tr class="row-odd"><td><p>dict</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+</tr>
+<tr class="row-even"><td><p>unknown</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p><strong>YES</strong></p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+<td><p>NO</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>For all casts between <a class="reference internal" href="#num"><span class="std std-ref">num</span></a>, <a class="reference internal" href="#duration"><span class="std std-ref">duration</span></a>, and <a class="reference internal" href="#time"><span class="std std-ref">time</span></a>, the time unit is the nanosecond</p></li>
+<li><p>Cast from <a class="reference internal" href="#str"><span class="std std-ref">str</span></a> to <a class="reference internal" href="#num"><span class="std std-ref">num</span></a> supports float and integer notation but also scientific (1e+2, 15e-3 etc.)</p></li>
+<li><p>Casts between <a class="reference internal" href="#time"><span class="std std-ref">time</span></a> and <a class="reference internal" href="#str"><span class="std std-ref">str</span></a> follow the syntax defined in
+<a class="reference external" href="https://medium.easyread.co/understanding-about-rfc-3339-for-datetime-formatting-in-software-engineering-940aa5d5f68a">RFC 3339</a>.</p></li>
+</ul>
+</div>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">num</span><span class="p">(</span><span class="s">&quot;12&quot;</span><span class="p">)</span>
+12
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="m">11</span><span class="o">+</span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;a&quot;</span>
+12a
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="s">&quot;42&quot;</span><span class="p">)</span>
+str
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="k">type</span><span class="p">(</span><span class="s">&quot;42&quot;</span><span class="p">))</span>
+type
+</pre></div>
+</div>
+<p>As described in the section about type <a class="reference internal" href="#type"><span class="std std-ref">type</span></a>, type names can be used as <a class="reference internal" href="#type"><span class="std std-ref">type</span></a> literals to perform
+type-assertions.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="k">false</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">str</span>
+false
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">type</span><span class="p">(</span><span class="k">false</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">bool</span>
+true
+</pre></div>
+</div>
+</section>
+<section id="json-support">
+<h2><a class="toc-backref" href="#id46" role="doc-backlink">JSON support</a><a class="headerlink" href="#json-support" title="Link to this heading"></a></h2>
+<p><span class="guilabel">Added in revision 5</span></p>
+<p>Variables can be declared with JSON syntax. JSON literals have to follow the format:
+<code class="docutils literal notranslate"><span class="pre">'json:&lt;text&gt;'</span></code> where <code class="docutils literal notranslate"><span class="pre">&lt;text&gt;</span></code> must be valid JSON. If the key or value in JSON
+is a string containing a single-quote character (<code class="docutils literal notranslate"><span class="pre">'</span></code>) it must be prefixed with a backslash <code class="docutils literal notranslate"><span class="pre">\</span></code>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">1&#39;</span>
+1 # AQL type is unknown (int)
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">1.2&#39;</span>
+1.2  # AQL type is num
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">{&quot;key1&quot;: 1, &quot;key2&quot;: true}&#39;</span>
+dict{
+    key1: 1
+    key2: true
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">[1, 2, true]&#39;</span>
+[1,2,true] # AQL type is unknown (list)
+</pre></div>
+</div>
+<p>Like any string, JSON literals can be defined using multiple lines:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">myDict</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">{</span>
+<span class="s">    &quot;key1&quot;: &quot;value1&quot;,</span>
+<span class="s">    &quot;key2&quot;: 2</span>
+<span class="s">}&#39;</span>
+</pre></div>
+</div>
+<section id="variable-substitution">
+<h3><a class="toc-backref" href="#id47" role="doc-backlink">Variable substitution</a><a class="headerlink" href="#variable-substitution" title="Link to this heading"></a></h3>
+<p>It is possible to insert variables into JSON literals. Variables can be included using this syntax:
+<code class="docutils literal notranslate"><span class="pre">&quot;$&lt;variable</span> <span class="pre">name&gt;&quot;</span></code>. It is possible to insert variables both in keys and values.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">{&quot;key1&quot;: 1, &quot;key2&quot;: true}&#39;</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">{&quot;idx&quot;: 1, &quot;val&quot;: &quot;$v&quot;}&#39;</span><span class="w"> </span><span class="c"># value substitution</span>
+dict{
+    idx: 1
+    val: dict{
+        key1: 1
+        key2: true
+    }
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s">&quot;title1&quot;</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">{&quot;$name&quot;: 15}&#39;</span><span class="w"> </span><span class="c"># key substitution</span>
+dict{title1: 15}
+</pre></div>
+</div>
+</section>
+</section>
+<section id="queries">
+<h2><a class="toc-backref" href="#id48" role="doc-backlink">Queries</a><a class="headerlink" href="#queries" title="Link to this heading"></a></h2>
+<p>AQL can fetch data from the CloudVision database by using queries. The general syntax is the following:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="c"># no range parameter (only current state is queried)</span>
+<span class="l">`datasetType/datasetName:/path/to/data`</span>
+
+<span class="c"># ranged query</span>
+<span class="l">`datasetType/datasetName:/path/to/data`</span><span class="p">[</span><span class="n">queryParameter</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Since AQL revision 5, it is also possible to select which fields to query by adding a list of
+fields surrounded by square brackets between the path part and the parameters part:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="l">`datasetType/datasetName:/path/to/data`</span><span class="p">{</span><span class="s">&quot;field1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;field2&quot;</span><span class="p">}</span>
+<span class="l">`datasetType/datasetName:/path/to/data`</span><span class="p">{</span><span class="s">&quot;field1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;field2&quot;</span><span class="p">}[</span><span class="n">queryParameter</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="dataset">
+<h3><a class="toc-backref" href="#id49" role="doc-backlink">Dataset</a><a class="headerlink" href="#dataset" title="Link to this heading"></a></h3>
+<p>The dataset section of the query is split into two parts with a forward slash (<cite>/</cite>). The first part
+is the dataset type (e.g. <code class="docutils literal notranslate"><span class="pre">device</span></code>, <code class="docutils literal notranslate"><span class="pre">app</span></code>, <code class="docutils literal notranslate"><span class="pre">config</span></code>…).</p>
+<p>The second part is the dataset name.</p>
+<p>Example:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="l">`user/johndoe:/path/to/data`</span><span class="p">[</span><span class="n">queryParameter</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If unspecified, the dataset type will default to <code class="code docutils literal notranslate"><span class="pre">device</span></code>:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="l">`JPE123456:/path/to/data`</span><span class="p">[</span><span class="n">queryParameter</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="path">
+<h3><a class="toc-backref" href="#id50" role="doc-backlink">Path</a><a class="headerlink" href="#path" title="Link to this heading"></a></h3>
+<p>The path section of the query is the path to the data in the CloudVision database, and each path
+element is separated by a forward slash (<cite>/</cite>).</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="l">`analytics:/Devices/JPE123456/versioned-data/interfaces/data/Ethernet1/rates`</span><span class="p">[</span><span class="n">queryParameter</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>A query with a fully specified path like the above will always return a <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<p>The value associated with each specific <a class="reference internal" href="#time"><span class="std std-ref">time</span></a> in the <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> is a <a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a> containing all the
+key-value pairs updated at that path, at that specific <a class="reference internal" href="#time"><span class="std std-ref">time</span></a>.</p>
+</section>
+<section id="wcards">
+<span id="id10"></span><h3><a class="toc-backref" href="#id51" role="doc-backlink">Wildcards</a><a class="headerlink" href="#wcards" title="Link to this heading"></a></h3>
+<p>If a path element or the dataset name (dataset type can not be wildcarded) is replaced with a simple
+star sign (<code class="docutils literal notranslate"><span class="pre">*</span></code>), called a wildcard, the query fetches the data at all the paths matching this wildcarded path.</p>
+<p>Example: In the previous section, the query was fetching the interface rates for device “JPE123456”,
+and interface “Ethernet1”. This example gets the interface rates for all interfaces of device “JPE123456”.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="l">`analytics:/Devices/JPE123456/versioned-data/interfaces/data/*/rates`</span><span class="p">[</span><span class="n">queryParameter</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Queries containing a wildcard do not return a <code class="docutils literal notranslate"><span class="pre">timeseries</span></code>, but a <code class="docutils literal notranslate"><span class="pre">dict</span></code>. Its keys are the path
+element values matching the wildcard (in the example above, the interface names). The <code class="docutils literal notranslate"><span class="pre">dict</span></code> values
+are the <code class="docutils literal notranslate"><span class="pre">timeseries</span></code> that would have been returned if querying the same path with the wildcard
+replaced with each possible key.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE123456/versioned-data/interfaces/data/Ethernet1/rates`</span><span class="p">[</span><span class="m">0</span><span class="p">]</span>
+timeseries{
+    start: 2021-10-26 16:12:46.870252166 +0100 IST
+    end: 2021-10-26 16:12:47.674314 +0100 IST
+    2021-10-26 16:12:46.870252166 +0100 IST: dict{
+        inMulticastPkts: 0.5000081856910986
+        inOctets: 61.50100684000513
+        outMulticastPkts: 0
+        outOctets: 0
+    }
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE123456/versioned-data/interfaces/data/*/rates`</span><span class="p">[</span><span class="m">0</span><span class="p">]</span>
+dict{
+    Ethernet1: timeseries{
+        start: 2021-10-26 16:13:16.870363498 +0100 IST
+        end: 2021-10-26 16:13:34.615865 +0100 IST
+        2021-10-26 16:13:16.870363498 +0100 IST: dict{
+            outMulticastPkts: 0
+            outOctets: 0
+        }
+        2021-10-26 16:13:26.870256382 +0100 IST: dict{
+            inMulticastPkts: 0.5000009149562546
+            inOctets: 61.50011253961932
+        }
+    }
+    Ethernet2: timeseries{
+        start: 2021-10-26 16:13:26.870256382 +0100 IST
+        end: 2021-10-26 16:13:34.615865 +0100 IST
+        2021-10-26 16:13:26.870256382 +0100 IST: dict{
+            inMulticastPkts: 0.10000018299125094
+            inOctets: 38.50007045163161
+            inUcastPkts: 0.20000036598250187
+            outMulticastPkts: 0.10000018299125094
+            outOctets: 12.80002342288012
+        }
+    }
+</pre></div>
+</div>
+<p>A query can also contain multiple wildcards, which will result in several levels of nested <a class="reference internal" href="#dict"><span class="std std-ref">dicts</span></a>,
+with <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> at the bottom level.</p>
+<p>This example fetches the same data as before, but for all interfaces of all devices, using two
+wildcards:</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/*/versioned-data/interfaces/data/*/rates`</span><span class="p">[</span><span class="m">0</span><span class="p">]</span>
+dict{
+    JPE123456: dict{
+        Ethernet1: timeseries{
+            start: 2021-10-26 16:13:16.870363498 +0100 IST
+            end: 2021-10-26 16:13:34.615865 +0100 IST
+            2021-10-26 16:13:16.870363498 +0100 IST: dict{
+                outMulticastPkts: 0
+                outOctets: 0
+            }
+            2021-10-26 16:13:26.870256382 +0100 IST: dict{
+                inMulticastPkts: 0.5000009149562546
+                inOctets: 61.50011253961932
+            }
+        }
+        Ethernet2: timeseries{
+            start: 2021-10-26 16:13:26.870256382 +0100 IST
+            end: 2021-10-26 16:13:34.615865 +0100 IST
+            2021-10-26 16:13:26.870256382 +0100 IST: dict{
+                inMulticastPkts: 0.10000018299125094
+                inOctets: 38.50007045163161
+                inUcastPkts: 0.20000036598250187
+                outMulticastPkts: 0.10000018299125094
+                outOctets: 12.80002342288012
+            }
+        }
+    }
+    JPE654321: dict{
+        Ethernet1: timeseries{
+            start: 2021-10-26 16:13:16.870363498 +0100 IST
+            end: 2021-10-26 16:13:34.615865 +0100 IST
+            2021-10-26 16:13:16.870363498 +0100 IST: dict{
+                outMulticastPkts: 0
+                outOctets: 0
+            }
+            2021-10-26 16:13:26.870256382 +0100 IST: dict{
+                inMulticastPkts: 0.50000037628384
+                inOctets: 67.638619033792
+            }
+        }
+        Ethernet2: timeseries{
+            start: 2021-10-26 16:13:26.870256382 +0100 IST
+            end: 2021-10-26 16:13:34.615865 +0100 IST
+            2021-10-26 16:13:26.870256382 +0100 IST: dict{
+                inMulticastPkts: 0.10000027274982
+                inOctets: 33.478329283748833
+                inUcastPkts: 0.20000036598250187
+                outMulticastPkts: 0.100000432767384
+                outOctets: 12.828728378483
+            }
+        }
+    }
+</pre></div>
+</div>
+<p>For a dataset wildcard, the result is built with the same structure. The syntax is as follows:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="l">`user/*:/some/path`[queryParameter] # This will get data for all `user`</span><span class="w"> </span><span class="n">datasets</span>
+<span class="l">`*:/some/path`[queryParameter] # This will get data for all `device`</span><span class="w"> </span><span class="n">datasets</span>
+</pre></div>
+</div>
+<section id="filtered-wildcards">
+<span id="filteredwildcards"></span><h4>Filtered wildcards<a class="headerlink" href="#filtered-wildcards" title="Link to this heading"></a></h4>
+<p><span class="guilabel">Added in revision 5</span></p>
+<p>A query with <a class="reference external" href="#wcards">wildcards</a> fetches the data at all the paths matching the wildcarded path.
+It is possible to restrict query results to a subset of the matching paths by replacing the wildcard
+(<code class="docutils literal notranslate"><span class="pre">*</span></code>) with the following syntax:
+<code class="docutils literal notranslate"><span class="pre">*filteredWildcardName</span></code> or <code class="docutils literal notranslate"><span class="pre">*_filteredWildcardName</span></code>, where <code class="docutils literal notranslate"><span class="pre">filteredWildcardName</span></code> is the name
+of an input variable which holds a list of values. The query will fetch only the paths for which
+the wildcarded path element is part of that list.</p>
+<p>For each filtered wildcard, the query will exit with an error if the associated input variable is missing.
+It is possible to modify this behaviour and make a filtered wildcard behave like a regular wildcard when its
+variable is not defined by adding a question mark (<code class="docutils literal notranslate"><span class="pre">?</span></code>) at the end of the variable’s name.</p>
+<p>Example:</p>
+<p>Regular wildcard:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/*/versioned-data/interfaces/data/*/rates`</span><span class="p">[</span><span class="s">1m</span><span class="p">]</span>
+<span class="n">data</span><span class="w"> </span><span class="c"># This contains the data for all datasets (type = dict of timeseries)</span>
+</pre></div>
+</div>
+<p>Filtered wildcard:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/*_devices/versioned-data/interfaces/data/*/rates`</span><span class="p">[</span><span class="s">1m</span><span class="p">]</span>
+<span class="n">data</span><span class="w"> </span><span class="c"># This contains only the data for defined datasets (type = dict of timeseries)</span>
+</pre></div>
+</div>
+<p>If the <code class="docutils literal notranslate"><span class="pre">_devices</span></code> variable is defined as an array of devices names: <code class="docutils literal notranslate"><span class="pre">{&quot;_devices&quot;:</span> <span class="pre">[&quot;JPE1234567&quot;,</span> <span class="pre">&quot;JPE7654321&quot;]}</span></code>,
+the result will contain only data for devices <code class="docutils literal notranslate"><span class="pre">JPE1234567</span></code> and <code class="docutils literal notranslate"><span class="pre">JPE7654321</span></code>.</p>
+<p>Variables can be defined as either a list (complex key, type <a class="reference internal" href="#unknown"><span class="std std-ref">unknown</span></a>) or a <a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a> with
+the selected path elements as keys. The following two examples are equivalent:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">{&quot;_devices&quot;:</span> <span class="pre">[&quot;JPE1234567&quot;,</span> <span class="pre">&quot;JPE7654321&quot;]}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{&quot;_devices&quot;:</span> <span class="pre">{&quot;JPE1234567&quot;:0,</span> <span class="pre">&quot;JPE7654321&quot;:0}</span></code></p></li>
+</ul>
+<p>Variables used for filtered wildcards can only be input variables (defined outside of the scope of
+the AQL script), using an input panel on CloudVision Dashboards, or a CLI argument using the AQL
+interpreter from the CLI.</p>
+<p>For more information about how to define filtered values, please refer to section <a class="reference external" href="#manualuserinput">Manual user input</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Filtered wildcards reduce the amount of requested data and therefore make queries cheaper and faster.</p>
+</div>
+<p>Example:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/*_Devices/versioned-data/aggregate/rates/1h/stats`</span><span class="p">{</span><span class="s">&quot;inOctets&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;outOctets&quot;</span><span class="p">}</span>
+
+<span class="n">data</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">_value</span><span class="p">)[</span><span class="s">&quot;inOctets&quot;</span><span class="p">][</span><span class="s">&quot;max&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">_value</span><span class="p">)[</span><span class="s">&quot;outOctets&quot;</span><span class="p">][</span><span class="s">&quot;max&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">?</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">{&quot;status&quot;:&quot;active&quot;}&#39;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">{&quot;status&quot;:&quot;inactive&quot;}&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This query marks devices as “enabled” if they received or sent any traffic within the past hour.</p>
+<a class="reference internal image-reference" href="images/filtered_wildcards1.png"><img alt="Filtered wildcard with multiple devices selected" src="images/filtered_wildcards1.png" style="width: 600px;" />
+</a>
+<a class="reference internal image-reference" href="images/filtered_wildcards2.png"><img alt="Filtered wildcard with single device selected" src="images/filtered_wildcards2.png" style="width: 600px;" />
+</a>
+</section>
+</section>
+<section id="complex-pathelts">
+<span id="id12"></span><h3><a class="toc-backref" href="#id52" role="doc-backlink">Complex path elements</a><a class="headerlink" href="#complex-pathelts" title="Link to this heading"></a></h3>
+<p>Most paths in the database are made of string path elements. In AQL, they are natively handled and
+are separated with slashes in queries. However, some paths can contain path elements of different
+types, some of which don’t exist in AQL. AQL, however, supports some of them using the curly
+brackets syntax.</p>
+<section id="numerical-value">
+<h4>Numerical value<a class="headerlink" href="#numerical-value" title="Link to this heading"></a></h4>
+<p>A numerical literal can be used between the curly brackets, and will produce an int path element if
+the literal is an integer literal, and a float path element when it has a decimal part (nil or not).</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{12}/bar`</span><span class="w"> </span><span class="c"># int path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{12.}/bar`</span><span class="w"> </span><span class="c"># float path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{12.0}/bar`</span><span class="w"> </span><span class="c"># float path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{12.35}/bar`</span><span class="w"> </span><span class="c"># float path element</span>
+</pre></div>
+</div>
+</section>
+<section id="boolean-value">
+<h4>Boolean value<a class="headerlink" href="#boolean-value" title="Link to this heading"></a></h4>
+<p>A boolean literal can be used between the curly brackets.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{true}/bar`</span><span class="w"> </span><span class="c"># bool (true) path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{false}/bar`</span><span class="w"> </span><span class="c"># bool (false) path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/true/bar`</span><span class="w"> </span><span class="c"># string path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{&quot;true&quot;}/bar`</span><span class="w"> </span><span class="c"># string path element (identical to the previous one)</span>
+</pre></div>
+</div>
+</section>
+<section id="string-value">
+<h4>String value<a class="headerlink" href="#string-value" title="Link to this heading"></a></h4>
+<p>A string literal can be used between the curly brackets. This is mostly useful for path elements that
+contain a slash</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{&quot;my string value&quot;}/bar`</span><span class="w"> </span><span class="c"># string path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{&quot;my/string/with/slashes&quot;}/bar`</span><span class="w"> </span><span class="c"># string path element containing slashes</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/my\/string\/with\/slashes/bar`</span><span class="w"> </span><span class="c"># identical to the previous one</span>
+</pre></div>
+</div>
+</section>
+<section id="map-value">
+<h4>Map value<a class="headerlink" href="#map-value" title="Link to this heading"></a></h4>
+<p>A map can be input using the JSON syntax (curly brackets and comma-separated colon-linked pairs).</p>
+<p>Can contain nested lists and maps.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{&quot;key&quot;: 1.0}/bar`</span><span class="w"> </span><span class="c"># map(&quot;key&quot;: float(1)) path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{&quot;key&quot;: 1}/bar`</span><span class="w"> </span><span class="c"># map(&quot;key&quot;: int(1)) path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{&quot;key&quot;: 1.1}/bar`</span><span class="w"> </span><span class="c"># map(&quot;key&quot;: float(1.1)) path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/{&quot;key&quot;: &quot;val&quot;, &quot;keyb&quot;: true}/bar`</span><span class="w"> </span><span class="c"># map(&quot;key&quot;: str(&quot;val&quot;), &quot;keyb&quot;: bool(true))</span>
+</pre></div>
+</div>
+</section>
+<section id="list-value">
+<h4>List value<a class="headerlink" href="#list-value" title="Link to this heading"></a></h4>
+<p>A list can be input using the JSON syntax (square brackets and comma-separated values). JSON does
+not know the difference between floats and ints, so a numerical value with a nil decimal part will
+be interpreted as an int, and one with a non-nil decimal part will be interpreted as a float. Can
+contain nested lists and maps</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/[1.0, 1, 1.1]/bar`</span><span class="w"> </span><span class="c"># list(int(1), int(1), float(1.1)) path element</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`myDataset:/foo/[true, &quot;str&quot;, {&quot;subkey&quot;: &quot;subval&quot;}, [1]]/bar`</span><span class="w"> </span><span class="c"># list(bool(true), str(&quot;str&quot;), map(&quot;subkey&quot;: str(&quot;subval&quot;)), list([int(1)]))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="fields">
+<h3><a class="toc-backref" href="#id53" role="doc-backlink">Fields</a><a class="headerlink" href="#fields" title="Link to this heading"></a></h3>
+<p><span class="guilabel">Added in revision 5</span></p>
+<p>The fields section of the query is the list of keys that should be queried at the specified path.
+It is optional, and placed after the closing backtick of the dataset and path part of the query, and
+before the range parameter.</p>
+<p>Like every other components of the query, the keys must be statically defined, which means they have
+to be either literals or input variables. They cannot use locally defined variables because queries
+are executed before the evaluation of the AQL code.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Selecting the fields can make the query faster and cheaper. It is optional but strongly recommended
+when only a part of the data at the requested path is needed.</p>
+</div>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE123456/versioned-data/counts/operStatus`</span>
+timeseries{
+        start: 2023-02-03 01:44:20.325212627 +0000 GMT
+        end: 2024-10-22 17:10:48.032887000 +0100 IST
+        2023-02-03 01:44:20.325212627 +0000 GMT: dict{
+                intfOperDormant: 0
+                intfOperLowerLayerDown: 0
+                intfOperTesting: 0
+                intfOperUnknown: 0
+        }
+        2024-05-31 23:08:25.618306414 +0100 IST: dict{intfOperNotPresent: 26}
+        2024-09-13 20:48:16.681354596 +0100 IST: dict{
+                intfOperDown: 45
+                intfOperUp: 2
+        }
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE123456/versioned-data/counts/operStatus`</span><span class="p">{</span><span class="s">&quot;intfOperDormant&quot;</span><span class="p">}</span>
+timeseries{
+        start: 2023-02-03 01:44:20.325212627 +0000 GMT
+        end: 2024-10-22 17:12:58.284038000 +0100 IST
+        2023-02-03 01:44:20.325212627 +0000 GMT: dict{intfOperDormant: 0}
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE123456/versioned-data/counts/operStatus`</span><span class="p">{</span><span class="s">&quot;intfOperDormant&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;intfOperUp&quot;</span><span class="p">}</span>
+timeseries{
+        start: 2023-02-03 01:44:20.325212627 +0000 GMT
+        end: 2024-10-22 17:14:00.495112000 +0100 IST
+        2023-02-03 01:44:20.325212627 +0000 GMT: dict{intfOperDormant: 0}
+        2024-09-13 20:48:16.681354596 +0100 IST: dict{intfOperUp: 2}
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`JPE123456:/Sysdb/environment/archer/power/status/powerSupply/*`</span><span class="p">{</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;outputCurrentSensorName&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;inputPower&quot;</span><span class="p">}</span>
+dict{
+        PowerSupply1: timeseries{
+                start: 2024-10-22 03:55:32.374691383 +0100 IST
+                end: 2024-10-22 17:31:36.497902000 +0100 IST
+                2024-10-22 03:55:32.374691383 +0100 IST: dict{
+                        inputPower: dict{value: 158}
+                        name: PowerSupply1
+                        outputCurrentSensorName: CurrentSensorP1/2
+                }
+        }
+        PowerSupply2: timeseries{
+                start: 2024-10-22 03:55:33.299529483 +0100 IST
+                end: 2024-10-22 17:31:36.497902000 +0100 IST
+                2024-10-22 03:55:33.299529483 +0100 IST: dict{
+                        inputPower: dict{value: 153}
+                        name: PowerSupply2
+                        outputCurrentSensorName: CurrentSensorP2/2
+                }
+        }
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`JPE123456:/Sysdb/environment/archer/power/status/powerSupply/*`</span><span class="p">{</span><span class="s">&quot;inputPower&quot;</span><span class="p">}[</span><span class="m">5</span><span class="p">]</span>
+dict{
+        PowerSupply1: timeseries{
+                start: 2024-10-18 12:42:39.861044576 +0100 IST
+                end: 2024-10-22 17:32:04.895275000 +0100 IST
+                        2024-10-18 12:42:39.861044576 +0100 IST: dict{inputPower: dict{value: 159.25}}
+                        2024-10-18 13:45:18.838676763 +0100 IST: dict{inputPower: dict{value: 161.25}}
+                        2024-10-21 03:01:37.514025317 +0100 IST: dict{inputPower: dict{value: 158.5}}
+                        2024-10-21 06:43:41.769409904 +0100 IST: dict{inputPower: dict{value: 160.75}}
+                        2024-10-22 03:07:27.974992986 +0100 IST: dict{inputPower: dict{value: 154}}
+                        2024-10-22 03:55:32.374691383 +0100 IST: dict{inputPower: dict{value: 158}}
+        }
+        PowerSupply2: timeseries{
+                start: 2024-10-18 12:42:39.401834480 +0100 IST
+                end: 2024-10-22 17:32:04.895275000 +0100 IST
+                        2024-10-18 12:42:39.401834480 +0100 IST: dict{inputPower: dict{value: 149}}
+                        2024-10-18 13:45:18.834509980 +0100 IST: dict{inputPower: dict{value: 151.5}}
+                        2024-10-21 03:01:37.510128194 +0100 IST: dict{inputPower: dict{value: 151.75}}
+                        2024-10-21 06:43:41.765597171 +0100 IST: dict{inputPower: dict{value: 153.5}}
+                        2024-10-22 03:07:27.971122700 +0100 IST: dict{inputPower: dict{value: 153.25}}
+                        2024-10-22 03:55:33.299529483 +0100 IST: dict{inputPower: dict{value: 153}}
+        }
+}
+</pre></div>
+</div>
+</section>
+<section id="range-parameter">
+<h3><a class="toc-backref" href="#id54" role="doc-backlink">Range parameter</a><a class="headerlink" href="#range-parameter" title="Link to this heading"></a></h3>
+<p>The query parameter is specified within the square brackets attached to the query. It determines
+the amount (time range or number of updates) of data to fetch.</p>
+<p>The parameter must be written as a <a class="reference internal" href="#num"><span class="std std-ref">num</span></a> or <a class="reference internal" href="#duration"><span class="std std-ref">duration</span></a> literal. It cannot use the value of a variable.</p>
+<section id="no-parameter">
+<h4>No parameter<a class="headerlink" href="#no-parameter" title="Link to this heading"></a></h4>
+<p>If the parameter is not specified, it is equivalent to specifying <code class="docutils literal notranslate"><span class="pre">0</span></code> within the brackets. In that case,
+the query will only return the state of data at the current time.</p>
+<p>This <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> can contain multiple updates if the keys at this path were last update at different times.</p>
+<p>In the example below, keys were last updated in 3 different updates, so the timeseries contains 3 updates.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span>
+timeseries {
+    start: 2021-10-26 16:13:26 +0100
+    end: 2021-10-26 16:13:34 +0100
+    2021-10-26 16:13:26 +0100 IST: dict{
+        key4: 5
+        key5: 6
+    }
+    2021-10-26 16:13:29 +0100 IST: dict{
+        key3: 2
+    }
+    2021-10-26 16:13:34 +0100 IST: dict{
+        key1: 2
+        key2: 1
+    }
+}
+</pre></div>
+</div>
+<div class="admonition-note-merging-the-result admonition">
+<p class="admonition-title">Note: Merging the result</p>
+<p>When getting only the current state (not specifying any parameter), it is common
+practice to use the <a class="reference internal" href="index_stdlib.html#merge"><span class="std std-ref">merge</span></a> function, which will turn a <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> of <a class="reference internal" href="#dict"><span class="std std-ref">dicts</span></a> into a simple <a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a>,
+containing the latest value for each possible key. This allows for direct manipulation of data.</p>
+</div>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">)</span>
+dict{
+    key1: 2
+    key2: 1
+    key3: 2
+    key4: 5
+    key5: 6
+}
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not confuse the query parameter with the bracket operator that accesses a specific update
+in an existing <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<p>In the following example, the first bracket expression is the query parameter, and the second is the
+index of the value to get in the resulting <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">[</span><span class="m">0</span><span class="p">][</span><span class="m">0</span><span class="p">]</span>
+dict{
+    key4: 5
+    key5: 6
+}
+</pre></div>
+</div>
+<p>If you want to use the “index-access” bracket operator and not specify a query parameter, you must either
+explicitly define the query parameter before, or surround the query with parentheses.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">[</span><span class="m">0</span><span class="p">]</span>
+timeseries {
+    start: 2021-10-26 16:13:26 +0100
+    end: 2021-10-26 16:13:34 +0100
+    2021-10-26 16:13:26 +0100 IST: dict{
+        key4: 5
+        key5: 6
+    }
+    2021-10-26 16:13:29 +0100 IST: dict{
+        key3: 2
+    }
+    2021-10-26 16:13:34 +0100 IST: dict{
+        key1: 2
+        key2: 1
+    }
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span>
+error: input:1:1: bracket selector of query can only get a num or duration, got str
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">(</span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">)[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span>
+error: input:1:16: operator [] applied to timeseries needs a value of type num or time
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">(</span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">)[</span><span class="m">0</span><span class="p">]</span>
+dict{
+    key4: 5
+    key5: 6
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">(</span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">)[</span><span class="m">0</span><span class="p">][</span><span class="s">&quot;key4&quot;</span><span class="p">]</span>
+5
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">)[</span><span class="s">&quot;key4&quot;</span><span class="p">]</span>
+5
+</pre></div>
+</div>
+</div>
+</section>
+<section id="number-of-updates">
+<h4>Number of updates<a class="headerlink" href="#number-of-updates" title="Link to this heading"></a></h4>
+<p>If the square brackets contain a <a class="reference internal" href="#num"><span class="std std-ref">num</span></a> literal, this <a class="reference internal" href="#num"><span class="std std-ref">num</span></a> defines what number <code class="docutils literal notranslate"><span class="pre">n</span></code> of updates to get.
+The query will fetch the <code class="docutils literal notranslate"><span class="pre">n</span></code> latest updates at this path, with each update corresponding to an entry
+in the resulting <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>. However, the length of the timeseries can be superior to <code class="docutils literal notranslate"><span class="pre">n</span></code>, because
+the query also gets the “state” of data before the <code class="docutils literal notranslate"><span class="pre">n</span></code> updates, i.e. the last update for each key at this
+path before the <code class="docutils literal notranslate"><span class="pre">n</span></code> updates.</p>
+<p>In the example below, the query requests 3 updates. However, the <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> returned has a length of 5.
+This is because the oldest update of the 3 only updates the value of keys <code class="docutils literal notranslate"><span class="pre">key4</span></code> and <code class="docutils literal notranslate"><span class="pre">key5</span></code>, but not <code class="docutils literal notranslate"><span class="pre">key1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">key2</span></code>, and <code class="docutils literal notranslate"><span class="pre">key3</span></code>. Therefore the query also returns the latest update before it for each of these keys.
+Here, there are two of these “state” updates: one updates both <code class="docutils literal notranslate"><span class="pre">key1</span></code> and <code class="docutils literal notranslate"><span class="pre">key2</span></code>, and the other updates <code class="docutils literal notranslate"><span class="pre">key3</span></code>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span>
+timeseries {
+    start: 2021-10-26 16:13:16 +0100
+    end: 2021-10-26 16:13:34 +0100
+    2021-10-26 16:13:16 +0100 IST: dict{
+        key1: 1
+        key2: 2
+    }
+    2021-10-26 16:13:23 +0100 IST: dict{
+        key3: 1
+    }
+    2021-10-26 16:13:26 +0100 IST: dict{
+        key4: 5
+        key5: 6
+    }
+    2021-10-26 16:13:29 +0100 IST: dict{
+        key1: 2
+        key3: 1
+    }
+    2021-10-26 16:13:34 +0100 IST: dict{
+        key1: 2
+        key2: 1
+    }
+}
+</pre></div>
+</div>
+<p>If the oldest of the 3 updates had updated all the keys stored at this path, there would not have been
+any “state” update and the length of the <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> would have been 3:</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">[</span><span class="m">3</span><span class="p">]</span>
+timeseries {
+    start: 2021-10-26 16:13:26 +0100
+    end: 2021-10-26 16:13:34 +0100
+    2021-10-26 16:13:26 +0100 IST: dict{
+        key1: 5
+        key2: 4
+        key3: 3
+        key4: 2
+        key5: 1
+    }
+    2021-10-26 16:13:29 +0100 IST: dict{
+        key1: 2
+        key3: 1
+    }
+    2021-10-26 16:13:34 +0100 IST: dict{
+        key1: 2
+        key2: 1
+    }
+}
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h4>Duration<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
+<p>If the square brackets contain a <a class="reference internal" href="#duration"><span class="std std-ref">duration</span></a> literal, this specifies the time range of data returned
+by the query.</p>
+<p>The query will return all the updates that happened at this path during the last <code class="docutils literal notranslate"><span class="pre">d</span></code> duration, along
+with the “state” updates, following the same rules as the number of updates.</p>
+<p>In the example below, the query fetches the latest 8 seconds of data. In this interval, three updates
+happened, the oldest of which only updated <code class="docutils literal notranslate"><span class="pre">key4</span></code> and <code class="docutils literal notranslate"><span class="pre">key5</span></code>, so the returned timeseries also contains
+two older updates, which are the latest updates for <code class="docutils literal notranslate"><span class="pre">key1</span></code>, <code class="docutils literal notranslate"><span class="pre">key2</span></code> and <code class="docutils literal notranslate"><span class="pre">key3</span></code> before <code class="docutils literal notranslate"><span class="pre">now()</span> <span class="pre">-</span> <span class="pre">8s</span></code>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/Devices/JPE12345/path/to/some/interface/data`</span><span class="p">[</span><span class="s">8s</span><span class="p">]</span>
+timeseries {
+    start: 2021-10-26 16:13:16 +0100
+    end: 2021-10-26 16:13:34 +0100
+    2021-10-26 16:13:16 +0100 IST: dict{
+        key1: 1
+        key2: 2
+    }
+    2021-10-26 16:13:23 +0100 IST: dict{
+        key3: 1
+    }
+    2021-10-26 16:13:26 +0100 IST: dict{
+        key4: 5
+        key5: 6
+    }
+    2021-10-26 16:13:29 +0100 IST: dict{
+        key1: 2
+        key3: 1
+    }
+    2021-10-26 16:13:34 +0100 IST: dict{
+        key1: 2
+        key2: 1
+    }
+}
+</pre></div>
+</div>
+</section>
+<section id="fixed-timestamps-range">
+<h4>Fixed timestamps range<a class="headerlink" href="#fixed-timestamps-range" title="Link to this heading"></a></h4>
+<p>It is also possible to use two timestamps separated with a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>). This syntax allows querying
+data that was written between these timestamps, along with the state data from before the first
+timestamp.</p>
+<p>Like for every query parameter, it is not possible to use a regular variable as one of the timestamps.
+They have to be defined directly within the square brackets, or use an input metavariable (defined
+outside of the AQL script scope).</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="k">time</span><span class="p">(</span><span class="s">&quot;2022-01-26T16:00:00+00:00&quot;</span><span class="p">):</span><span class="k">time</span><span class="p">(</span><span class="s">&quot;2022-01-26T16:01:00+00:00&quot;</span><span class="p">)]</span>
+timeseries {
+    start: 2022-01-26 16:00:00 +0000 GMT
+    end: 2022-01-26 16:01:00 +0000 GMT
+    2021-10-26 15:59:30 +0100 IST: dict{
+        key1: 1
+    }
+    2021-10-26 16:00:00 +0100 IST: dict{
+        key1: 2
+    }
+    2021-10-26 16:00:30 +0100 IST: dict{
+        key1: 3
+    }
+    2021-10-26 16:01:00 +0100 IST: dict{
+        key1: 4
+    }
+}
+</pre></div>
+</div>
+<p>Example with input variables:</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="l">`analytics:/path/to/data`</span><span class="p">[</span><span class="n">_startTime</span><span class="p">:</span><span class="n">_endTime</span><span class="p">]</span>
+timeseries {
+    start: 2022-01-26 16:00:00 +0000 GMT
+    end: 2022-01-26 16:01:00 +0000 GMT
+    2021-10-26 15:59:30 +0100 IST: dict{
+        key1: 1
+    }
+    2021-10-26 16:00:00 +0100 IST: dict{
+        key1: 2
+    }
+    2021-10-26 16:00:30 +0100 IST: dict{
+        key1: 3
+    }
+    2021-10-26 16:01:00 +0100 IST: dict{
+        key1: 4
+    }
+}
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="square-bracket-operator">
+<h2><a class="toc-backref" href="#id55" role="doc-backlink">Square bracket operator</a><a class="headerlink" href="#square-bracket-operator" title="Link to this heading"></a></h2>
+<p>When applied to a collection (<a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>), the square bracket operator allows access to
+a specific value of that collection.</p>
+<section id="id14">
+<h3><a class="toc-backref" href="#id56" role="doc-backlink">Timeseries</a><a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<p>For a <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>, the type specified within the square brackets can be either a <a class="reference internal" href="#num"><span class="std std-ref">num</span></a> for access to
+a specific numerical index (starts at 0) in the timeseries, or a <a class="reference internal" href="#time"><span class="std std-ref">time</span></a>, for access to a the value at
+a specific <a class="reference internal" href="#time"><span class="std std-ref">time</span></a> (if there is no exact match, it will return the latest value before the specied <a class="reference internal" href="#time"><span class="std std-ref">time</span></a>).</p>
+<p>When accessing a timeseries value using the square bracket operator, the interpreter sets the metavariables
+<code class="docutils literal notranslate"><span class="pre">_bracketTime</span></code> and <code class="docutils literal notranslate"><span class="pre">_bracketIndex</span></code> to the exact time and index associated with that value.</p>
+<p>The <cite>num</cite> index can be negative, in which case it starts from the end of the <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> (index <code class="docutils literal notranslate"><span class="pre">-1</span></code> is the
+last update)</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">myTimeseries</span>
+timeseries {
+    start: 2021-10-26 16:13:16 +0100
+    end: 2021-10-26 16:13:34 +0100
+    2021-10-26 16:13:16 +0100 IST: &quot;val1&quot;
+    2021-10-26 16:13:23 +0100 IST: &quot;val2&quot;
+    2021-10-26 16:13:26 +0100 IST: &quot;val3&quot;
+    2021-10-26 16:13:29 +0100 IST: &quot;val4&quot;
+    2021-10-26 16:13:34 +0100 IST: &quot;val5&quot;
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">myTimeseries</span><span class="p">[</span><span class="k">time</span><span class="p">(</span><span class="s">&quot;2021-10-26T16:13:25+01:00&quot;</span><span class="p">)]</span>
+val2
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_bracketTime</span>
+2021-10-26 16:13:23 +0100 IST
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_bracketIndex</span>
+1
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">myTimeseries</span><span class="p">[</span><span class="o">-</span><span class="m">2</span><span class="p">]</span>
+val4
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_bracketTime</span>
+2021-10-26 16:13:29 +0100 IST
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_bracketIndex</span>
+3
+</pre></div>
+</div>
+</section>
+<section id="id15">
+<h3><a class="toc-backref" href="#id57" role="doc-backlink">Dict</a><a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<p>The square bracket operator allows access to the value associated with a specific key in a <a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a>.
+The key can be of any valid key type:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#num"><span class="std std-ref">num</span></a></p></li>
+<li><p><a class="reference internal" href="#bool"><span class="std std-ref">bool</span></a></p></li>
+<li><p><a class="reference internal" href="#str"><span class="std std-ref">str</span></a></p></li>
+<li><p>any value returned by the <cite>complexKey</cite> function (even if type is <a class="reference internal" href="#unknown"><span class="std std-ref">unknown</span></a>)</p></li>
+</ul>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;k\&quot;: \&quot;v\&quot;}&quot;</span><span class="p">),</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{
+    2: 3
+    key: 1
+    {&quot;k&quot;:&quot;v&quot;}: 4
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="m">2</span><span class="p">]</span>
+3
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key&quot;</span><span class="p">]</span>
+1
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;k\&quot;: \&quot;v\&quot;}&quot;</span><span class="p">)]</span>
+4
+</pre></div>
+</div>
+<p>This operator also allows for setting values in the <a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">[</span><span class="s">&quot;key&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;value&quot;</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{key: value}
+</pre></div>
+</div>
+</section>
+<section id="complex-keys">
+<h3><a class="toc-backref" href="#id58" role="doc-backlink">Complex Keys</a><a class="headerlink" href="#complex-keys" title="Link to this heading"></a></h3>
+<p>Since revision 5, the square bracket operator allows accessing inner values in complex keys.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;</span><span class="o">json:</span><span class="s">[1,2,3]&#39;</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span>
+[1,2,3]
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="m">0</span><span class="p">]</span>
+1
+</pre></div>
+</div>
+</section>
+</section>
+<section id="if-else">
+<h2><a class="toc-backref" href="#id59" role="doc-backlink">If/Else</a><a class="headerlink" href="#if-else" title="Link to this heading"></a></h2>
+<p>AQL also supports <code class="docutils literal notranslate"><span class="pre">if</span></code> / <code class="docutils literal notranslate"><span class="pre">else</span></code> conditions. The syntax is as follows:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="n">condition</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c"># statements</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c"># statements</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>It is possible to write only the <code class="docutils literal notranslate"><span class="pre">if</span></code> block and not the <code class="docutils literal notranslate"><span class="pre">else</span></code>.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="n">condition</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c"># statements</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Variables in AQL are not scoped. This means that variables defined within the scope of the <code class="docutils literal notranslate"><span class="pre">if</span></code> / <code class="docutils literal notranslate"><span class="pre">else</span></code>
+can be accessed from outside.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span>
+error: input:1:1: undeclared variable: a
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="p">{</span>
+<span class="esc">...</span><span class="w">     </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">...</span><span class="w"> </span><span class="p">}</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">a</span>
+1
+</pre></div>
+</div>
+<p>The metavariable <code class="docutils literal notranslate"><span class="pre">_</span></code> is set even by statements within the scope of an <code class="docutils literal notranslate"><span class="pre">if</span></code> / <code class="docutils literal notranslate"><span class="pre">else</span></code>.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">7</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">42</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="p">{</span>
+<span class="esc">...</span><span class="w">     </span><span class="s">&quot;a is the answer&quot;</span>
+<span class="esc">...</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="esc">...</span><span class="w">     </span><span class="s">&quot;a is not the answer&quot;</span>
+<span class="esc">...</span><span class="w"> </span><span class="p">}</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">_</span>
+a is the answer
+</pre></div>
+</div>
+<p>However, the <code class="docutils literal notranslate"><span class="pre">if</span></code> / <code class="docutils literal notranslate"><span class="pre">else</span></code> statement itself does not have a return value, like a variable assignment.
+Therefore, this script will not return <code class="docutils literal notranslate"><span class="pre">&quot;a</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">the</span> <span class="pre">answer&quot;</span></code> but will have no return value:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>
+<span class="k">if</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">42</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">&quot;a is the answer&quot;</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">&quot;a is not the answer&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>To return this value at the end of the script, it is possible to just add a statement that simply
+returns the <code class="docutils literal notranslate"><span class="pre">_</span></code> value. In that case, the script will return <code class="docutils literal notranslate"><span class="pre">&quot;a</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">the</span> <span class="pre">answer&quot;</span></code>:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>
+<span class="k">if</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">42</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">9</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">&quot;a is the answer&quot;</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">&quot;a is not the answer&quot;</span>
+<span class="p">}</span>
+<span class="n">_</span>
+</pre></div>
+</div>
+</section>
+<section id="ternary-expressions">
+<h2><a class="toc-backref" href="#id60" role="doc-backlink">Ternary expressions</a><a class="headerlink" href="#ternary-expressions" title="Link to this heading"></a></h2>
+<p>Ternary expressions allow to use conditions directly within an expression. The syntax is similar to
+that of the C language.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="n">condition</span><span class="w"> </span><span class="p">?</span><span class="w"> </span><span class="n">valueIfConditionIsTrue</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">valueIfConditionIsFalse</span>
+</pre></div>
+</div>
+<p>This can be used in any context that manipulates a value.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="p">?</span><span class="w"> </span><span class="s">&quot;a lower than 3&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a greater than 3&quot;</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">b</span>
+a lower than 3
+</pre></div>
+</div>
+<p>Ternary expressions can be nested.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">?</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="p">?</span><span class="w"> </span><span class="s">&quot;big&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;small&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;negative&quot;</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">b</span>
+small
+</pre></div>
+</div>
+<p>Ternary expressions are mostly used within programmatic filters such as <a class="reference internal" href="index_stdlib.html#map"><span class="std std-ref">map</span></a> (see section <a class="reference external" href="#filters">Filters</a>),
+because these filters only allow pure expressions, and statements such as <code class="docutils literal notranslate"><span class="pre">if</span></code> / <code class="docutils literal notranslate"><span class="pre">else</span></code> or variable
+declarations statements cannot be used in their scope.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/some/data/path`</span><span class="p">[</span><span class="s">16s</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;avg&quot;</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">threshold</span><span class="w"> </span><span class="p">?</span><span class="w"> </span><span class="n">_value</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;forbidden&quot;</span><span class="p">)</span>
+timeseries {
+    start: 2021-10-26 16:13:16 +0100
+    end: 2021-10-26 16:13:34 +0100
+    2021-10-26 16:13:16 +0100 IST: 5
+    2021-10-26 16:13:23 +0100 IST: forbidden
+    2021-10-26 16:13:26 +0100 IST: 3
+    2021-10-26 16:13:29 +0100 IST: 10
+    2021-10-26 16:13:34 +0100 IST: forbidden
+}
+</pre></div>
+</div>
+</section>
+<section id="loops">
+<h2><a class="toc-backref" href="#id61" role="doc-backlink">Loops</a><a class="headerlink" href="#loops" title="Link to this heading"></a></h2>
+<p>AQL supports two kinds of loops: <a class="reference internal" href="#for-loop"><span class="std std-ref">for</span></a> and <a class="reference internal" href="#while-loop"><span class="std std-ref">while</span></a>.</p>
+<section id="for-loop">
+<span id="id16"></span><h3><a class="toc-backref" href="#id62" role="doc-backlink">For loop</a><a class="headerlink" href="#for-loop" title="Link to this heading"></a></h3>
+<p>The for loop iterates over an existing collection (<a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>).
+Since revision 5, for loops can also be used with complex keys (type <cite>unknown</cite>) of type list or map.
+The syntax is as follows:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">collection</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c"># statements</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In the example above, <code class="docutils literal notranslate"><span class="pre">k</span></code> takes the current key (or timestamp if the collection is a <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>),
+and <cite>v</cite> its associated value at each iteration. <code class="docutils literal notranslate"><span class="pre">k</span></code> and <code class="docutils literal notranslate"><span class="pre">v</span></code> are not predefined names and can be named
+any valid variable name by the user:</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">myDict</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;k1&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;k2&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">myKey</span><span class="p">,</span><span class="w"> </span><span class="n">myValue</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">myDict</span><span class="w"> </span><span class="p">{</span>
+<span class="esc">...</span><span class="w">     </span><span class="k">let</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;{&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">myKey</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">myValue</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;}&quot;</span>
+<span class="esc">...</span><span class="w"> </span><span class="p">}</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">s</span>
+{k1: 1}{k2: 2}
+</pre></div>
+</div>
+<p>It is possible to specify only one variable instead of both key and value. In this case, the variable
+will only take the value at each iteration, and the timestamp/key will not be used.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">myDict</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;k1&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;k2&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">myDict</span><span class="w"> </span><span class="p">{</span>
+<span class="esc">...</span><span class="w">     </span><span class="k">let</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">val</span>
+<span class="esc">...</span><span class="w"> </span><span class="p">}</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">i</span>
+3
+</pre></div>
+</div>
+</section>
+<section id="while-loop">
+<span id="id17"></span><h3><a class="toc-backref" href="#id63" role="doc-backlink">While loop</a><a class="headerlink" href="#while-loop" title="Link to this heading"></a></h3>
+<p>While loops will iterate as long as the specified condition is <a class="reference internal" href="#bool"><span class="std std-ref">true</span></a>. The syntax is as follows:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">while</span><span class="w"> </span><span class="n">condition</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c"># statements</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here is an example that computes the factorial of 6.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">fact6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="p">{</span>
+<span class="esc">...</span><span class="w">     </span><span class="k">let</span><span class="w"> </span><span class="n">fact6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fact6</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">a</span>
+<span class="esc">...</span><span class="w">     </span><span class="k">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+<span class="esc">...</span><span class="w"> </span><span class="p">}</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">fact6</span>
+720
+</pre></div>
+</div>
+</section>
+</section>
+<section id="functions">
+<h2><a class="toc-backref" href="#id64" role="doc-backlink">Functions</a><a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="index_stdlib.html"><span class="doc">Standard Library</span></a> of AQL offers a wide range of functions. Each of them is documented in the
+<a class="reference internal" href="index_stdlib.html"><span class="doc">Standard Library</span></a> page.</p>
+<p>However, it is not possible to define new functions in AQL.</p>
+<p>The syntax to call a standard library function is as follows:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="n">functionName</span><span class="p">(</span><span class="n">argument1</span><span class="p">)</span>
+<span class="n">functionName</span><span class="p">(</span><span class="n">argument1</span><span class="p">,</span><span class="w"> </span><span class="n">argument2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The number of arguments varies depending on the function.</p>
+<p>Some examples:</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/some/data/path`</span><span class="p">[</span><span class="s">10s</span><span class="p">]</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="c"># length returns the length of a dict or timeseries</span>
+5
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">avgData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;avg&quot;</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">avgData</span>
+timeseries {
+    start: 2021-10-26 16:13:25 +0100
+    end: 2021-10-26 16:13:34 +0100
+    2021-10-26 16:13:25 +0100 IST: 5
+    2021-10-26 16:13:27 +0100 IST: 2
+    2021-10-26 16:13:29 +0100 IST: 3
+    2021-10-26 16:13:31 +0100 IST: 10
+    2021-10-26 16:13:33 +0100 IST: 1
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">avgData</span><span class="p">)</span>
+4.2
+</pre></div>
+</div>
+</section>
+<section id="id18">
+<h2><a class="toc-backref" href="#id65" role="doc-backlink">Filters</a><a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
+<p>Filters are one of the most powerful features in AQL. They allow filtering, formatting, and refining of data
+returned by queries very easily and much more efficiently than with loops and manual data manipulation.</p>
+<p>The AQL <a class="reference internal" href="index_stdlib.html"><span class="doc">Standard Library</span></a> offers a wide range of filters, designed to adapt to the data structures of
+the CloudVision database. Each of them is documented in the <a class="reference internal" href="index_stdlib.html"><span class="doc">Standard Library</span></a> page.</p>
+<p>Filters can only be applied to a collection (<a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a> or <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a>), and do not alter the data in the
+filtered collection. They return a new collection of the same type, with its content filtered or altered.</p>
+<p>The syntax is as follows:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="n">collection</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">filterName</span><span class="p">(</span><span class="n">argument1</span><span class="p">,</span><span class="w"> </span><span class="n">argument2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The number of arguments varies depending on the filter, and filters can be chained. Some filters, like
+<a class="reference internal" href="index_stdlib.html#fields"><span class="std std-ref">fields</span></a> or <a class="reference internal" href="index_stdlib.html#setfields"><span class="std std-ref">setFields</span></a> for example, take a variable number of arguments.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="n">collection</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">filter1</span><span class="p">(</span><span class="n">argument1</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">filter2</span><span class="p">(</span><span class="n">argument1</span><span class="p">,</span><span class="w"> </span><span class="n">argument2</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">filter3</span><span class="p">(</span><span class="n">argument1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Some filters, such as <a class="reference internal" href="index_stdlib.html#map"><span class="std std-ref">map</span></a> or <a class="reference internal" href="index_stdlib.html#where"><span class="std std-ref">where</span></a> take expressions as arguments, and set metavariables that can
+be used in these expressions to manipulate the content of the collection. Here are some examples
+with a <a class="reference internal" href="#dict"><span class="std std-ref">dict</span></a> but these filters work with <a class="reference internal" href="#timeseries"><span class="std std-ref">timeseries</span></a> as well. For more examples with either type of
+collection, see the detailed documentation for each filter.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;k1&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;k2&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;k3&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{
+    k1: 1
+    k2: 2
+    k3: 3
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="p">)</span>
+dict{
+    k1: 10
+    k2: 20
+    k3: 30
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span>
+dict{
+    k1: 1
+    k2: 2
+    k3: 3
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">20</span><span class="p">)</span>
+dict{
+    k1: 10
+    k2: 20
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="k">str</span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_key</span><span class="p">)</span>
+dict{
+    k1: 10k1
+    k2: 20k2
+    k3: 30k3
+}
+</pre></div>
+</div>
+<p>The expression within a filter can use nested filters.</p>
+<div class="highlight-aqlp notranslate"><div class="highlight"><pre><span></span><span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="k">let</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;d1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;k1&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;d2&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;k1&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">))</span>
+dict{
+        d1: dict{
+                k1: 1
+        }
+        d2: dict{
+                k1: 2
+        }
+}
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="p">)</span>
+error: input:1:4: input:1:15: operator * cannot be used with dict and num
+<span class="esc">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">map</span><span class="p">(</span><span class="n">_value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">10</span><span class="p">))</span>
+dict{
+        d1: dict{
+                k1: 10
+        }
+        d2: dict{
+                k1: 20
+        }
+}
+</pre></div>
+</div>
+</section>
+<section id="directives">
+<h2><a class="toc-backref" href="#id66" role="doc-backlink">Directives</a><a class="headerlink" href="#directives" title="Link to this heading"></a></h2>
+<p>Directives allow setting some options before running an AQL script. They must be specified at the beginning
+of the script code and will be set for the entire execution.</p>
+<p>The syntax is as follows:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">directiveName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="o">|</span><span class="k">false</span>
+</pre></div>
+</div>
+<p>The only directive currently allowed is <code class="docutils literal notranslate"><span class="pre">includeDecommissionedDevices</span></code>. It makes <code class="docutils literal notranslate"><span class="pre">device</span></code> dataset
+wildcards include decommissioned devices’ datasets. By default, these datasets are not included.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">includeDecommissionedDevices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+
+<span class="l">`*:/Sysdb/some/path/to/data`</span>
+</pre></div>
+</div>
+</section>
+<section id="named-wildcards-and-per-value-execution">
+<span id="namedwildcards"></span><h2><a class="toc-backref" href="#id67" role="doc-backlink">Named wildcards and per-value execution</a><a class="headerlink" href="#named-wildcards-and-per-value-execution" title="Link to this heading"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This section covers features that apply outside of the scope of a single AQL script execution.
+Named wildcards are a part of AQL syntax but will modify how the interpreter behaves, by making
+it run the script multiple times instead of one, with different input variables at each execution.</p>
+<p>This execution can then produce multiple outputs.</p>
+</div>
+<section id="default-behaviour">
+<h3><a class="toc-backref" href="#id68" role="doc-backlink">Default behaviour</a><a class="headerlink" href="#default-behaviour" title="Link to this heading"></a></h3>
+<p>It is possible to insert a named wildcard into a query with the following syntax: <code class="docutils literal notranslate"><span class="pre">&lt;wildcardName&gt;</span></code>.
+When a named wildcard is set in a query, the interpreter catches it before running the AQL script;
+instead of running it once, it runs the script multiple times for each path element matching the named
+wildcard.</p>
+<p>In each run, the value of the path element is also set by the interpreter as a metavariable.
+The name of that variable is always prefixed with an underscore, like all metavariables, but you do not
+have to specify that underscore in the wildcard name. Therefore, these two syntaxes have the exact same
+result, with the path element being stored in variable <code class="docutils literal notranslate"><span class="pre">_device</span></code></p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="l">`analytics:/Devices/&lt;device&gt;/interfaces/data`</span>
+</pre></div>
+</div>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="l">`analytics:/Devices/&lt;_device&gt;/interfaces/data`</span>
+</pre></div>
+</div>
+<p>Example:</p>
+<p>Regular wildcard:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/some/path/to/data`</span><span class="p">[</span><span class="s">1m</span><span class="p">]</span>
+<span class="n">data</span><span class="w"> </span><span class="c"># This contains the data for all datasets (type = dict of timeseries)</span>
+</pre></div>
+</div>
+<p>Named wildcard:</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`&lt;d&gt;:/some/path/to/data`</span><span class="p">[</span><span class="s">1m</span><span class="p">]</span>
+<span class="k">let</span><span class="w"> </span><span class="n">deviceName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_d</span><span class="w"> </span><span class="c"># deviceName is a single string value, the name of the dataset in the current run</span>
+<span class="n">data</span><span class="w"> </span><span class="c"># This contains only the data for one dataset (type = timeseries)</span>
+</pre></div>
+</div>
+<p>For the named wildcard, the AQL script runs multiple times and the interpreter returns the list of all the
+outputs. The user only has to manage data for one single dataset within the AQL code.</p>
+<p>For the regular wildcard, the AQL script runs only once, and contains the data of a datasets in a dict.
+The user has to deal with the data of all the datasets manually.</p>
+</section>
+<section id="manualuserinput">
+<span id="id19"></span><h3><a class="toc-backref" href="#id69" role="doc-backlink">Manual user input</a><a class="headerlink" href="#manualuserinput" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>User defined input variables are used to control behaviour of <a class="reference external" href="#namedwildcards">Named wildcards</a>
+as well as <a class="reference external" href="#filteredwildcards">Filtered wildcards</a>.</p>
+</div>
+<p>When running AQL scripts through CLI, the Service API, or directly using the AQL interpreter library,
+it is possible to pass input variables to manually control the multiple runs of named or filtered
+wildcards from outside the scope of the AQL script.</p>
+<p>In the AQL library, this is handled through the <code class="docutils literal notranslate"><span class="pre">inputVars</span></code> parameter, in the Service API, through the
+<code class="docutils literal notranslate"><span class="pre">varsets</span></code> field.</p>
+<p>In any case, the field is a list that defines the list of times the query will be run.
+Each element of the list is a list or map of the variables that the interpreter will set in the environment
+before running the AQL script.</p>
+<p>If these varsets contain values that match the variable name of a named/filtered wildcard, the interpreter will
+not perform the global GET on all defined values and instead run the query one or several times, following
+the runs defined in the varset.</p>
+<p>Example with named wildcards:</p>
+<p>With these input variable sets:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;_d&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JPE123456&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;_i&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet5&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;_d&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JPE123456&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;_i&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet6&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;_d&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JPE654321&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;_i&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ethernet1&quot;</span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>The following query will just run three times, twice for device <code class="docutils literal notranslate"><span class="pre">JPE123456</span></code> (with interface <code class="docutils literal notranslate"><span class="pre">Ethernet5</span></code>
+the first time and <code class="docutils literal notranslate"><span class="pre">Ethernet6</span></code> the second), and once for device <code class="docutils literal notranslate"><span class="pre">JPE654321</span></code>, with interface <code class="docutils literal notranslate"><span class="pre">Ethernet1</span></code>.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">interfaceData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`&lt;d&gt;:/Sysdb/hardware/archer/xcvr/status/all/&lt;i&gt;`</span><span class="p">[</span><span class="s">10m</span><span class="p">]</span>
+<span class="k">let</span><span class="w"> </span><span class="n">deviceAndInterfaceNames</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_d</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_i</span><span class="w"> </span><span class="c"># This is just a string containing the device and interface name</span>
+<span class="n">interfaceData</span><span class="w"> </span><span class="c"># This is a timeseries containing the last 10 mins of data for the current intf and device</span>
+</pre></div>
+</div>
+<p>Example with filtered wildcards:</p>
+<p>With these input variable sets:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;_dv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;JPE123456&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;HSH123456&quot;</span><span class="p">],</span><span class="w"> </span><span class="nt">&quot;_int&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Ethernet1&quot;</span><span class="p">,</span><span class="s2">&quot;Ethernet5&quot;</span><span class="p">]},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;_dv&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JPE654321&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;_int&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Ethernet1&quot;</span><span class="p">,</span><span class="s2">&quot;Ethernet3&quot;</span><span class="p">]}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>The following query will run two times, once for devices <code class="docutils literal notranslate"><span class="pre">JPE123456</span></code> and <code class="docutils literal notranslate"><span class="pre">HSH123456</span></code>
+(with interfaces <code class="docutils literal notranslate"><span class="pre">Ethernet1``and</span> <span class="pre">``Ethernet5</span></code>), and once for device <code class="docutils literal notranslate"><span class="pre">JPE654321</span></code>
+(with interfaces <code class="docutils literal notranslate"><span class="pre">Ethernet1</span></code> and <code class="docutils literal notranslate"><span class="pre">Ethernet3</span></code>).</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="l">`*:/Sysdb/hardware/archer/xcvr/status/all/*i`</span><span class="p">[</span><span class="s">10m</span><span class="p">]</span>
+
+<span class="c"># Execution 1 (varset = {_dv: [JPE123456 HSH123456], _int: [Ethernet1 Ethernet5]}):</span>
+<span class="k">dict</span><span class="p">{</span>
+<span class="w">    </span><span class="n">JPE123456</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">{</span>
+<span class="w">        </span><span class="n">Ethernet1</span><span class="p">:</span><span class="w"> </span><span class="k">timeseries</span><span class="p">{</span>
+<span class="w">            </span><span class="n">start</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">17</span><span class="p">:</span><span class="m">33</span><span class="p">:</span><span class="m">40.662701881</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="n">end</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">12</span><span class="o">-</span><span class="m">06</span><span class="w"> </span><span class="m">15</span><span class="p">:</span><span class="m">46</span><span class="p">:</span><span class="m">10.248705559</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">17</span><span class="p">:</span><span class="m">33</span><span class="p">:</span><span class="m">40.662701881</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">{</span>
+<span class="w">                </span><span class="n">presence</span><span class="p">:</span><span class="w"> </span><span class="k">true</span>
+<span class="w">                </span><span class="n">transceiverType</span><span class="p">:</span><span class="w"> </span><span class="m">1000</span><span class="n">BaseT</span>
+<span class="w">                </span><span class="n">vendorName</span><span class="p">:</span><span class="w"> </span><span class="n">Arista</span><span class="w"> </span><span class="n">Networks</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">Ethernet5</span><span class="p">:</span><span class="w"> </span><span class="k">timeseries</span><span class="p">{</span>
+<span class="w">            </span><span class="n">start</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">17</span><span class="p">:</span><span class="m">33</span><span class="p">:</span><span class="m">40.662701881</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="n">end</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">12</span><span class="o">-</span><span class="m">06</span><span class="w"> </span><span class="m">15</span><span class="p">:</span><span class="m">46</span><span class="p">:</span><span class="m">10.248705559</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">17</span><span class="p">:</span><span class="m">33</span><span class="p">:</span><span class="m">40.662701881</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">{</span>
+<span class="w">                </span><span class="n">presence</span><span class="p">:</span><span class="w"> </span><span class="k">true</span>
+<span class="w">                </span><span class="n">transceiverType</span><span class="p">:</span><span class="w"> </span><span class="m">1000</span><span class="n">BaseT</span>
+<span class="w">                </span><span class="n">vendorName</span><span class="p">:</span><span class="w"> </span><span class="n">Arista</span><span class="w"> </span><span class="n">Networks</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">HSH123456</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">{</span>
+<span class="w">        </span><span class="n">Ethernet1</span><span class="p">:</span><span class="w"> </span><span class="k">timeseries</span><span class="p">{</span>
+<span class="w">            </span><span class="n">start</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">18</span><span class="p">:</span><span class="m">29</span><span class="p">:</span><span class="m">05.331186322</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="n">end</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">12</span><span class="o">-</span><span class="m">06</span><span class="w"> </span><span class="m">15</span><span class="p">:</span><span class="m">46</span><span class="p">:</span><span class="m">10.248705559</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">18</span><span class="p">:</span><span class="m">29</span><span class="p">:</span><span class="m">05.331186322</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">{</span>
+<span class="w">                </span><span class="n">presence</span><span class="p">:</span><span class="w"> </span><span class="k">true</span>
+<span class="w">                </span><span class="n">serialNumber</span><span class="p">:</span><span class="w"> </span><span class="n">XMD1145MC095</span>
+<span class="w">                </span><span class="n">transceiverType</span><span class="p">:</span><span class="w"> </span><span class="m">1000</span><span class="n">BaseT</span>
+<span class="w">                </span><span class="n">vendorName</span><span class="p">:</span><span class="w"> </span><span class="n">Arista</span><span class="w"> </span><span class="n">Networks</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">Ethernet5</span><span class="p">:</span><span class="w"> </span><span class="k">timeseries</span><span class="p">{</span>
+<span class="w">            </span><span class="n">start</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">18</span><span class="p">:</span><span class="m">29</span><span class="p">:</span><span class="m">05.341094729</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="n">end</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">12</span><span class="o">-</span><span class="m">06</span><span class="w"> </span><span class="m">15</span><span class="p">:</span><span class="m">46</span><span class="p">:</span><span class="m">10.248705559</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">18</span><span class="p">:</span><span class="m">29</span><span class="p">:</span><span class="m">05.341094729</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">{</span>
+<span class="w">                </span><span class="n">presence</span><span class="p">:</span><span class="w"> </span><span class="k">true</span>
+<span class="w">                </span><span class="n">serialNumber</span><span class="p">:</span><span class="w"> </span><span class="n">XMD1239MCJAH</span>
+<span class="w">                </span><span class="n">transceiverType</span><span class="p">:</span><span class="w"> </span><span class="m">1000</span><span class="n">BaseT</span>
+<span class="w">                </span><span class="n">vendorName</span><span class="p">:</span><span class="w"> </span><span class="n">Arista</span><span class="w"> </span><span class="n">Networks</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c"># Execution 2 (varset = {_dv: [JPE654321], _int: [Ethernet1 Ethernet3]}):</span>
+<span class="k">dict</span><span class="p">{</span>
+<span class="w">    </span><span class="n">JPE654321</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">{</span>
+<span class="w">        </span><span class="n">Ethernet1</span><span class="p">:</span><span class="w"> </span><span class="k">timeseries</span><span class="p">{</span>
+<span class="w">            </span><span class="n">start</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">13</span><span class="p">:</span><span class="m">19</span><span class="p">:</span><span class="m">27.069039503</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="n">end</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">12</span><span class="o">-</span><span class="m">06</span><span class="w"> </span><span class="m">15</span><span class="p">:</span><span class="m">46</span><span class="p">:</span><span class="m">10.248705559</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">13</span><span class="p">:</span><span class="m">19</span><span class="p">:</span><span class="m">27.069039503</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">{</span><span class="n">presence</span><span class="p">:</span><span class="w"> </span><span class="k">false</span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">Ethernet3</span><span class="p">:</span><span class="w"> </span><span class="k">timeseries</span><span class="p">{</span>
+<span class="w">            </span><span class="n">start</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">13</span><span class="p">:</span><span class="m">19</span><span class="p">:</span><span class="m">27.218098594</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="n">end</span><span class="p">:</span><span class="w"> </span><span class="m">2024</span><span class="o">-</span><span class="m">12</span><span class="o">-</span><span class="m">06</span><span class="w"> </span><span class="m">15</span><span class="p">:</span><span class="m">46</span><span class="p">:</span><span class="m">10.248705559</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span>
+<span class="w">            </span><span class="m">2024</span><span class="o">-</span><span class="m">11</span><span class="o">-</span><span class="m">13</span><span class="w"> </span><span class="m">13</span><span class="p">:</span><span class="m">19</span><span class="p">:</span><span class="m">27.218098594</span><span class="w"> </span><span class="o">+</span><span class="m">0100</span><span class="w"> </span><span class="n">CET</span><span class="p">:</span><span class="w"> </span><span class="k">dict</span><span class="p">{</span><span class="n">presence</span><span class="p">:</span><span class="w"> </span><span class="k">false</span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>For the following input variable sets:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;_dv&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;JPE123456&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;JPE654321&quot;</span><span class="p">],</span><span class="w"> </span><span class="nt">&quot;_int&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Ethernet1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Ethernet5&quot;</span><span class="p">,</span><span class="s2">&quot;Ethernet6&quot;</span><span class="p">]}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>The previous query will search for all combinations of given devices and interfaces with one run.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is possible to mix filtered and named wildcards but with uniq names!</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="AQL Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index_stdlib.html" class="btn btn-neutral float-right" title="AQL Standard Library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Arista Networks.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

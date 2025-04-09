@@ -1,0 +1,164 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AQL Documentation &mdash; CloudVision Advanced Query Language 4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0190abbe" />
+
+  
+    <link rel="canonical" href="https://aql.arista.com/index.html" />
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=71af5d5d"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Language Specification" href="index_doc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            CloudVision Advanced Query Language
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index_doc.html">Language Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_stdlib.html">AQL Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Language revisions / Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_examples.html">AQL Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">CloudVision Advanced Query Language</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">AQL Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aql-documentation">
+<h1>AQL Documentation<a class="headerlink" href="#aql-documentation" title="Link to this heading"></a></h1>
+<p>This page is the official documentation for the CloudVision Advanced Query Language (AQL).</p>
+<p>The AQL language can be used with Arista’s CloudVision to configure dashboards, query data, configure custom event rules, etc.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>AQL scripts and dashboards may stop working and require a manual update following a hardware upgrade or EOS image update, as data paths may have changed.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To read the documentation for other revisions of the language, please check the <a class="reference external" href="revisions_index/index.html">Revisions index</a></p>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index_doc.html">Language Specification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#quick-overview">Quick overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#basic-statements">Basic statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#types">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#language-keywords">Language keywords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#language-operators">Language Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#comparisons">Comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#operations">Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#typecasts">Typecasts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#json-support">JSON support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#queries">Queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#square-bracket-operator">Square bracket operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#if-else">If/Else</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#ternary-expressions">Ternary expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#loops">Loops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#id18">Filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_doc.html#named-wildcards-and-per-value-execution">Named wildcards and per-value execution</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_stdlib.html">AQL Standard Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index_stdlib.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index_stdlib.html#filters">Filters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Language revisions / Change log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#revision-per-cloudvision-release">Revision per CloudVision release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#change-log">Change log</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_examples.html">AQL Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/interface_states/index.html">Interface States Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/layer2_and_layer3/index.html">Layer 2 and Layer 3 examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/system_health/index.html">System Health Examples</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index_doc.html" class="btn btn-neutral float-right" title="Language Specification" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Arista Networks.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

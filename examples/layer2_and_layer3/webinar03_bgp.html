@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAC Webinar03 2023 - BGP States &mdash; CloudVision Advanced Query Language 4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0190abbe" />
+
+  
+    <link rel="canonical" href="https://aql.arista.com/examples/layer2_and_layer3/webinar03_bgp.html" />
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=71af5d5d"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CloudVision Advanced Query Language
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_doc.html">Language Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_stdlib.html">AQL Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Language revisions / Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_examples.html">AQL Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CloudVision Advanced Query Language</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">TAC Webinar03 2023 - BGP States</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/layer2_and_layer3/webinar03_bgp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tac-webinar03-2023-bgp-states">
+<h1>TAC Webinar03 2023 - BGP States<a class="headerlink" href="#tac-webinar03-2023-bgp-states" title="Link to this heading"></a></h1>
+<p>This dashboards helps to provide current and historical BGP status and provides link flap counters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some of the BGP states are not streamed by default and the <code class="docutils literal notranslate"><span class="pre">/Smash/routing/bgp/bgpPeerInfoStatus/default/bgpPeerStatisticsEntry</span></code> needs to be added to the TerminAttr include list using the tastreaming.TerminattrStreaming service API.
+Examples can be found <a class="reference external" href="../../index_examples.html#terminattrstreamingpermitlistnote">here</a></p>
+</div>
+<section id="pre-requisites">
+<h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading"></a></h2>
+<ul>
+<li><p>Devices will need to be tagged with tag label <code class="docutils literal notranslate"><span class="pre">site_name</span></code> and the label value of the site’s name, for example a customer has 3 sites: ABC, DEF, XYZ</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Tag <code class="docutils literal notranslate"><span class="pre">site_name:ALL</span></code> to all devices</p></li>
+<li><p>Tag <code class="docutils literal notranslate"><span class="pre">site_name:ABC</span></code> to ABC devices</p></li>
+<li><p>repeat for DEF and XYZ</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Devices with multiple supervisors upon supervisor failover might not show the correct states</p></li>
+</ul>
+</section>
+<section id="bgp-summary">
+<h2>BGP Summary<a class="headerlink" href="#bgp-summary" title="Link to this heading"></a></h2>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="c"># set vars</span>
+<span class="k">let</span><span class="w"> </span><span class="n">afis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">let</span><span class="w"> </span><span class="n">afi_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">let</span><span class="w"> </span><span class="n">bgpPeerAfiSafiActive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;l2vpnEvpn&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ipv4Unicast&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">bgpPeerAfiSafiActiveName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;l2vpnEvpn&quot;</span><span class="p">,</span><span class="s">&quot;L2VPN EVPN&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ipv4Unicast&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;IPv4 Unicast&quot;</span><span class="p">)</span>
+
+<span class="c"># Get all devices from a specific site</span>
+<span class="k">let</span><span class="w"> </span><span class="n">devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/tags/labels/devices/site_name/value/&lt;_SITE_NAME&gt;/elements`</span><span class="p">)</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">bgpNeighbors</span><span class="w"> </span><span class="o">=</span><span class="l">`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/*/bgpPeerInfoStatusEntry/*`</span>
+<span class="k">if</span><span class="w"> </span><span class="n">_device</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">bgpNeighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bgpNeighbors</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">fields</span><span class="p">(</span><span class="n">_device</span><span class="p">)</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_SITE_NAME</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">bgpNeighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bgpNeighbors</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">bgpPeerInfoStatusEntry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/Sysdb/cell/1/routing/bgp/export/vrfBgpPeerInfoStatusEntryTable/*/bgpPeerInfoStatusEntry/*`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">bgpPeerStatisticsEntry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/Smash/routing/bgp/bgpPeerInfoStatus/*/bgpPeerStatisticsEntry`</span>
+
+<span class="c"># This is the table</span>
+<span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">let</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="c"># Lets loop over every device</span>
+<span class="k">for</span><span class="w"> </span><span class="n">deviceKey</span><span class="p">,</span><span class="w"> </span><span class="n">deviceSessions</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">bgpNeighbors</span><span class="p">{</span>
+<span class="w">    </span><span class="c"># And each session on the devices</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">_device</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">deviceKey</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_device</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">vrfKey</span><span class="p">,</span><span class="w"> </span><span class="n">vrfValue</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">deviceSessions</span><span class="p">{</span>
+<span class="w">            </span><span class="c"># Check if _vrf is empty or if the current vrfKey is in _vrf</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">_vrf</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">_vrf</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">vrfKey</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="n">sessionData</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">vrfValue</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">sessionData</span><span class="p">)</span>
+<span class="w">                    </span><span class="c"># Add one to the ID</span>
+<span class="w">                    </span><span class="k">let</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+<span class="w">                    </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">                    </span><span class="c"># This is where we add the various columns</span>
+<span class="w">                    </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;0. Device&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceKey</span>
+<span class="w">                    </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;1. Status&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s">&quot;bgpState&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span>
+<span class="w">                    </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;2. Peering Address&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s">&quot;bgpPeerLocalAddr&quot;</span><span class="p">]</span>
+<span class="w">                    </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;3. Neighbor Address&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s">&quot;key&quot;</span><span class="p">]</span>
+<span class="w">                    </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;4. Neighbor AS&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="s">&quot;bgpPeerAs&quot;</span><span class="p">][</span><span class="s">&quot;value&quot;</span><span class="p">]</span>
+<span class="w">                    </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;6. VRF&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vrfKey</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">bgpPeerInfoStatusEntry</span><span class="p">,</span><span class="w"> </span><span class="n">deviceKey</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">bgpPeerStatisticsEntry</span><span class="p">,</span><span class="w"> </span><span class="n">deviceKey</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">bgpPeerInfoStatusEntry</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">],</span><span class="w"> </span><span class="n">vrfKey</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="k">let</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">bgpPeerInfoStatusEntry</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">][</span><span class="n">vrfKey</span><span class="p">][</span><span class="n">ip</span><span class="p">])</span>
+<span class="w">                            </span><span class="k">for</span><span class="w"> </span><span class="n">kafi</span><span class="p">,</span><span class="w"> </span><span class="n">kval</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">test</span><span class="p">[</span><span class="s">&quot;bgpPeerAfiSafiActive&quot;</span><span class="p">]{</span>
+<span class="w">                                </span><span class="k">if</span><span class="w"> </span><span class="n">kval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">true</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                    </span><span class="n">afis</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bgpPeerAfiSafiActive</span><span class="p">[</span><span class="n">kafi</span><span class="p">]</span>
+<span class="w">                                    </span><span class="n">afi_name</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bgpPeerAfiSafiActiveName</span><span class="p">[</span><span class="n">kafi</span><span class="p">]</span>
+<span class="w">                                    </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;7. AFI/SAFI&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">afi_name</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">]</span>
+<span class="w">                                </span><span class="p">}</span>
+<span class="w">                            </span><span class="p">}</span>
+<span class="w">                            </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;5. Peer Description&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">test</span><span class="p">[</span><span class="s">&quot;bgpPeerDescription&quot;</span><span class="p">]</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">bgpPeerStatisticsEntry</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">],</span><span class="w"> </span><span class="n">vrfKey</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="k">let</span><span class="w"> </span><span class="n">bgpPeerAfiSafiStats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">bgpPeerStatisticsEntry</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">][</span><span class="n">vrfKey</span><span class="p">])</span>
+<span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">afis</span><span class="p">,</span><span class="w"> </span><span class="n">deviceKey</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">bgpPeerAfiSafiStats</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="p">){</span>
+<span class="w">                                </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;8. PfxRcd&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bgpPeerAfiSafiStats</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="s">&quot;bgpPeerAfiSafiStats&quot;</span><span class="p">][</span><span class="n">afis</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">]][</span><span class="s">&quot;prefixIn&quot;</span><span class="p">]</span>
+<span class="w">                                </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;9. PfxAcc&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bgpPeerAfiSafiStats</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="s">&quot;bgpPeerAfiSafiStats&quot;</span><span class="p">][</span><span class="n">afis</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">]][</span><span class="s">&quot;prefixAcceptedIn&quot;</span><span class="p">]</span>
+<span class="w">                            </span><span class="p">}</span>
+<span class="w">                        </span><span class="p">}</span>
+
+
+<span class="w">                    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="c"># need to figure out why sometimes there&#39;s no prefix info</span>
+<span class="w">                        </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;8. PfxRcd&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;N/A&quot;</span>
+<span class="w">                        </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;9. PfxAcc&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;N/A&quot;</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bgpPeerIntoOrOutOfEstablishedTime&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="n">result</span><span class="p">[</span><span class="n">id</span><span class="p">][</span><span class="s">&quot;10. Up/Down&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="k">duration</span><span class="p">(</span><span class="m">1000000000</span><span class="o">*</span><span class="n">round</span><span class="p">(</span><span class="k">num</span><span class="p">(</span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">time</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;bgpPeerIntoOrOutOfEstablishedTime&quot;</span><span class="p">]</span><span class="o">*</span><span class="m">1000000000</span><span class="p">))</span><span class="o">/</span><span class="m">1000000000</span><span class="p">)))</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">result</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/webinar03_bgp1.png"><img alt="BGP Summary" class="align-center" src="../../_images/webinar03_bgp1.png" style="width: 1400px;" />
+</a>
+<a class="reference internal image-reference" href="../../_images/webinar03_bgp1_2.png"><img alt="BGP Summary2" class="align-center" src="../../_images/webinar03_bgp1_2.png" style="width: 1400px;" />
+</a>
+<a class="reference internal image-reference" href="../../_images/webinar03_bgp1_3.png"><img alt="BGP Summary23" class="align-center" src="../../_images/webinar03_bgp1_3.png" style="width: 1400px;" />
+</a>
+</section>
+<section id="bgp-sessions-flaps">
+<h2>BGP Sessions Flaps<a class="headerlink" href="#bgp-sessions-flaps" title="Link to this heading"></a></h2>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="l">`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`</span><span class="p">[</span><span class="s">24h</span><span class="p">]</span>
+<span class="k">let</span><span class="w"> </span><span class="n">devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/tags/labels/devices/site_name/value/&lt;_SITE_NAME&gt;/elements`</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">device</span><span class="p">,</span><span class="w"> </span><span class="n">deviceValues</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">establishedNeighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">flapCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="n">tseries</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">deviceValues</span><span class="p">{</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="n">timestamp</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">tseries</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bgpState&quot;</span><span class="p">){</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="n">values</span><span class="p">[</span><span class="s">&quot;bgpState&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Established&quot;</span><span class="p">{</span>
+<span class="w">                        </span><span class="k">let</span><span class="w"> </span><span class="n">flapCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flapCount</span><span class="w"> </span><span class="o">+</span><span class="m">1</span>
+<span class="w">                        </span><span class="n">establishedNeighbors</span><span class="p">[</span><span class="n">ip</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flapCount</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">establishedNeighbors</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">device</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="s">&quot;Flaps&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="n">result</span>
+</pre></div>
+</div>
+</section>
+<section id="bgp-historical-state-tracker">
+<h2>BGP Historical state tracker<a class="headerlink" href="#bgp-historical-state-tracker" title="Link to this heading"></a></h2>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="c"># BGP Session historical state tracker</span>
+<span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`analytics:/Devices/&lt;_bgpDevice&gt;/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`</span><span class="p">[</span><span class="s">4h</span><span class="p">]</span>
+<span class="k">let</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">for</span><span class="w"> </span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="n">tseries</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">timestamp</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">tseries</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c"># only show selected neighbors or all if none selected</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">_NeighborIP</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">_NeighborIP</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="p">){</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">timestamp</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">res</span><span class="p">[</span><span class="k">str</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setFields</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bgpState&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">?</span><span class="w"> </span><span class="n">values</span><span class="p">[</span><span class="s">&quot;bgpState&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">res</span><span class="p">[</span><span class="k">str</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)][</span><span class="n">ip</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bgpState&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">?</span><span class="w"> </span><span class="n">values</span><span class="p">[</span><span class="s">&quot;bgpState&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="m">0</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">res</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/webinar03_bgp2.png"><img alt="BGP Flaps and Historical state tracker" src="../../_images/webinar03_bgp2.png" style="width: 1400px;" />
+</a>
+</section>
+<section id="bgp-syslog-messages">
+<h2>BGP Syslog Messages<a class="headerlink" href="#bgp-syslog-messages" title="Link to this heading"></a></h2>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`&lt;_bgpDevice&gt;:/Logs/var/log/messages`</span><span class="p">[</span><span class="s">48h</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">field</span><span class="p">(</span><span class="s">&quot;line&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">reMatch</span><span class="p">(</span><span class="n">_value</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;BGP&quot;</span><span class="p">))</span>
+<span class="k">let</span><span class="w"> </span><span class="n">logs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">for</span><span class="w"> </span><span class="n">timest</span><span class="p">,</span><span class="w"> </span><span class="n">logentry</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">logs</span><span class="p">[</span><span class="k">str</span><span class="p">(</span><span class="n">timest</span><span class="o">+</span><span class="p">(</span><span class="n">_tz_offset</span><span class="p">))]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">    </span><span class="n">logs</span><span class="p">[</span><span class="k">str</span><span class="p">(</span><span class="n">timest</span><span class="o">+</span><span class="p">(</span><span class="n">_tz_offset</span><span class="p">))][</span><span class="s">&quot;Log&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">logentry</span>
+<span class="p">}</span>
+<span class="n">logs</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/webinar03_bgp3.png"><img alt="BGP Syslog Messages" src="../../_images/webinar03_bgp3.png" style="width: 1400px;" />
+</a>
+<p><a class="reference download internal" download="" href="../../_downloads/a7b0d5b48cb41c016b861f9f82a02fab/webinar03_bgp_states.json"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">Dashboard</span> <span class="pre">JSON</span> <span class="pre">here</span></code></a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Arista Networks.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

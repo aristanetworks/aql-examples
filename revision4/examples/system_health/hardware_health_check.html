@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hardware Health Check &mdash; CloudVision Advanced Query Language 4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0190abbe" />
+
+  
+    <link rel="canonical" href="https://aql.arista.com/examples/system_health/hardware_health_check.html" />
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=71af5d5d"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CloudVision Advanced Query Language - Revision 4
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_doc.html">Language Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_stdlib.html">AQL Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Language revisions / Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_examples.html">AQL Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CloudVision Advanced Query Language - Revision 4</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Hardware Health Check</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/system_health/hardware_health_check.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hardware-health-check">
+<h1>Hardware Health Check<a class="headerlink" href="#hardware-health-check" title="Link to this heading"></a></h1>
+<section id="power-supply-status-per-device">
+<h2>Power Supply Status per Device<a class="headerlink" href="#power-supply-status-per-device" title="Link to this heading"></a></h2>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/tags/labels/devices/pod_name/value/&lt;_POD_NAME&gt;/elements`</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">devicesSwitchLabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/tags/labels/devices/switch_role/value/&lt;_SWITCH_ROLE&gt;/elements`</span><span class="p">)</span>
+
+
+<span class="k">let</span><span class="w"> </span><span class="n">powerSupply</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/Sysdb/environment/archer/power/status/powerSupply/*`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">filteredPsuStats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">powerSupply</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">powerSupply</span><span class="p">,</span><span class="w"> </span><span class="n">_key</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">true</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">recmap</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">_value</span><span class="p">)[</span><span class="s">&quot;state&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]))</span>
+
+<span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_POD_NAME</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_SWITCH_ROLE</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filteredPsuStats</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_SWITCH_ROLE</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filteredPsuStats</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_POD_NAME</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filteredPsuStats</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devicesSwitchLabel</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filteredPsuStats</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devicesSwitchLabel</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">deviceKey</span><span class="p">,</span><span class="w"> </span><span class="n">deviceValue</span><span class="w">  </span><span class="k">in</span><span class="w"> </span><span class="n">result</span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">powerSupplyKey</span><span class="p">,</span><span class="w"> </span><span class="n">powerSupplyValue</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">deviceValue</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">powerSupplyValue</span><span class="o">==</span><span class="s">&quot;ok&quot;</span><span class="p">{</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">][</span><span class="n">powerSupplyKey</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;✔️&quot;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="p">{</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">][</span><span class="n">powerSupplyKey</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;❌&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">result</span>
+</pre></div>
+</div>
+</section>
+<section id="fan-status-per-device">
+<h2>Fan Status per Device<a class="headerlink" href="#fan-status-per-device" title="Link to this heading"></a></h2>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/tags/labels/devices/pod_name/value/&lt;_POD_NAME&gt;/elements`</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">devicesSwitchLabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/tags/labels/devices/switch_role/value/&lt;_SWITCH_ROLE&gt;/elements`</span><span class="p">)</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">fans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/Sysdb/environment/archer/cooling/status/*`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">fansHwStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fans</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">fans</span><span class="p">,</span><span class="w"> </span><span class="n">_key</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">true</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">recmap</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">_value</span><span class="p">)[</span><span class="s">&quot;hwStatus&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]))</span>
+
+<span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_POD_NAME</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_SWITCH_ROLE</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fansHwStatus</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_SWITCH_ROLE</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fansHwStatus</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_POD_NAME</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fansHwStatus</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devicesSwitchLabel</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fansHwStatus</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devicesSwitchLabel</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">deviceKey</span><span class="p">,</span><span class="w"> </span><span class="n">deviceValue</span><span class="w">  </span><span class="k">in</span><span class="w"> </span><span class="n">result</span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">fansKey</span><span class="p">,</span><span class="w"> </span><span class="n">fansValue</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">deviceValue</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">fansValue</span><span class="o">==</span><span class="s">&quot;ok&quot;</span><span class="p">{</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">][</span><span class="n">fansKey</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;✔️&quot;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="p">{</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">][</span><span class="n">fansKey</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;❌&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">result</span>
+</pre></div>
+</div>
+</section>
+<section id="temperature-sensors-per-device">
+<h2>Temperature Sensors per Device<a class="headerlink" href="#temperature-sensors-per-device" title="Link to this heading"></a></h2>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">devices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/tags/labels/devices/pod_name/value/&lt;_POD_NAME&gt;/elements`</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">devicesSwitchLabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/tags/labels/devices/switch_role/value/&lt;_SWITCH_ROLE&gt;/elements`</span><span class="p">)</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/Sysdb/environment/archer/temperature/status/cell/1/*`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">filteredTemperatureStats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temperature</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span><span class="w"> </span><span class="n">_key</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">true</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">recmap</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">_value</span><span class="p">)[</span><span class="s">&quot;alertRaised&quot;</span><span class="p">]))</span>
+
+<span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_POD_NAME</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_SWITCH_ROLE</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filteredTemperatureStats</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_SWITCH_ROLE</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filteredTemperatureStats</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">_POD_NAME</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filteredTemperatureStats</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devicesSwitchLabel</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filteredTemperatureStats</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">where</span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devicesSwitchLabel</span><span class="p">,</span><span class="w"> </span><span class="n">complexKey</span><span class="p">(</span><span class="s">&quot;{\&quot;deviceID\&quot;: \&quot;&quot;</span><span class="o">+</span><span class="n">_key</span><span class="o">+</span><span class="s">&quot;\&quot;}&quot;</span><span class="p">)))</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">deviceKey</span><span class="p">,</span><span class="w"> </span><span class="n">deviceValue</span><span class="w">  </span><span class="k">in</span><span class="w"> </span><span class="n">result</span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">sensorKey</span><span class="p">,</span><span class="w"> </span><span class="n">sensorValue</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">deviceValue</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">sensorValue</span><span class="o">==</span><span class="k">false</span><span class="p">{</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">][</span><span class="n">sensorKey</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;✔️&quot;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="p">{</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">deviceKey</span><span class="p">][</span><span class="n">sensorKey</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;❌&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">result</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/hardware_health_check.png"><img alt="Hardware Health Check" src="../../_images/hardware_health_check.png" style="width: 600px;" />
+</a>
+<p><a class="reference download internal" download="" href="../../_downloads/52257ff7a9e1e11d2c327bdbbcd8a11a/hardware_health_check.json"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">Dashboard</span> <span class="pre">JSON</span> <span class="pre">here</span></code></a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Arista Networks.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
