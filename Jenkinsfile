@@ -37,8 +37,12 @@ pipeline {
                     steps {
                         container('artools') {
                             dir("${WORKSPACE}") {
-                                sh "PATH=${env.PATH}  a4 scp arastra@distcvp:/dist/storage/aql/latest/aql-v* /tmp/aql"
-                                sh "AQLBIN=/tmp/aql ./aqlcheck.sh"
+                                sshagent (credentials: ['cvp-jenkins-robot-distcvp']) {
+                                    sh "PATH=${env.PATH} scp -o UserKnownHostsFile=/dev/null \
+                                    -o StrictHostKeyChecking=no \
+                                    cvp-jenkins-robot-distcvp@distcvp:/dist/storage/aql/latest/aql-v* /tmp/aql"
+                                    sh "AQLBIN=/tmp/aql ./aqlcheck.sh"
+                                }
                             }
                         }
                     }

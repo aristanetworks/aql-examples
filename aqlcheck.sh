@@ -6,7 +6,7 @@ RESULT=0
 
 for f in $(find . -name "*.aql")
 do
-    OUT="$($AQLBIN --syntax-check "$f" 2>&1)"
+    OUT="$($AQLBIN --time-window "5m" --syntax-check "$f" 2>&1)"
     if [ -n "$OUT" ]
     then
         echo "$OUT"
