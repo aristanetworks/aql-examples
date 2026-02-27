@@ -1,0 +1,15 @@
+# Get InBroadcasPkts_count for all interfaces on all filtered devices
+let data = `analytics:/Devices/*_Devices?/versioned-data/interfaces/data/*/counters`{"inBroadcastPkts_count"}
+let result = newDict()
+
+for device, interfaces in data {
+    for intf, ts in interfaces {
+        let latest = merge(ts)
+        if dictHasKey(latest, "inBroadcastPkts_count") {
+            result[device + " / " + intf] = newDict() | setFields("Device", device, "Interface", intf, "Broadcast In", latest["inBroadcastPkts_count"])
+        }
+    }
+}
+# Put the top 10 in a table format (default is 10)
+# change it from the TopK input
+result | topK(_TopK, _value["Broadcast In"])
