@@ -1,0 +1,423 @@
+{
+  "dashboards": [
+    {
+      "key": "ad81413d-1646-4c2e-a4ca-10782a2d3744",
+      "createdAt": [
+        572740067,
+        1656
+      ],
+      "createdBy": "sakti",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "PTP Dashboards using AQL ver3",
+      "description": "Shows overall PTP Health Per PTP Domain",
+      "widgets": [
+        {
+          "id": "7454329e-0bed-4bbc-adf1-584a103a1eae",
+          "name": "Devices in PTP Error State",
+          "position": {
+            "x": 0,
+            "y": 10
+          },
+          "dimensions": {
+            "width": 24,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "% experimentalFeatures = true\nlet ptpStatus = `*:/Sysdb/ptp/status/parentDS`\nlet ptpConfig = `*:/Sysdb/ptp/config`\nlet dataSetDevices = merge(`analytics:/DatasetInfo/Devices`)\nlet devMap = newDict()\nfor dataSet, dataValues in dataSetDevices{\n    if (dictHasKey(_Domain, dataSet)){\n        devMap[dataSet ] = newDict()\n        devMap[dataSet ][\"hostname\"] = str(dataValues[\"hostname\"])\n        devMap[dataSet ][\"mac\"] = str(dataValues[\"mac\"])\n        }}\n\n\nlet result = newDict()\nlet ptpData = newDict()\nlet gmIdStatus = true\nlet ptpConfigStatus = true\n\nlet inputGMlist = newDict()\nfor t, val in _GMID{\n    let strsplit = strSplit(t, \":\")\n    let idx = 0\n    let key = \"\"\n    for splitval in strsplit{\n        if length(key) == 0{\n           let key = str(parseInt(splitval,16))\n        }else{\n        let key = key+\":\"+str(parseInt(splitval,16))\n        }\n    }\n    inputGMlist[key] = t\n}\n\nlet readDevByGmId = newDict()\n\nlet readValidGm = newDict()\n\nfor dataSet, dDetails in ptpStatus { \n    if (dictHasKey(_Domain, dataSet)){    \n    let gmId = merge(dDetails)[\"grandmasterIdentity\"]\n    let gc = gmId[\"value\"]\n    let gmIdStr = formatInt(gc[\"v0\"],16) + \":\" + formatInt(gc[\"v1\"],16) + \":\" + formatInt(gc[\"v2\"],16) + \":\" + formatInt(gc[\"v3\"],16) + \":\" + formatInt(gc[\"v4\"],16) + \":\" + formatInt(gc[\"v5\"],16) + \":\" + formatInt(gc[\"v6\"],16) + \":\" + formatInt(gc[\"v7\"],16)    \n    let gmIdAsStr = str(gc[\"v0\"]) + \":\" + str(gc[\"v1\"]) + \":\" + str(gc[\"v2\"]) + \":\" + str(gc[\"v3\"])+ \":\" + str(gc[\"v4\"]) + \":\" + str(gc[\"v5\"]) + \":\" + str(gc[\"v6\"]) + \":\" + str(gc[\"v7\"])\n    let hostname = devMap[dataSet][\"hostname\"]\n    if !dictHasKey(readDevByGmId, gmIdAsStr){\n        readDevByGmId[gmIdAsStr] = newDict()\n        }\n    readDevByGmId[gmIdAsStr][hostname] = true\n    let dId = merge(ptpConfig[dataSet])[\"domainNumber\"]\n    let ptpModeStr = merge(ptpConfig[dataSet])[\"ptpMode\"][\"Name\"]\n    let match = \"OK\"\n    if ! dictHasKey( inputGMlist, gmIdAsStr) || ptpModeStr!= \"ptpBoundaryClock\" || str(dId) != _DomainID{\n      let match = \"ERROR\"\n    }\n    ptpData[hostname] = newDict()   \n    ptpData[hostname][\"gmId\"] = gmIdStr\n    ptpData[hostname][\"ptpMode\"] = ptpModeStr\n    ptpData[hostname][\"domain number\"] = dId  \n    ptpData[hostname][\"match\"] = match\n\n    if dictHasKey (inputGMlist, gmIdAsStr){\n        readValidGm[gmIdAsStr] = true\n    }\n    }\n}\n\n\n\n\n\nfor gmIdAsStr, devs in readDevByGmId{\n    for dev, value in devs{\n        if  ptpData[dev][\"match\"] != \"OK\"{\n            result[dev] = newDict()\n            result[dev][\"domain number\"] = ptpData[dev][\"domain number\"]\n            result[dev][\"gmId\"] = ptpData[dev][\"gmId\"]\n            result[dev][\"ptpMode\"] = ptpData[dev][\"ptpMode\"]\n            result[dev][\"state\"] =  ptpData[dev][\"match\"]\n        }\n    }\n}\n\nif length(readValidGm) > 1{\nfor gmId, devs in readDevByGmId{\n    for dev, value in devs{\n        if  ptpData[dev][\"match\"] == \"OK\"{\n            result[dev] = newDict()\n            result[dev][\"domain number\"] = ptpData[dev][\"domain number\"]\n            result[dev][\"gmId\"] = ptpData[dev][\"gmId\"]\n            result[dev][\"ptpMode\"] = ptpData[dev][\"ptpMode\"]\n            result[dev][\"state\"] =  \"WARN\"\n        }\n    }\n}\n}\n\nresult\n\n\n",
+            "graphConfig": {
+              "columns": {
+                "state": {
+                  "colorMappings": [
+                    {
+                      "type": "regex",
+                      "options": {
+                        "WARN": {
+                          "color": "yellow",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "value",
+                      "options": {
+                        "ERROR": {
+                          "color": "red9",
+                          "index": 1
+                        },
+                        "OK": {
+                          "color": "green",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "pollingInterval": 30000,
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "264cd731-2937-4d28-bfdc-aae86b44b18f",
+          "name": "PTP Health",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 10,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "% experimentalFeatures = true\nlet ptpStatus = `*:/Sysdb/ptp/status/parentDS`\nlet ptpConfig = `*:/Sysdb/ptp/config`\nlet dataSetDevices = merge(`analytics:/DatasetInfo/Devices`)\n\n\n\nlet error = 0\nlet ok = 0\n\nlet gl = newDict()\nfor t, val in _GMID{\n    let strsplit = strSplit(t, \":\")\n    let idx = 0\n    let key = \"\"\n    for splitval in strsplit{\n        if length(key) == 0{\n           let key = str(parseInt(splitval,16))\n        }else{\n        let key = key+\":\"+str(parseInt(splitval,16))\n        }\n    }\n    gl[key] = t\n}\nlet devByGmId = newDict()\nfor dataSet, dDetails in ptpStatus { \n        \n    if (dictHasKey(_Domain, dataSet)){ \n     let gmId = merge(dDetails)[\"grandmasterIdentity\"]\n      let gc = gmId[\"value\"]\n      let gmIdStr = formatInt(gc[\"v0\"],16) + \":\" + formatInt(gc[\"v1\"],16) + \":\" + formatInt(gc[\"v2\"],16) + \":\" + formatInt(gc[\"v3\"],16) + \":\" + formatInt(gc[\"v4\"],16) + \":\" + formatInt(gc[\"v5\"],16) + \":\" + formatInt(gc[\"v6\"],16) + \":\" + formatInt(gc[\"v7\"],16)    \n      let gmIdAsStr = str(gc[\"v0\"]) + \":\" + str(gc[\"v1\"]) + \":\" + str(gc[\"v2\"]) + \":\" + str(gc[\"v3\"])+ \":\" + str(gc[\"v4\"]) + \":\" + str(gc[\"v5\"]) + \":\" + str(gc[\"v6\"]) + \":\" + str(gc[\"v7\"])\n        if !dictHasKey(devByGmId, gmIdStr){\n            devByGmId[gmIdStr] = newDict()\n        }\n    devByGmId[gmIdStr][dataSet] = true\n      let dId = merge(ptpConfig[dataSet])[\"domainNumber\"]\n      \n     let match = false\n\n    if dictHasKey( gl, gmIdAsStr){\n      let match = true\n    }\n    let ptpModeStr = merge(ptpConfig[dataSet])[\"ptpMode\"][\"Name\"]\n    if (!match || ptpModeStr!= \"ptpBoundaryClock\" || str(dId) != _DomainID) {\n        let error = error + 1\n    }else{\n        let ok = ok + 1\n    }\n    \n}}\n\n\nif error == 0{\n    let retString = \"OK\"\n    if length(devByGmId) > 1 {\n        let retString = \"WARNING\"\n    }\n}\nif error > 0{\n    let retString = \"ERROR\"\n}\n\nretString\n\n\n\n",
+            "graphConfig": {
+              "unit": "",
+              "unitPlacement": "right",
+              "mapToHostname": false,
+              "showDotIndicator": false,
+              "description": "Shows if all devices in the network are locked to primary GMID, Domain ID and PTP Mode Boundary",
+              "colorMappings": [
+                {
+                  "type": "value",
+                  "options": {
+                    "OK": {
+                      "color": "green",
+                      "index": 0
+                    },
+                    "ERROR": {
+                      "color": "red",
+                      "index": 1
+                    },
+                    "WARNING": {
+                      "color": "yellow",
+                      "index": 2
+                    }
+                  }
+                }
+              ],
+              "fontSize": 120
+            },
+            "visualization": "singleValue"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "26fa42c3-49bb-4154-aedf-f84944e934ff",
+          "name": "PTP Interface Summary",
+          "position": {
+            "x": 0,
+            "y": 22
+          },
+          "dimensions": {
+            "width": 24,
+            "height": 14
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let ptpPort = `<_Device>:/Sysdb/ptp/status/portDS/*`\n\nlet result = newDict()\nfor intfPath, intfValue in ptpPort{\n    let intfDetails = merge(intfValue)\n    if ! intfDetails[\"adminDisabled\"]{\n        let key = intfPath[\"intf\"]\n        result[key] = newDict()\n        result[key][\"Device\"] = _Device\n        result[key][\"Interface\"] = intfPath[\"intf\"]\n        result[key][\"Role\"] = intfDetails[\"role\"][\"Name\"]\n        result[key][\"Port State\"] = strReplace(intfDetails[\"portState\"][\"Name\"], \"ps\", \"\")\n        result[key][\"Transport\"] = intfDetails[\"transportMode\"][\"Name\"]\n        result[key][\"Delay Mechanism\"] = intfDetails[\"delayMechanism\"][\"Name\"]\n    }\n\n}\n\n\nresult",
+            "graphConfig": {
+              "columns": {
+                "Device": {
+                  "mapToHostname": true
+                },
+                "Port State": {
+                  "colorMappings": [
+                    {
+                      "type": "regex",
+                      "options": {
+                        "^(?!.*?\\b(?:Master|Slave)\\b).*$": {
+                          "color": "red",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                },
+                "key": {
+                  "hide": true
+                }
+              },
+              "columnOrders": {
+                "Device": 1,
+                "Interface": 2,
+                "key": 3,
+                "Delay Mechanism": 6,
+                "Port State": 4,
+                "Role": 5,
+                "Transport": 7
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "de34e5cd-eb92-46bd-8ffb-b31e67eba926",
+          "name": "PTP Grandmaster Clock Identities in selected domain",
+          "position": {
+            "x": 10,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 14,
+            "height": 10
+          },
+          "type": "metrics-widget-aggregate",
+          "inputs": {
+            "components": [],
+            "isTokenSearchEnabled": true,
+            "metricKeys": [
+              "DEVICE_PTP_GRANDMASTER_CLOCK_IDENTITY"
+            ],
+            "metricSource": "devices",
+            "selectedCustomTags": [
+              "Domain"
+            ],
+            "tags": "",
+            "viewType": "metric",
+            "limits": {}
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "d922c901-9614-4e62-947e-1445fef396ee",
+          "name": "",
+          "position": {
+            "x": 11,
+            "y": 46
+          },
+          "dimensions": {
+            "width": 13,
+            "height": 14
+          },
+          "type": "topology-widget",
+          "inputs": {
+            "displayMode": "logical",
+            "displayModeDefault": "logical",
+            "overlay": "ptp",
+            "selectedCustomTags": [
+              "Domain"
+            ],
+            "showActiveEvents": true,
+            "showContainerTypes": false,
+            "showLegend": true,
+            "showManagement": false,
+            "showOverlaySelect": true,
+            "showVxlanTunnels": false,
+            "tags": "",
+            "useDeviceImages": false
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "e21d036e-9a27-436d-98f8-e57c84030a5a",
+          "name": "Events",
+          "position": {
+            "x": 0,
+            "y": 46
+          },
+          "dimensions": {
+            "width": 11,
+            "height": 14
+          },
+          "type": "events-widget",
+          "inputs": {
+            "eventCountThreshold": 1,
+            "eventTypeFilter": [
+              "INCONSISTENT_PTP_DOMAIN_ID",
+              "INCONSISTENT_PTP_GMID",
+              "PTP_DOMAIN_ID_GROUP",
+              "PTP_GRANDMASTER_GROUP",
+              "SYS_PTP_GRANDMASTER_CHANGE",
+              "UNEXPECTED_PTP_GMID"
+            ],
+            "maintenanceState": "nonMaintenance",
+            "ruleIdFilter": [],
+            "selectedCustomTags": [
+              "Domain"
+            ],
+            "severityFilter": [
+              "WARNING",
+              "ERROR",
+              "CRITICAL"
+            ],
+            "showAcked": false,
+            "showActiveOnly": true,
+            "tags": "",
+            "tagType": "devices",
+            "showThresholdCount": {
+              "Interfaces": false,
+              "Devices": false
+            },
+            "viewMode": "Time Blocks",
+            "chartOrientationMode": "Vertical",
+            "chartGroupBy": "Timestamp"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "bc4728c8-ad9d-44f7-ae22-b4645a554098",
+          "name": "Holdover Status (Master, Slave and Disabled Count)",
+          "position": {
+            "x": 0,
+            "y": 36
+          },
+          "dimensions": {
+            "width": 24,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let ptpPort = `<_Device>:/Sysdb/ptp/status/portDS/*`\nlet ptpHoldOverState = `<_Device>:/Sysdb/ptp/status`\nptpHoldOverState\n\nlet deviceCounts = newDict()\nlet dataSet = _Device\n\n\n        deviceCounts[dataSet] = newDict()\n        deviceCounts[dataSet][\"Master Count\"] = 0\n        deviceCounts[dataSet][\"Slave Count\"] = 0\n        deviceCounts[dataSet][\"Disabled Count\"] = 0\n        deviceCounts[dataSet][\"Holdover Mode\"] = merge(ptpHoldOverState)[\"holdoverState\"][\"Name\"]\n    \n\n    \n        for intfPath, intfValue in ptpPort {\n            let intfDetails = merge(intfValue)\n\n            if !intfDetails[\"adminDisabled\"] {\n                let portStateName = intfDetails[\"portState\"][\"Name\"]\n\n                if portStateName == \"psMaster\" {\n                    deviceCounts[dataSet][\"Master Count\"] = deviceCounts[dataSet][\"Master Count\"] + 1\n                } \n                if portStateName == \"psSlave\" {\n                    deviceCounts[dataSet][\"Slave Count\"] = deviceCounts[dataSet][\"Slave Count\"] + 1\n                } \n                if portStateName == \"psDisabled\" {\n\n                    deviceCounts[dataSet][\"Disabled Count\"] = deviceCounts[dataSet][\"Disabled Count\"]+ 1\n                }\n            }\n        }\n\n\ndeviceCounts",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "unit": "",
+                  "columnTitle": "Device"
+                },
+                "Slave Count": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "0": {
+                          "color": "red",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "columnOrders": {
+                "key": 1,
+                "Holdover Mode": 2,
+                "Master Count": 3,
+                "Slave Count": 4,
+                "Disabled Count": 5
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "04330c07-027f-400e-8b55-52b17c2d8ef2",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "127",
+            "inputName": "DomainID",
+            "inputSource": "devices",
+            "selectedCustomTags": [],
+            "tagLabel": "PTP_DomainID",
+            "tags": ""
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "ab0943f1-e2d2-418f-bd13-b4efa3ad7dc8",
+          "name": "",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 8,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": [
+              "00:02:c5:ff:fe:34:5b:40",
+              "00:02:c5:ff:fe:20:f9:b0"
+            ],
+            "inputName": "GMID",
+            "inputType": "MultiSelect",
+            "selectData": {
+              "manualOptions": [],
+              "createOptionsUsingAql": true,
+              "query": "let gmids = merge(`analytics:/tags/labels/devices/PTP_GMID/value`)\ngmids",
+              "useValueAsLabel": false
+            },
+            "variableType": "ComplexPath"
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "584e9a22-736c-48d0-b834-0d9fbb8bdf08",
+          "name": "",
+          "position": {
+            "x": 13,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "tag-query-widget",
+          "inputs": {
+            "inputName": "Domain",
+            "inputSource": "devices",
+            "defaultValue": "PTP_DOMAIN:PROD"
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "2cd0815f-ea27-4b8a-8a5c-bc7c8c43d822",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 20
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "JPE19363421",
+            "inputName": "Device",
+            "inputSource": "devices",
+            "selectedCustomTags": [],
+            "tagLabel": "device",
+            "tags": "device:*"
+          },
+          "location": "main",
+          "parent": ""
+        }
+      ],
+      "layoutType": "",
+      "lastUpdated": 1778690304374,
+      "lastUpdatedBy": "sakti"
+    }
+  ]
+}

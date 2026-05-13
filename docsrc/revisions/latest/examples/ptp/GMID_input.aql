@@ -1,0 +1,2 @@
+let gmids = merge(`analytics:/tags/labels/devices/PTP_GMID/value`)
+gmids

@@ -1,0 +1,20 @@
+let ptpPort = `<_Device>:/Sysdb/ptp/status/portDS/*`
+
+let result = newDict()
+for intfPath, intfValue in ptpPort{
+    let intfDetails = merge(intfValue)
+    if ! intfDetails["adminDisabled"]{
+        let key = intfPath["intf"]
+        result[key] = newDict()
+        result[key]["Device"] = _Device
+        result[key]["Interface"] = intfPath["intf"]
+        result[key]["Role"] = intfDetails["role"]["Name"]
+        result[key]["Port State"] = strReplace(intfDetails["portState"]["Name"], "ps", "")
+        result[key]["Transport"] = intfDetails["transportMode"]["Name"]
+        result[key]["Delay Mechanism"] = intfDetails["delayMechanism"]["Name"]
+    }
+
+}
+
+
+result

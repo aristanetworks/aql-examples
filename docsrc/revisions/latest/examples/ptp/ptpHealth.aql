@@ -1,0 +1,67 @@
+% experimentalFeatures = true
+let ptpStatus = `*:/Sysdb/ptp/status/parentDS`
+let ptpConfig = `*:/Sysdb/ptp/config`
+let dataSetDevices = merge(`analytics:/DatasetInfo/Devices`)
+
+
+
+let error = 0
+let ok = 0
+
+let gl = newDict()
+for t, val in _GMID{
+    let strsplit = strSplit(t, ":")
+    let idx = 0
+    let key = ""
+    for splitval in strsplit{
+        if length(key) == 0{
+           let key = str(parseInt(splitval,16))
+        }else{
+        let key = key+":"+str(parseInt(splitval,16))
+        }
+    }
+    gl[key] = t
+}
+let devByGmId = newDict()
+for dataSet, dDetails in ptpStatus {
+
+    if (dictHasKey(_Domain, dataSet)){
+     let gmId = merge(dDetails)["grandmasterIdentity"]
+      let gc = gmId["value"]
+      let gmIdStr = formatInt(gc["v0"],16) + ":" + formatInt(gc["v1"],16) + ":" + formatInt(gc["v2"],16) + ":" + formatInt(gc["v3"],16) + ":" + formatInt(gc["v4"],16) + ":" + formatInt(gc["v5"],16) + ":" + formatInt(gc["v6"],16) + ":" + formatInt(gc["v7"],16)
+      let gmIdAsStr = str(gc["v0"]) + ":" + str(gc["v1"]) + ":" + str(gc["v2"]) + ":" + str(gc["v3"])+ ":" + str(gc["v4"]) + ":" + str(gc["v5"]) + ":" + str(gc["v6"]) + ":" + str(gc["v7"])
+        if !dictHasKey(devByGmId, gmIdStr){
+            devByGmId[gmIdStr] = newDict()
+        }
+    devByGmId[gmIdStr][dataSet] = true
+      let dId = merge(ptpConfig[dataSet])["domainNumber"]
+
+     let match = false
+
+    if dictHasKey( gl, gmIdAsStr){
+      let match = true
+    }
+    let ptpModeStr = merge(ptpConfig[dataSet])["ptpMode"]["Name"]
+    if (!match || ptpModeStr!= "ptpBoundaryClock" || str(dId) != _DomainID) {
+        let error = error + 1
+    }else{
+        let ok = ok + 1
+    }
+
+}}
+
+
+if error == 0{
+    let retString = "OK"
+    if length(devByGmId) > 1 {
+        let retString = "WARNING"
+    }
+}
+if error > 0{
+    let retString = "ERROR"
+}
+
+retString
+
+
+

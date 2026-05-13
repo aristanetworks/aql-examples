@@ -1,0 +1,32 @@
+let ptpPort = `<_Device>:/Sysdb/ptp/status/portDS/*`
+let ptpHoldOverState = `<_Device>:/Sysdb/ptp/status`
+let deviceCounts = newDict()
+let dataSet = _Device
+
+deviceCounts[dataSet] = newDict()
+deviceCounts[dataSet]["Master Count"] = 0
+deviceCounts[dataSet]["Slave Count"] = 0
+deviceCounts[dataSet]["Disabled Count"] = 0
+deviceCounts[dataSet]["Holdover Mode"] = merge(ptpHoldOverState)["holdoverState"]["Name"]
+
+for intfPath, intfValue in ptpPort {
+    let intfDetails = merge(intfValue)
+
+    if !intfDetails["adminDisabled"] {
+        let portStateName = intfDetails["portState"]["Name"]
+
+        if portStateName == "psMaster" {
+            deviceCounts[dataSet]["Master Count"] = deviceCounts[dataSet]["Master Count"] + 1
+        }
+        if portStateName == "psSlave" {
+            deviceCounts[dataSet]["Slave Count"] = deviceCounts[dataSet]["Slave Count"] + 1
+        }
+        if portStateName == "psDisabled" {
+
+            deviceCounts[dataSet]["Disabled Count"] = deviceCounts[dataSet]["Disabled Count"]+ 1
+        }
+    }
+}
+
+
+deviceCounts

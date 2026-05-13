@@ -1,0 +1,99 @@
+% experimentalFeatures = true
+let ptpStatus = `*:/Sysdb/ptp/status/parentDS`
+let ptpConfig = `*:/Sysdb/ptp/config`
+let dataSetDevices = merge(`analytics:/DatasetInfo/Devices`)
+let devMap = newDict()
+for dataSet, dataValues in dataSetDevices{
+    if (dictHasKey(_Domain, dataSet)){
+        devMap[dataSet ] = newDict()
+        devMap[dataSet ]["hostname"] = str(dataValues["hostname"])
+        devMap[dataSet ]["mac"] = str(dataValues["mac"])
+        }}
+
+
+let result = newDict()
+let ptpData = newDict()
+let gmIdStatus = true
+let ptpConfigStatus = true
+
+let inputGMlist = newDict()
+for t, val in _GMID{
+    let strsplit = strSplit(t, ":")
+    let idx = 0
+    let key = ""
+    for splitval in strsplit{
+        if length(key) == 0{
+           let key = str(parseInt(splitval,16))
+        }else{
+        let key = key+":"+str(parseInt(splitval,16))
+        }
+    }
+    inputGMlist[key] = t
+}
+
+let readDevByGmId = newDict()
+
+let readValidGm = newDict()
+
+for dataSet, dDetails in ptpStatus {
+    if (dictHasKey(_Domain, dataSet)){
+    let gmId = merge(dDetails)["grandmasterIdentity"]
+    let gc = gmId["value"]
+    let gmIdStr = formatInt(gc["v0"],16) + ":" + formatInt(gc["v1"],16) + ":" + formatInt(gc["v2"],16) + ":" + formatInt(gc["v3"],16) + ":" + formatInt(gc["v4"],16) + ":" + formatInt(gc["v5"],16) + ":" + formatInt(gc["v6"],16) + ":" + formatInt(gc["v7"],16)
+    let gmIdAsStr = str(gc["v0"]) + ":" + str(gc["v1"]) + ":" + str(gc["v2"]) + ":" + str(gc["v3"])+ ":" + str(gc["v4"]) + ":" + str(gc["v5"]) + ":" + str(gc["v6"]) + ":" + str(gc["v7"])
+    let hostname = devMap[dataSet]["hostname"]
+    if !dictHasKey(readDevByGmId, gmIdAsStr){
+        readDevByGmId[gmIdAsStr] = newDict()
+        }
+    readDevByGmId[gmIdAsStr][hostname] = true
+    let dId = merge(ptpConfig[dataSet])["domainNumber"]
+    let ptpModeStr = merge(ptpConfig[dataSet])["ptpMode"]["Name"]
+    let match = "OK"
+    if ! dictHasKey( inputGMlist, gmIdAsStr) || ptpModeStr!= "ptpBoundaryClock" || str(dId) != _DomainID{
+      let match = "ERROR"
+    }
+    ptpData[hostname] = newDict()
+    ptpData[hostname]["gmId"] = gmIdStr
+    ptpData[hostname]["ptpMode"] = ptpModeStr
+    ptpData[hostname]["domain number"] = dId
+    ptpData[hostname]["match"] = match
+
+    if dictHasKey (inputGMlist, gmIdAsStr){
+        readValidGm[gmIdAsStr] = true
+    }
+    }
+}
+
+
+
+
+
+for gmIdAsStr, devs in readDevByGmId{
+    for dev, value in devs{
+        if  ptpData[dev]["match"] != "OK"{
+            result[dev] = newDict()
+            result[dev]["domain number"] = ptpData[dev]["domain number"]
+            result[dev]["gmId"] = ptpData[dev]["gmId"]
+            result[dev]["ptpMode"] = ptpData[dev]["ptpMode"]
+            result[dev]["state"] =  ptpData[dev]["match"]
+        }
+    }
+}
+
+if length(readValidGm) > 1{
+for gmId, devs in readDevByGmId{
+    for dev, value in devs{
+        if  ptpData[dev]["match"] == "OK"{
+            result[dev] = newDict()
+            result[dev]["domain number"] = ptpData[dev]["domain number"]
+            result[dev]["gmId"] = ptpData[dev]["gmId"]
+            result[dev]["ptpMode"] = ptpData[dev]["ptpMode"]
+            result[dev]["state"] =  "WARN"
+        }
+    }
+}
+}
+
+result
+
+
