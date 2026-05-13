@@ -1,0 +1,82 @@
+{
+  "dashboards": [
+    {
+      "key": "79f3751d-7a0d-4767-acc3-01f0a1f79829",
+      "createdAt": [
+        609295625,
+        1639
+      ],
+      "createdBy": "sakti",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Multicast Fastdrops",
+      "description": "",
+      "widgets": [
+        {
+          "id": "dc5f66c4-3842-46a1-90f3-0ffcfa959f3d",
+          "name": "Fastdrops",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 14,
+            "height": 13
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let path =`*:/Sysdb/routing/hardware/multicast/status/vrfStatus/{\"value\":\"default\"}/route/*/fastdropLastPollTime`\n\nlet result = newDict()\n\nfor device, fastDropDetails in path{\n    for key, value in fastDropDetails{\n        let flow = key[\"g\"]+\", \"+key[\"s\"]\n        let multicastKey = flow + \" on device \" + device\n        result[multicastKey] = newDict()\n        let fastDropIntfs = \"\"\n        for intf, pollTime in merge(value){\n            let fastDropIntfs = \"\"\n            if fastDropIntfs != \"\"{\n                let fastDropIntfs =  fastDropIntfs + \"\\n\"+intf\n            }else{\n                let fastDropIntfs = intf\n            }  \n        }\n\n        result[multicastKey] = newDict() | setFields(\"interfaces\", fastDropIntfs, \"multicast\", flow, \"device\", device)\n    }\n}\n\nresult",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "columnTitle": "",
+                  "hide": true
+                },
+                "device": {
+                  "mapToHostname": true
+                }
+              },
+              "columnOrders": {
+                "key": 1,
+                "device": 2,
+                "multicast": 3,
+                "interfaces": 4
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "0f21649f-9d64-4ca0-a1f3-bfeccc4e5266",
+          "name": "Number of FastDrops",
+          "position": {
+            "x": 14,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 10,
+            "height": 13
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let path =`*:/Sysdb/routing/hardware/multicast/status/vrfStatus/{\"value\":\"default\"}/route/*/fastdropLastPollTime`\n\nlet numDevices = newDict()\n\nfor device, fastDropDetails in path{\n    #let numDevices = numDevices +1\n    let numFlows = 0\n    for key, value in fastDropDetails{\n        let numFlows = numFlows +1\n    }\n    numDevices[device] = numFlows\n}\n\nnumDevices",
+            "graphConfig": {
+              "mapToHostname": true
+            },
+            "visualization": "donutGraph"
+          },
+          "location": "main",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1760631222802,
+      "lastUpdatedBy": "sakti"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+let path =`*:/Sysdb/routing/hardware/multicast/status/vrfStatus/{"value":"default"}/route/*/fastdropLastPollTime`
+
+let result = newDict()
+
+for device, fastDropDetails in path{
+    for key, value in fastDropDetails{
+        let flow = key["g"]+", "+key["s"]
+        let multicastKey = flow + " on device " + device
+        result[multicastKey] = newDict()
+        let fastDropIntfs = ""
+        for intf, pollTime in merge(value){
+            let fastDropIntfs = ""
+            if fastDropIntfs != ""{
+                let fastDropIntfs =  fastDropIntfs + "\n"+intf
+            }else{
+                let fastDropIntfs = intf
+            }
+        }
+
+        result[multicastKey] = newDict() | setFields("interfaces", fastDropIntfs, "multicast", flow, "device", device)
+    }
+}
+
+result

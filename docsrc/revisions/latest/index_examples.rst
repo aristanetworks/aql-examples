@@ -10,6 +10,7 @@ AQL Examples
    examples/system_health/index
    examples/mcs/index
    examples/ptp/index
+   examples/multicast/index
 
 .. _terminattrStreamingPermitlistNote:
 

@@ -1,0 +1,13 @@
+let path =`*:/Sysdb/routing/hardware/multicast/status/vrfStatus/{"value":"default"}/route/*/fastdropLastPollTime`
+
+let numDevices = newDict()
+
+for device, fastDropDetails in path{
+    let numFlows = 0
+    for key, value in fastDropDetails{
+        let numFlows = numFlows +1
+    }
+    numDevices[device] = numFlows
+}
+
+numDevices
