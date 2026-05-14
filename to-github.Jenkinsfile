@@ -12,7 +12,7 @@ pipeline {
                         [$class: 'CleanBeforeCheckout'],
                     ],
                     userRemoteConfigs: [[
-                        url: 'https://gerrit.corp.arista.io/aql-examples',
+                        url: 'https://gerrit.corp.arista.io/a/aql-examples', credentialsId: 'srv-jenkins-io',
                     ]],
                 ])
                 sshagent (credentials: ['jenkins-rsa-key']) {
