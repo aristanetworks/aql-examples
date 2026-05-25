@@ -14,8 +14,8 @@ pipeline {
             yaml '''
             spec:
               containers:
-              - name: artools
-                image: docker.corp.arista.io/artools-eos-trunk-x86_64_el7:latest
+              - name: debian
+                image: debian:latest
                 command: ["cat"]
                 tty: true
 '''
@@ -35,8 +35,9 @@ pipeline {
             stages {
                 stage ('aql syntaxcheck') {
                     steps {
-                        container('artools') {
+                        container('debian') {
                             dir("${WORKSPACE}") {
+                                sh "apt-get update && apt-get -y install openssh-client python3 python3-pip"
                                 sshagent (credentials: ['cvp-jenkins-robot-distcvp']) {
                                     sh "PATH=${env.PATH} scp -o UserKnownHostsFile=/dev/null \
                                     -o StrictHostKeyChecking=no \
@@ -52,9 +53,9 @@ pipeline {
 
         stage('Build and Publish Documentation') {
             steps {
-                container('artools') {
+                container('debian') {
                     dir("${WORKSPACE}") {
-                        sh "pip install -r requirements.txt"
+                        sh "pip install --break-system-packages -r requirements.txt"
                         sh "make all"
 
                         publishHTML (target: [
