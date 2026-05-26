@@ -1,0 +1,182 @@
+{
+  "dashboards": [
+    {
+      "key": "969b5f6d-4765-4a75-999f-8e2cce796c65",
+      "createdAt": [
+        1031714660,
+        1574
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "BGP States",
+      "description": "",
+      "widgets": [
+        {
+          "id": "0a782e66-197b-4453-9d09-e056fb361a4a",
+          "name": "BGP Session Details in the Default VRF for all Devices",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 12,
+            "height": 11
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\n\nif str(_POD_NAME) == \"\" {\n    let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`\n} else {\n    let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\n}\n\n# This is the table\nlet res = newDict()\nlet id = 0\n# Lets loop over every device\nfor device, deviceSessions in bgpNeighbors{\n    # And each session on the devices\n    for ip, sessionData in deviceSessions{\n        let data = merge(sessionData)\n        # Add one to the ID\n        let id = id + 1\n        res[id] = newDict()\n        # This is where we add the various columns\n        res[id][\"0. Device\"] = device\n        res[id][\"1. Status\"] = data[\"bgpState\"][\"Name\"]\n        res[id][\"2. Peering Address\"] = data[\"bgpPeerLocalAddr\"]\n        res[id][\"3. Neighbor Address\"] = data[\"key\"]\n        res[id][\"4. Neighbor AS\"] = data[\"bgpPeerAs\"][\"value\"]\n    }\n}\nres\n",
+            "graphConfig": {
+              "columns": {
+                "0. Device": {
+                  "mapToHostname": true
+                },
+                "1. Status": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "Established": {
+                          "color": "green",
+                          "index": 0
+                        },
+                        "Active": {
+                          "color": "yellow",
+                          "index": 1
+                        },
+                        "Idle": {
+                          "color": "orange",
+                          "index": 2
+                        },
+                        "OpenSent": {
+                          "color": "purple",
+                          "index": 3
+                        },
+                        "Connect": {
+                          "color": "red9",
+                          "index": 4
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "a5c2e69b-5562-4fa6-9e9c-8f23169c14bf",
+          "name": "BGP Session Status",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 5,
+            "height": 11
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let neighbors = `analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`\n\n# Dict to store the states and counts\nlet res = newDict()\n# Loop over each device\nfor device, deviceSessions in neighbors{\n    # Loop over each session on each device\n    for ip, sessionData in deviceSessions{\n        let data = merge(sessionData)\n        # Have we used this status yet?\n        let status = data[\"bgpState\"][\"Name\"]\n        if !dictHasKey(res, status) {\n            # If not lets set it use count to zero\n            res[status] = 0\n        }\n        # Add one to the total times this status is used\n        res[status] = res[status] + 1\n    }\n}\nres\n",
+            "graphConfig": {
+              "colorOverrides": {
+                "Idle": "orange",
+                "OpenSent": "purple",
+                "Established": "green",
+                "Active": "yellow",
+                "Connect": "red9"
+              },
+              "mapToHostname": true,
+              "unit": "sessions"
+            },
+            "visualization": "donutGraph"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "29ae71af-0dfb-41e8-948d-2dda5abd32e3",
+          "name": "BGP Sessions that are Not Established",
+          "position": {
+            "x": 0,
+            "y": 11
+          },
+          "dimensions": {
+            "width": 17,
+            "height": 8
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\n\r\nif str(_POD_NAME) == \"\" {\r\n    let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`\r\n} else {\r\n    let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n}\r\n\r\n# This is the table\r\nlet res = newDict()\r\nlet id = 0\r\n# Lets loop over every device\r\nfor device, deviceSessions in bgpNeighbors{\r\n    # And each session on the devices\r\n    for ip, sessionData in deviceSessions{\r\n        let data = merge(sessionData)\r\n        # Add one to the ID\r\n        let id = id + 1\r\n        res[id] = newDict()\r\n        # This is where we add the various columns\r\n        res[id][\"0. Device\"] = device\r\n        res[id][\"1. Status\"] = data[\"bgpState\"][\"Name\"]\r\n        res[id][\"2. Peering Address\"] = data[\"bgpPeerLocalAddr\"]\r\n        res[id][\"3. Neighbor Address\"] = data[\"key\"]\r\n        res[id][\"4. Neighbor AS\"] = data[\"bgpPeerAs\"][\"value\"]\r\n    }\r\n}\r\n\r\nres | where(_value[\"1. Status\"] != \"Established\")\r\n",
+            "graphConfig": {
+              "columns": {
+                "0. Device": {
+                  "mapToHostname": true
+                },
+                "1. Status": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "Active": {
+                          "color": "yellow",
+                          "index": 0
+                        },
+                        "Connect": {
+                          "color": "red9",
+                          "index": 1
+                        },
+                        "Idle": {
+                          "color": "orange",
+                          "index": 2
+                        },
+                        "OpenSent": {
+                          "color": "purple",
+                          "index": 3
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "b011dce3-f0ff-4bb1-b2bd-6ee24d256bcc",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "POD_NAME",
+            "inputSource": "devices",
+            "inputWidgetId": "9d02c221-74ff-47dd-9b79-5ef575246c91",
+            "tagLabel": "pod_name"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691101487763,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}

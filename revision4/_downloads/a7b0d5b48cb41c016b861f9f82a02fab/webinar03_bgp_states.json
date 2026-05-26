@@ -1,0 +1,482 @@
+{
+  "dashboards": [
+    {
+      "key": "75a72a5d-39d8-4966-90b1-dd380707cfdf",
+      "createdAt": [
+        607971239,
+        1606
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Webinar03 - BGP States (Per Vrf)",
+      "description": "#device",
+      "widgets": [
+        {
+          "id": "c98c5487-7fbc-4190-bf53-0b88ac4b4ffb",
+          "name": "BGP Session Details in all vrfs for all Devices",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 19,
+            "height": 13
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# set vars\nlet afis = newDict()\nlet afi_name = newDict()\nlet bgpPeerAfiSafiActive = newDict() | setFields(\"l2vpnEvpn\", 3, \"ipv4Unicast\", 1)\nlet bgpPeerAfiSafiActiveName = newDict() | setFields(\"l2vpnEvpn\",\"L2VPN EVPN\", \"ipv4Unicast\", \"IPv4 Unicast\")\n\n# Get all devices from a specific site\nlet devices = merge(`analytics:/tags/labels/devices/site_name/value/<_SITE_NAME>/elements`)\n\nlet bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/*/bgpPeerInfoStatusEntry/*`\nif _device != \"\" {\n    let bgpNeighbors = bgpNeighbors | fields(_device)\n} else {\n    if str(_SITE_NAME) != \"\" {\n        let bgpNeighbors = bgpNeighbors | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\n    }\n}\n\nlet bgpPeerInfoStatusEntry = `*:/Sysdb/cell/1/routing/bgp/export/vrfBgpPeerInfoStatusEntryTable/*/bgpPeerInfoStatusEntry/*`\nlet bgpPeerStatisticsEntry = `*:/Smash/routing/bgp/bgpPeerInfoStatus/*/bgpPeerStatisticsEntry`\n\n# This is the table\nlet result = newDict()\nlet id = 0\n# Lets loop over every device\nfor deviceKey, deviceSessions in bgpNeighbors{\n    # And each session on the devices\n    if _device == \"\" || deviceKey == _device {\n        for vrfKey, vrfValue in deviceSessions{\n            # Check if _vrf is empty or if the current vrfKey is in _vrf\n            if length(_vrf) == 0 || _vrf == vrfKey {\n                for ip, sessionData in vrfValue {\n                    let data = merge(sessionData)\n                    # Add one to the ID\n                    let id = id + 1\n                    result[id] = newDict()\n                    # This is where we add the various columns\n                    result[id][\"0. Device\"] = deviceKey\n                    result[id][\"1. Status\"] = data[\"bgpState\"][\"Name\"]\n                    result[id][\"2. Peering Address\"] = data[\"bgpPeerLocalAddr\"]\n                    result[id][\"3. Neighbor Address\"] = data[\"key\"]\n                    result[id][\"4. Neighbor AS\"] = data[\"bgpPeerAs\"][\"value\"]\n                    result[id][\"6. VRF\"] = vrfKey\n                    if dictHasKey(bgpPeerInfoStatusEntry, deviceKey) && dictHasKey(bgpPeerStatisticsEntry, deviceKey) {\n                        if dictHasKey(bgpPeerInfoStatusEntry[deviceKey], vrfKey) {\n                            let test = merge(bgpPeerInfoStatusEntry[deviceKey][vrfKey][ip])\n                            for kafi, kval in test[\"bgpPeerAfiSafiActive\"]{\n                                if kval == true {\n                                    afis[deviceKey] = bgpPeerAfiSafiActive[kafi]\n                                    afi_name[deviceKey] = bgpPeerAfiSafiActiveName[kafi]\n                                    result[id][\"7. AFI/SAFI\"] = afi_name[deviceKey]\n                                }\n                            }\n                            result[id][\"5. Peer Description\"] = test[\"bgpPeerDescription\"]\n                        }\n                        if dictHasKey(bgpPeerStatisticsEntry[deviceKey], vrfKey) {\n                            let bgpPeerAfiSafiStats = merge(bgpPeerStatisticsEntry[deviceKey][vrfKey])\n                            if dictHasKey(afis, deviceKey) && dictHasKey(bgpPeerAfiSafiStats, ip){\n                                result[id][\"8. PfxRcd\"] = bgpPeerAfiSafiStats[ip][\"bgpPeerAfiSafiStats\"][afis[deviceKey]][\"prefixIn\"]\n                                result[id][\"9. PfxAcc\"] = bgpPeerAfiSafiStats[ip][\"bgpPeerAfiSafiStats\"][afis[deviceKey]][\"prefixAcceptedIn\"]\n                            }\n                        }\n\n\n                    } else {\n                        # need to figure out why sometimes there's no prefix info\n                        result[id][\"8. PfxRcd\"] = \"N/A\"\n                        result[id][\"9. PfxAcc\"] = \"N/A\"\n                    }\n                    if dictHasKey(data, \"bgpPeerIntoOrOutOfEstablishedTime\") {\n                        result[id][\"10. Up/Down\"] = str(duration(1000000000*round(num(now() - time(data[\"bgpPeerIntoOrOutOfEstablishedTime\"]*1000000000))/1000000000)))\n                    }\n                }\n            }\n        }\n    }\n}\nresult",
+            "graphConfig": {
+              "columns": {
+                "0. Device": {
+                  "mapToHostname": true
+                },
+                "1. Status": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "Established": {
+                          "color": "green",
+                          "index": 0
+                        },
+                        "Active": {
+                          "color": "yellow",
+                          "index": 1
+                        },
+                        "Idle": {
+                          "color": "orange",
+                          "index": 2
+                        },
+                        "OpenSent": {
+                          "color": "purple",
+                          "index": 3
+                        },
+                        "Connect": {
+                          "color": "red9",
+                          "index": 4
+                        }
+                      }
+                    }
+                  ]
+                },
+                "8. PfxRcd": {
+                  "showDotIndicator": true,
+                  "type": "number",
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "0": {
+                          "color": "red",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                },
+                "9. PfxAcc": {
+                  "showDotIndicator": true,
+                  "type": "number",
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "0": {
+                          "color": "red",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "defaultSort": {
+                "key": "key"
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "67bb15db-4cb7-4dc1-b807-bf87d53a09bd",
+          "name": "BGP Session Status",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 5,
+            "height": 13
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "\n# Get all devices from a specific site\nlet devices = merge(`analytics:/tags/labels/devices/site_name/value/<_SITE_NAME>/elements`)\n\n# Get the neighbors\nlet bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/*/bgpPeerInfoStatusEntry/*`\nif _device != \"\" {\n    let bgpNeighbors = bgpNeighbors | fields(_device)\n} else {\n    if str(_SITE_NAME) != \"\" {\n        let bgpNeighbors = bgpNeighbors | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\n    }\n}\n\n# Dict to store the states and counts\nlet res = newDict()\n# Loop over each device\nfor device, deviceSessions in bgpNeighbors{\n    # Loop over each session on each device\n    for vrfKey, vrfValue in deviceSessions {\n        if length(_vrf) == 0 || _vrf == vrfKey {\n            for ip, sessionData in vrfValue{\n                let data = merge(sessionData)\n                \n                # Have we used this status yet?\n                let status = data[\"bgpState\"][\"Name\"]\n                if !dictHasKey(res, status) {\n                    # If not lets set it use count to zero\n                    res[status] = 0\n                }\n                # Add one to the total times this status is used\n                res[status] = res[status] + 1\n            }\n        }   \n    }\n}\nres",
+            "graphConfig": {
+              "colorOverrides": {
+                "Idle": "orange",
+                "OpenSent": "purple",
+                "Established": "green",
+                "Active": "yellow",
+                "Connect": "red9"
+              },
+              "mapToHostname": true,
+              "unit": "sessions"
+            },
+            "visualization": "donutGraph"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "e2206569-c0e7-461a-9ccf-0fd1d5111bd8",
+          "name": "BGP Sessions that are Not Established",
+          "position": {
+            "x": 0,
+            "y": 13
+          },
+          "dimensions": {
+            "width": 20,
+            "height": 7
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# set vars\r\nlet afis = newDict()\r\nlet afi_name = newDict()\r\nlet bgpPeerAfiSafiActive = newDict() | setFields(\"l2vpnEvpn\", 3, \"ipv4Unicast\", 1)\r\nlet bgpPeerAfiSafiActiveName = newDict() | setFields(\"l2vpnEvpn\",\"L2VPN EVPN\", \"ipv4Unicast\", \"IPv4 Unicast\")\r\n\r\n# Get all devices from a specific site\r\nlet devices = merge(`analytics:/tags/labels/devices/site_name/value/<_SITE_NAME>/elements`)\r\n\r\nlet bgpPeerInfoStatusEntry = `*:/Sysdb/cell/1/routing/bgp/export/vrfBgpPeerInfoStatusEntryTable/*/bgpPeerInfoStatusEntry/*`\r\nif str(_SITE_NAME) == \"\" {\r\n    if _device == \"\"{\r\n        let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/*/bgpPeerInfoStatusEntry/*`\r\n    } else {\r\n        let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/*/bgpPeerInfoStatusEntry/*` | fields(_device)\r\n    }\r\n} else {\r\n    if _device == \"\"{\r\n        let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/*/bgpPeerInfoStatusEntry/*` | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    } else {\r\n        let bgpNeighbors =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/*/bgpPeerInfoStatusEntry/*` | fields(_device)\r\n    }\r\n\r\n}\r\nlet bgpPeerStatisticsEntry = `*:/Smash/routing/bgp/bgpPeerInfoStatus/*/bgpPeerStatisticsEntry`\r\n\r\n\r\n# This is the table\r\nlet result = newDict()\r\nlet id = 0\r\n# Lets loop over every device\r\nfor deviceKey, deviceSessions in bgpNeighbors{\r\n    # And each session on the devices\r\n    if _device == \"\" || deviceKey == _device {\r\n        for vrfKey, vrfValue in deviceSessions{\r\n            # Check if _vrf is empty or if the current vrfKey is in _vrf\r\n            if length(_vrf) == 0 || _vrf == vrfKey {\r\n                for ip, sessionData in vrfValue {\r\n                    let data = merge(sessionData)\r\n                    # Add one to the ID\r\n                    let id = id + 1\r\n                    result[id] = newDict()\r\n                    # This is where we add the various columns\r\n                    result[id][\"0. Device\"] = deviceKey\r\n                    result[id][\"1. Status\"] = data[\"bgpState\"][\"Name\"]\r\n                    result[id][\"2. Peering Address\"] = data[\"bgpPeerLocalAddr\"]\r\n                    result[id][\"3. Neighbor Address\"] = data[\"key\"]\r\n                    result[id][\"4. Neighbor AS\"] = data[\"bgpPeerAs\"][\"value\"]\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\nresult | where(_value[\"1. Status\"] != \"Established\")\r\n",
+            "graphConfig": {
+              "columns": {
+                "0. Device": {
+                  "mapToHostname": true
+                },
+                "1. Status": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "Active": {
+                          "color": "yellow",
+                          "index": 0
+                        },
+                        "Connect": {
+                          "color": "red9",
+                          "index": 1
+                        },
+                        "Idle": {
+                          "color": "orange",
+                          "index": 2
+                        },
+                        "OpenSent": {
+                          "color": "purple",
+                          "index": 3
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "3613741f-5fd6-4b8c-b921-31ea25ff6937",
+          "name": "BGP Session historical state tracker",
+          "position": {
+            "x": 8,
+            "y": 22
+          },
+          "dimensions": {
+            "width": 10,
+            "height": 15
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# BGP Session historical state tracker\nlet data = `analytics:/Devices/<_bgpDevice>/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`[4h]\nlet res = newDict()\nfor ip, tseries in data {\n    for timestamp, values in tseries {\n        # only show selected neighbors or all if none selected\n        if length(_NeighborIP) == 0 || dictHasKey(_NeighborIP, ip){\n            res[str(timestamp+(_tz_offset))] = newDict() | setFields(ip, dictHasKey(values, \"bgpState\") ? values[\"bgpState\"][\"Name\"] : 0)\n        }\n    }\n}\nres\n",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "columnTitle": "Time"
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "c58615af-7bad-485b-97dc-f377ea800605",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 20
+          },
+          "dimensions": {
+            "width": 8,
+            "height": 5
+          },
+          "type": "text-widget",
+          "inputs": {
+            "textContent": "# BGP Flaps\n\nIdeally these should be zero!\nLight the Warning Beacons of Gondor 🔥🔥 otherwise.\n\nCheck for more details in the `BGP historical state tracker` nearby ➡️➡️",
+            "verticalAlignment": 0
+          },
+          "location": "main",
+          "styles": {
+            "hideTitle": true,
+            "backgroundColor": "",
+            "hideHorizontalBar": false,
+            "titleSize": 14
+          },
+          "parent": ""
+        },
+        {
+          "id": "6c3d7755-bc3d-4c07-ac5c-ea698b698f9e",
+          "name": "BGP Syslogs on selected device",
+          "position": {
+            "x": 0,
+            "y": 37
+          },
+          "dimensions": {
+            "width": 18,
+            "height": 12
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let data = `<_bgpDevice>:/Logs/var/log/messages`[48h] | field(\"line\") | where(reMatch(_value, \"BGP\"))\nlet logs = newDict()\nfor timest, logentry in data {\n    logs[str(timest+(_tz_offset))] = newDict()\n    logs[str(timest+(_tz_offset))][\"Log\"] = logentry\n}\nlogs",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "columnTitle": "Timestamp"
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "472cdfca-2b7e-4720-ae98-59e8cc1c6320",
+          "name": "Flaps in selected time range",
+          "position": {
+            "x": 0,
+            "y": 25
+          },
+          "dimensions": {
+            "width": 8,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let data =`analytics:/Devices/*/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`[24h]\nlet devices = merge(`analytics:/tags/labels/devices/site_name/value/<_SITE_NAME>/elements`)\nlet data = data | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\nlet result = newDict()\n\nfor device, deviceValues in data {\n        let establishedNeighbors = newDict()\n        let flapCount = 0\n        for ip, tseries in deviceValues{\n            for timestamp, values in tseries {\n                if dictHasKey(values, \"bgpState\"){\n                    if values[\"bgpState\"][\"Name\"] == \"Established\"{\n                        let flapCount = flapCount +1\n                        establishedNeighbors[ip] = true\n                    }\n                }\n            }\n        }\n        let count = flapCount - length(establishedNeighbors)\n        if count > 0 {\n            result[device] = newDict() | setFields(\"Flaps\", count )\n        }\n\n}\n\nresult\n",
+            "graphConfig": {
+              "columns": {
+                "Flaps": {
+                  "showDotIndicator": true,
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "0": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 1,
+                        "to": 15,
+                        "result": {
+                          "color": "yellow3",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 15,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Hostname"
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "a6a4deee-01c6-47ba-8669-883bfdb5f7ff",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "1",
+            "inputName": "SITE_NAME",
+            "inputSource": "devices",
+            "selectedCustomTags": [],
+            "tagLabel": "site_name",
+            "tags": ""
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "2f6f6e09-5ffb-430a-ba7e-9239ee0546a2",
+          "name": "",
+          "position": {
+            "x": 8,
+            "y": 20
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "bgpDevice",
+            "inputSource": "devices",
+            "selectedCustomTags": [],
+            "tagLabel": "device",
+            "tags": ""
+          },
+          "location": "main",
+          "styles": {
+            "hideTitle": false,
+            "backgroundColor": "",
+            "hideHorizontalBar": false,
+            "titleSize": 14
+          },
+          "parent": ""
+        },
+        {
+          "id": "73f80705-7e25-4e32-a2ef-20919fe50103",
+          "name": "",
+          "position": {
+            "x": 12,
+            "y": 20
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": [],
+            "inputName": "NeighborIP",
+            "inputType": "MultiSelect",
+            "selectData": {
+              "createOptionsUsingAql": true,
+              "manualOptions": [],
+              "query": "`analytics:/Devices/<_bgpDevice>/versioned-data/routing/bgp/status/vrf/default/bgpPeerInfoStatusEntry/*`"
+            },
+            "variableType": "String"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "e35c7ee0-f392-427f-b1a0-4dbe96cbbe0b",
+          "name": "",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "device",
+            "inputSource": "devices",
+            "selectedCustomTags": [
+              "SITE_NAME"
+            ],
+            "tagLabel": "device",
+            "tags": "device:* "
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "1d4657dd-9d76-4798-a23e-5d4f3f0453e2",
+          "name": "",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "default",
+            "inputName": "vrf",
+            "inputType": "SingleSelect",
+            "selectData": {
+              "manualOptions": [],
+              "createOptionsUsingAql": true,
+              "query": "let data = `<_device>:/Sysdb/routing/vrf/config/vrfConfig`\nlet res = merge(data)\nres[\"default\"] = \"default\"\n#res[\"None\"] = \"\"\nres"
+            },
+            "variableType": "String"
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "e6b9120a-0cdd-4629-a3ff-4acb1b5f14f5",
+          "name": "",
+          "position": {
+            "x": 14,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "-4h",
+            "inputName": "tz_offset",
+            "inputType": "FreeForm",
+            "variableType": "Duration"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1725037602680,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}

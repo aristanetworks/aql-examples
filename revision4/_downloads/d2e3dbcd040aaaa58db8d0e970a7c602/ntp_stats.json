@@ -1,0 +1,55 @@
+{
+    "dashboards": [
+      {
+        "key": "c4bd6309-9f04-4075-9009-76f2a4d6c2d0",
+        "createdAt": [
+          805090024,
+          1564
+        ],
+        "createdBy": "tamas",
+        "metaData": {
+          "schemaVersion": "3",
+          "legacyKey": "",
+          "legacyVersion": "",
+          "fromPackage": ""
+        },
+        "name": "NTP stats",
+        "description": "",
+        "widgets": [
+          {
+            "id": "a9e9d5d3-e67a-4aa3-931b-a8847a72aa8c",
+            "name": "",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 8,
+              "height": 11
+            },
+            "type": "aql-query-widget",
+            "inputs": {
+              "expression": "let ntpData = `*:/NTP/status/system/variables` | map(merge(_value))\nlet output = newDict()\nfor devID,devData in ntpData{\n    output[devID] = newDict()\n    output[devID][\"peer\"]= devData[\"refid\"]\n    output[devID][\"Stratum\"]=devData[\"stratum\"]\n    output[devID][\"OffSet\"]=devData[\"offset\"]\n    }\noutput\n",
+              "graphConfig": {
+                "columns": {
+                  "key": {
+                    "mapToHostname": true
+                  }
+                }
+              },
+              "visualization": "table"
+            },
+            "location": "main",
+            "styles": {
+              "hideTitle": true,
+              "backgroundColor": "",
+              "hideHorizontalBar": false,
+              "titleSize": 14
+            }
+          }
+        ],
+        "lastUpdated": 1680137491777,
+        "lastUpdatedBy": "tamas"
+      }
+    ]
+  }

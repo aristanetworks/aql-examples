@@ -1,0 +1,88 @@
+{
+    "dashboards": [
+      {
+        "key": "7c1195b0-be81-4f16-b066-5265ea904d40",
+        "createdAt": [
+          414026146,
+          1570
+        ],
+        "createdBy": "tamas",
+        "metaData": {
+          "schemaVersion": "3",
+          "legacyKey": "",
+          "legacyVersion": "",
+          "fromPackage": ""
+        },
+        "name": "Interface Admin Status",
+        "description": "",
+        "widgets": [
+          {
+            "id": "84631492-7f46-40e6-adfb-3279e0eb9960",
+            "name": "",
+            "position": {
+              "x": 11,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 7,
+              "height": 12
+            },
+            "type": "aql-query-widget",
+            "inputs": {
+              "expression": "let data = `analytics:/Devices/<_device>/versioned-data/OpenConfig/interfaces/interface/*/state` \nlet res = newDict()\nfor key, value in data{\n    let temp = merge(value)\n    res[key[\"name\"]] = newDict() | setFields(\"Status\", temp[\"admin-status\"]) \n}\nres",
+              "visualization": "table"
+            },
+            "location": "main",
+            "parent": ""
+          },
+          {
+            "id": "f7da75be-066e-44f3-9b48-cfb172257f57",
+            "name": "",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 8,
+              "height": 10
+            },
+            "type": "aql-query-widget",
+            "inputs": {
+              "expression": "let data = `<_device>:/Sysdb/interface/config/eth/phy/slice/*/intfConfig/*`\nlet res = newDict()\nfor cell in data{\n    for interface, value in cell{\n        let status = merge(value)[\"adminEnabledStateLocal\"][\"Name\"]\n        # if an interface was never shutdown the state is unknownEnabledState\n        if status == \"unknownEnabledState\"{\n            let status = \"enabled\"\n        }\n        res[interface] = newDict() | setFields(\"Status\", status)\n        \n    }\n}\nres",
+              "graphConfig": {
+                "columns": {
+                  "Status": {}
+                }
+              },
+              "visualization": "table"
+            },
+            "location": "main",
+            "parent": ""
+          },
+          {
+            "id": "64d655a3-76d5-4a31-a985-ccf6c551b29a",
+            "name": "",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 4,
+              "height": 2
+            },
+            "type": "input-widget",
+            "inputs": {
+              "defaultValue": "BAD032986065E8DC14CBB6472EC314A6",
+              "inputName": "device",
+              "inputSource": "devices",
+              "tagLabel": "device"
+            },
+            "location": "inputs",
+            "parent": ""
+          }
+        ],
+        "lastUpdated": 1686190218947,
+        "lastUpdatedBy": "tamas"
+      }
+    ]
+  }

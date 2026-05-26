@@ -1,0 +1,327 @@
+{
+  "dashboards": [
+    {
+      "key": "50865968-9023-497b-b710-bf3d2bb7b294",
+      "createdAt": [
+        25589288,
+        1575
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Hardware Health Check",
+      "description": "",
+      "widgets": [
+        {
+          "id": "abeec35c-30f7-40e8-be14-c5a1acbfebba",
+          "name": "Power Supply Status per Device",
+          "position": {
+            "x": 0,
+            "y": 9
+          },
+          "dimensions": {
+            "width": 12,
+            "height": 21
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/<_SWITCH_ROLE>/elements`)\r\n\r\n\r\nlet powerSupply = `*:/Sysdb/environment/archer/power/status/powerSupply/*`\r\nlet filteredPsuStats = powerSupply | where(dictHasKey(powerSupply, _key) == true) | recmap(2, (merge(_value)[\"state\"][\"Name\"]))\r\n\r\nif str(_POD_NAME) == \"\" && str(_SWITCH_ROLE) == \"\" {\r\n    let result = filteredPsuStats\r\n} else {\r\n    if str(_SWITCH_ROLE) == \"\" {\r\n        let result = filteredPsuStats | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    } else {\r\n        if str(_POD_NAME) == \"\" {\r\n            let result = filteredPsuStats | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n        } else {\r\n            let result = filteredPsuStats | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n        }\r\n    }\r\n}\r\n\r\nfor deviceKey, deviceValue  in result{\r\n    for powerSupplyKey, powerSupplyValue in deviceValue{\r\n        if powerSupplyValue==\"ok\"{\r\n            result[deviceKey][powerSupplyKey]=\"✔️\"\r\n        } else{\r\n            result[deviceKey][powerSupplyKey]=\"❌\"\r\n        }\r\n    }\r\n}\r\nresult",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Device"
+                },
+                "PowerSupply1": {
+                  "showDotIndicator": false,
+                  "colorMappings": []
+                },
+                "PowerSupply2": {
+                  "showDotIndicator": false,
+                  "colorMappings": []
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "4eafc49f-18c1-44a3-8ac0-6ce698e47f12",
+          "name": "Power Supplies in the Fabric",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 9
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let powerSupplies = `*:/Sysdb/environment/archer/power/status/powerSupply/*`\r\nlet data = powerSupplies | where(dictHasKey(powerSupplies, _key) == true) | recmap(2, (merge(_value)[\"state\"][\"Name\"]))\r\n\r\nlet loss = 0\r\nlet ok = 0\r\nfor deviceKey, deviceValue  in data{\r\n    for powerSuppliesKey, powerSuppliesValue in deviceValue{\r\n        if powerSuppliesValue==\"ok\"{\r\n            let ok = ok+1\r\n        } else{\r\n            let loss = loss+1\r\n        }\r\n    }\r\n}\r\n\r\nlet usageDict = newDict()\r\n\r\nusageDict[\"PowerSupplies OK\"] = ok\r\nusageDict[\"PowerSupplies NOK\"] = loss\r\n \r\nusageDict",
+            "graphConfig": {
+              "colorOverrides": {
+                "PowerSupplies OK": "green",
+                "PowerSupplies NOK": "red"
+              },
+              "mapToHostname": true,
+              "unit": "powersupplies"
+            },
+            "visualization": "donutGraph"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "0a19206b-2cae-4d38-a2d6-ce6b478cc9b6",
+          "name": "Fan Status per Device",
+          "position": {
+            "x": 12,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 12,
+            "height": 13
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/<_SWITCH_ROLE>/elements`)\r\n\r\nlet fans = `*:/Sysdb/environment/archer/cooling/status/*`\r\nlet fansHwStatus = fans | where(dictHasKey(fans, _key) == true) | recmap(2, (merge(_value)[\"hwStatus\"][\"Name\"]))\r\n\r\nif str(_POD_NAME) == \"\" && str(_SWITCH_ROLE) == \"\" {\r\n    let result = fansHwStatus\r\n} else {\r\n    if str(_SWITCH_ROLE) == \"\" {\r\n        let result = fansHwStatus | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    } else {\r\n        if str(_POD_NAME) == \"\" {\r\n            let result = fansHwStatus | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n        } else {\r\n            let result = fansHwStatus | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n        }\r\n    }\r\n}\r\n\r\nfor deviceKey, deviceValue  in result{\r\n    for fansKey, fansValue in deviceValue{\r\n        if fansValue==\"ok\"{\r\n            result[deviceKey][fansKey]=\"✔️\"\r\n        } else{\r\n            result[deviceKey][fansKey]=\"❌\"\r\n        }\r\n    }\r\n}\r\nresult",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "columnTitle": "Device",
+                  "mapToHostname": true,
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "ok": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Fan1/2": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "ok": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Fan2/2": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "ok": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                },
+                "FanP1/1": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "ok": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Fan2/1": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "ok": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                },
+                "FanP2/1": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "ok": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Fan1/1": {
+                  "colorMappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "ok": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "914738b6-ac0f-492a-8ad5-a6b5f8cac24e",
+          "name": "Temperature Sensors per Device",
+          "position": {
+            "x": 12,
+            "y": 13
+          },
+          "dimensions": {
+            "width": 12,
+            "height": 17
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/<_SWITCH_ROLE>/elements`)\r\n\r\nlet temperature = `*:/Sysdb/environment/archer/temperature/status/cell/1/*`\r\nlet filteredTemperatureStats = temperature | where(dictHasKey(temperature, _key) == true) | recmap(2, (merge(_value)[\"alertRaised\"]))\r\n\r\nif str(_POD_NAME) == \"\" && str(_SWITCH_ROLE) == \"\" {\r\n    let result = filteredTemperatureStats\r\n} else {\r\n    if str(_SWITCH_ROLE) == \"\" {\r\n        let result = filteredTemperatureStats | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n    } else {\r\n        if str(_POD_NAME) == \"\" {\r\n            let result = filteredTemperatureStats | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n        } else {\r\n            let result = filteredTemperatureStats | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n        }\r\n    }\r\n}\r\n\r\nfor deviceKey, deviceValue  in result{\r\n    for sensorKey, sensorValue in deviceValue{\r\n        if sensorValue==false{\r\n            result[deviceKey][sensorKey]=\"✔️\"\r\n        } else{\r\n            result[deviceKey][sensorKey]=\"❌\"\r\n        }\r\n    }\r\n}\r\nresult",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Device"
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "8b30437c-4f2b-49d2-b01d-20eb196ecd9a",
+          "name": "Fans in the Fabric",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 9
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let fans = `*:/Sysdb/environment/archer/cooling/status/*`\r\nlet data = fans | where(dictHasKey(fans, _key) == true) | recmap(2, (merge(_value)[\"hwStatus\"][\"Name\"]))\r\n\r\nlet loss = 0\r\nlet ok = 0\r\n\r\nfor deviceKey, deviceValue  in data{\r\n    for fansKey, fansValue in deviceValue{\r\n        if fansValue==\"ok\"{\r\n           let ok = ok +1\r\n        } else{\r\n           let loss = loss +1\r\n        }\r\n    }\r\n}\r\n\r\nlet usageDict = newDict()\r\n\r\nusageDict[\"Fans OK\"] = ok\r\nusageDict[\"Fans NOK\"] = loss\r\n \r\nusageDict",
+            "graphConfig": {
+              "colorOverrides": {
+                "Fans OK": "green",
+                "Fans NOK": "red"
+              },
+              "mapToHostname": true,
+              "unit": "fans"
+            },
+            "visualization": "donutGraph"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "bd45f03b-1c5c-40b2-b94b-1e8b5df1322e",
+          "name": "TEMPERATURE state",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 9
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let temperature = `*:/Sysdb/environment/archer/temperature/status/cell/1/*`\r\nlet data = temperature | where(dictHasKey(temperature, _key) == true) | recmap(2, (merge(_value)[\"alertRaised\"]))\r\n\r\nlet loss = 0\r\nlet ok = 0\r\n\r\nfor deviceKey, deviceValue  in data{\r\n    for sensorKey, sensorValue in deviceValue{\r\n        if sensorValue==false{\r\n           let ok = ok +1\r\n        } else{\r\n           let loss = loss +1\r\n        }\r\n    }\r\n}\r\n\r\nlet usageDict = newDict()\r\n\r\nusageDict[\"Temp OK\"] = ok\r\nusageDict[\"Temp NOK\"] = loss\r\n \r\nusageDict",
+            "graphConfig": {
+              "colorOverrides": {
+                "Temp NOK": "red",
+                "Temp OK": "green"
+              },
+              "mapToHostname": true,
+              "unit": "sensors"
+            },
+            "visualization": "donutGraph"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "c5b66b76-ddd7-4766-83b0-846fd82c3f53",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "SWITCH_ROLE",
+            "inputSource": "devices",
+            "inputWidgetId": "c5b66b76-ddd7-4766-83b0-846fd82c3f53",
+            "tagLabel": "switch_role"
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "9eb232c0-82f3-48a4-961b-0b50927394f0",
+          "name": "",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "POD_NAME",
+            "inputSource": "devices",
+            "inputWidgetId": "9eb232c0-82f3-48a4-961b-0b50927394f0",
+            "tagLabel": "pod_name"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691169204125,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}

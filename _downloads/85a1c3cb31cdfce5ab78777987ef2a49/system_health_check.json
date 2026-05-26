@@ -1,0 +1,310 @@
+{
+  "dashboards": [
+    {
+      "key": "597bf49c-dcbf-460c-bb2e-b48d182f8d7c",
+      "createdAt": [
+        1005976962,
+        1574
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "System Health Check",
+      "description": "",
+      "widgets": [
+        {
+          "id": "d1a23e52-595c-4210-886b-970269fd1892",
+          "name": "CPU Utilization and Boot Timeper Device",
+          "position": {
+            "x": 11,
+            "y": 10
+          },
+          "dimensions": {
+            "width": 8,
+            "height": 9
+          },
+          "type": "metrics-widget-table",
+          "inputs": {
+            "components": [],
+            "isTokenSearchEnabled": true,
+            "metricKeys": [
+              "DEVICE_CPU",
+              "DEVICE_BOOTTIME_METRIC"
+            ],
+            "metricSource": "devices",
+            "selectedCustomTags": [
+              "POD_NAME",
+              "SWITCH_ROLE"
+            ],
+            "tags": "",
+            "viewType": "metric"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "5418b3cc-94e1-4a5b-b20d-871415d2f84b",
+          "name": "Used Memory per Device over Time",
+          "position": {
+            "x": 0,
+            "y": 19
+          },
+          "dimensions": {
+            "width": 11,
+            "height": 9
+          },
+          "type": "metrics-widget",
+          "inputs": {
+            "components": [],
+            "isTokenSearchEnabled": true,
+            "metricKeys": [
+              "DEVICE_USED_MEMORY"
+            ],
+            "metricSource": "devices",
+            "selectedCustomTags": [
+              "POD_NAME",
+              "SWITCH_ROLE"
+            ],
+            "tags": "",
+            "viewType": "metric"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "fb792084-6697-4ea4-824d-712897004301",
+          "name": "CPU Utilization per Device over Time",
+          "position": {
+            "x": 0,
+            "y": 10
+          },
+          "dimensions": {
+            "width": 11,
+            "height": 9
+          },
+          "type": "metrics-widget",
+          "inputs": {
+            "components": [],
+            "isTokenSearchEnabled": true,
+            "metricKeys": [
+              "DEVICE_CPU"
+            ],
+            "metricSource": "devices",
+            "selectedCustomTags": [
+              "POD_NAME",
+              "SWITCH_ROLE"
+            ],
+            "tags": "",
+            "viewType": "metric"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "f9eb222c-3fe1-4163-88b8-04ec47e27243",
+          "name": "Usage in Percent of /mnt/flash all",
+          "position": {
+            "x": 11,
+            "y": 19
+          },
+          "dimensions": {
+            "width": 8,
+            "height": 9
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/pod_name/value/<_POD_NAME>/elements`)\r\nlet devicesSwitchLabel = merge(`analytics:/tags/labels/devices/switch_role/value/<_SWITCH_ROLE>/elements`)\r\n\r\nlet deviceDisks = `analytics:/Devices/*/versioned-data/hardware/disk/\\/mnt\\/flash`\r\n\r\nif str(_POD_NAME) == \"\" && str(_SWITCH_ROLE) == \"\" {\r\n    let data = deviceDisks\r\n} else {\r\n    if str(_SWITCH_ROLE) == \"\" {\r\n        let data = deviceDisks | where(strContains(str(devices), _key))\r\n    } else {\r\n        if str(_POD_NAME) == \"\" {\r\n            let data = deviceDisks | where(dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n        } else {\r\n            let data = deviceDisks | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(devicesSwitchLabel, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))\r\n        }\r\n    }\r\n}\r\n\r\ndata | map(merge(_value) | fields(\"usedPartitionPercent\"))",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Device"
+                },
+                "usedPartitionPercent": {
+                  "mapToHostname": false,
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 60,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 60,
+                        "to": 80,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 80,
+                        "to": 100,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ],
+                  "showDotIndicator": true,
+                  "unit": "%"
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "6b78a2d2-3c6a-446c-b12c-0ba6db4bdbd2",
+          "name": "Disk /mnt/flash State",
+          "position": {
+            "x": 12,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 7,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let data =`analytics:/Devices/*/versioned-data/hardware/disk/\\/mnt\\/flash`\r\nlet data = data | map(merge(_value) | fields(\"usedPartitionPercent\"))\r\n\r\nlet test = 0\r\nlet i60 = 0\r\nlet b6080 = 0\r\nlet s80 = 0\r\n\r\nfor device, deviceData in data {\r\n    if dictHasKey(deviceData, \"usedPartitionPercent\") {\r\n        let test = deviceData[\"usedPartitionPercent\"]\r\n        if test < 60 {\r\n            let i60=i60+1\r\n        }\r\n        if test < 80 && test > 60 {\r\n            let b6080=b6080+1\r\n        }\r\n        if test > 80 {\r\n            let s80=s80+1\r\n        }\r\n    }\r\n}\r\n\r\nlet usageDict = newDict()\r\n\r\nusageDict[\"Disk < 60%\"] = i60\r\nusageDict[\"60% < Disk < 80%\"] = b6080\r\nusageDict[\"Disk > 80%\"] = s80\r\n\r\nusageDict\r\n",
+            "graphConfig": {
+              "colorOverrides": {
+                "Disk < 60%": "green",
+                "60% < Disk < 80%": "yellow",
+                "Disk > 80%": "red"
+              },
+              "mapToHostname": true,
+              "unit": "devices"
+            },
+            "visualization": "donutGraph"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "e6843920-1bcb-4ee5-8318-d99119760d21",
+          "name": "CPU Utilization in the Fabric",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let data =`analytics:/Devices/*/versioned-data/hardware/cpu/total/aggregate/1m`\r\nlet data = data | map(merge(_value) | fields(\"util\"))\r\n\r\nlet test = 0\r\nlet i60 = 0\r\nlet b6080 = 0\r\nlet s80 = 0\r\n\r\nfor device, deviceData in data {\r\n    if dictHasKey(deviceData, \"util\") {\r\n        let test = deviceData[\"util\"][\"avg\"]\r\n        if test < 60 {\r\n            let i60=i60+1\r\n        }\r\n        if test < 80 && test > 60 {\r\n            let b6080=b6080+1\r\n        }\r\n        if test > 80 {\r\n            let s80=s80+1\r\n        }\r\n    }\r\n}\r\n\r\nlet usageDict = newDict()\r\n\r\nusageDict[\"CPU < 60%\"] = i60\r\nusageDict[\" 60% < CPU < 80%\"] = b6080\r\nusageDict[\"CPU > 80%\"] = s80\r\n\r\nusageDict\r\n",
+            "graphConfig": {
+              "colorOverrides": {
+                "CPU > 80%": "red",
+                "CPU < 60%": "green",
+                " 60% < CPU < 80%": "yellow"
+              },
+              "mapToHostname": true,
+              "unit": "devices"
+            },
+            "visualization": "donutGraph"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "04079929-781d-4dbc-bb16-cd6f65cfe970",
+          "name": "Memory Usage in the Fabric",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 10
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let data =`analytics:/Devices/*/versioned-data/hardware/meminfo/memoryUsage`\r\nlet data = data | map(merge(_value) | fields(\"usedMemoryPercent\"))\r\n\r\nlet test = 0\r\nlet i60 = 0\r\nlet b6070 = 0\r\nlet s70 = 0\r\n\r\nfor device, deviceData in data {\r\n    if dictHasKey(deviceData, \"usedMemoryPercent\") {\r\n        let test = deviceData[\"usedMemoryPercent\"]\r\n        if test < 70 {\r\n            let i60=i60+1\r\n        }\r\n        if test < 80 && test > 70 {\r\n            let b6070=b6070+1\r\n        }\r\n        if test > 70 {\r\n            let s70=s70+1\r\n        }\r\n    }\r\n}\r\n\r\nlet usageDict = newDict()\r\n\r\nusageDict[\"Memory < 60%\"] = i60\r\nusageDict[\"60% < Memory < 70%\"] = b6070\r\nusageDict[\"Memory > 70%\"] = s70\r\n\r\nusageDict",
+            "graphConfig": {
+              "colorOverrides": {
+                "Memory < 60%": "green",
+                "60% < Memory < 70%": "yellow",
+                "Memory > 70%": "red"
+              },
+              "unit": "devices"
+            },
+            "visualization": "donutGraph"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "b101a5e2-96c8-4874-9ffa-f20ea2a03230",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "SWITCH_ROLE",
+            "inputSource": "devices",
+            "selectedCustomTags": [],
+            "tagLabel": "switch_role",
+            "tags": ""
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "1ab1af02-21ae-4fbc-98db-ef027459fbc5",
+          "name": "",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "POD_NAME",
+            "inputSource": "devices",
+            "selectedCustomTags": [],
+            "tagLabel": "pod_name",
+            "tags": ""
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691082198455,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}

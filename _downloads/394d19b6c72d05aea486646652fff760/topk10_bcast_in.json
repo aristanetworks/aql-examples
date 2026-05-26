@@ -1,0 +1,100 @@
+{
+  "dashboards": [
+    {
+      "key": "919c1d36-faf8-4e58-9df8-be4be2340761",
+      "createdAt": [
+        528508665,
+        1650
+      ],
+      "createdBy": "cvpadmin",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "TopK Broadcast In",
+      "description": "",
+      "widgets": [
+        {
+          "id": "a4f9a360-7621-47c7-a6e7-3e6a4b69e796",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 15,
+            "height": 15
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# Get InBroadcasPkts_count for all interfaces on all filtered devices\nlet data = `analytics:/Devices/*_Devices?/versioned-data/interfaces/data/*/counters`{\"inBroadcastPkts_count\"}\nlet result = newDict()\n\nfor device, interfaces in data {\n    for intf, ts in interfaces {\n        let latest = merge(ts)\n        if dictHasKey(latest, \"inBroadcastPkts_count\") {\n            result[device + \" / \" + intf] = newDict() | setFields(\"Device\", device, \"Interface\", intf, \"Broadcast In\", latest[\"inBroadcastPkts_count\"])\n        }\n    }\n}\n# Put the top 10 in a table format (default is 10)\n# change it from the TopK input\nresult | topK(_TopK, _value[\"Broadcast In\"])",
+            "graphConfig": {
+              "columns": {
+                "Device": {
+                  "mapToHostname": true
+                },
+                "key": {
+                  "hide": true
+                }
+              },
+              "columnOrders": {
+                "Device": 1,
+                "Interface": 2,
+                "key": 3,
+                "Broadcast In": 4
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "fc59c79e-fd97-4b9b-8a9b-f9b9146ae125",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 9,
+            "height": 2
+          },
+          "type": "tag-query-widget",
+          "inputs": {
+            "inputName": "Devices",
+            "inputSource": "devices",
+            "defaultValue": "device:*"
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "5c7fff8e-2a0a-4c75-8603-5ce7e42a1262",
+          "name": "",
+          "position": {
+            "x": 9,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": 10,
+            "inputName": "TopK",
+            "inputType": "FreeForm",
+            "variableType": "Number"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1772212865708,
+      "lastUpdatedBy": "cvpadmin"
+    }
+  ]
+}

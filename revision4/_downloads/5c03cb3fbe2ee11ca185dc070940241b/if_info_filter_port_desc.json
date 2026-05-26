@@ -1,0 +1,88 @@
+{
+  "dashboards": [
+    {
+      "key": "76e82968-cffe-48ff-9857-4d80f710e344",
+      "createdAt": [
+        470032826,
+        1570
+      ],
+      "createdBy": "cvpadmin",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Gather Interface Information with a filter on Port Description",
+      "description": "",
+      "widgets": [
+        {
+          "id": "dc092a39-346a-4c47-9b3f-c9e3cdf97ecd",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 22,
+            "height": 11
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# Requires a variable input named PortDescription\n\n# Get the interface names and descriptions\nlet intfConfig = `*:/Sysdb/interface/config/eth/phy/slice/1/intfConfig/*` | recmap(2, merge(_value))\nlet i = 0\nlet result = newDict()\nfor deviceKey, deviceVal in intfConfig {\n    for interfaceKey, interfaceVal in deviceVal {\n        if reMatch(interfaceVal[\"description\"], _PortDescription) {\n            result[i] = newDict()\n            result[i][\"Switch\"] = deviceKey\n            result[i][\"Interface\"] = interfaceKey\n            result[i][\"Port Description\"] = interfaceVal[\"description\"]\n            let i = i + 1\n        }\n    }\n}\n\n# Get the LLDP Neighbour Information\nlet lldpPeers = `*:/Sysdb/l2discovery/lldp/status/local/1/portStatus/*/remoteSystem/*` | recmap(3, merge(_value))\nfor deviceKey, deviceVal in result {\n    for lldpKey, lldpVal in lldpPeers {\n        if lldpKey == deviceVal[\"Switch\"] {\n            for interfaceKey, interfaceVal in lldpVal {\n                if interfaceKey == deviceVal[\"Interface\"] {\n                    let values = interfaceVal[dictKeys(interfaceVal)[0]]\n                    result[deviceKey][\"Remote LLDP Hostname\"] = values[\"sysName\"][\"value\"][\"value\"]\n                    result[deviceKey][\"Remote LLDP PortID\"] = values[\"msap\"][\"portIdentifier\"][\"portId\"]\n                    result[deviceKey][\"Chassis Identifier\"] = values[\"msap\"][\"chassisIdentifier\"][\"chassisId\"]\n                }\n            }\n        }\n    }\n}\n\n# Get the L2 Interface Information (VLAN Info, etc)\nlet switchIntfConfig = `*:/Sysdb/bridging/switchIntfConfig/switchIntfConfig/*` | recmap(2, merge(_value))\nfor deviceKey, deviceVal in result {\n    for switchKey, switchVal in switchIntfConfig {\n        if switchKey == deviceVal[\"Switch\"] {\n            for interfaceKey, interfaceVal in switchVal {\n                if interfaceKey == deviceVal[\"Interface\"] {\n                    result[deviceKey][\"Switchport Mode\"] = interfaceVal[\"switchportMode\"][\"Name\"]\n                    result[deviceKey][\"Access VLAN\"] = interfaceVal[\"accessVlan\"][\"value\"]\n                    result[deviceKey][\"Trunked VLANs\"] = interfaceVal[\"trunkAllowedVlans\"]\n                }\n            }\n        }\n    }\n}\n\n# Get the Interface Status Info\nlet intfStatus = `*:/Sysdb/interface/status/eth/phy/slice/1/intfStatus/*` | recmap(2, merge(_value))\nfor deviceKey, deviceVal in result {\n    for switchKey, switchVal in intfStatus {\n        if switchKey == deviceVal[\"Switch\"] {\n            for intfKey, intfVal in switchVal {\n                if intfKey == deviceVal[\"Interface\"] {\n                    result[deviceKey][\"Status\"] = intfVal[\"operStatus\"][\"Name\"]\n                    result[deviceKey][\"Speed\"] = intfVal[\"speedEnum\"][\"Name\"]\n                }\n            }\n        }\n    }\n}\nresult\n",
+            "graphConfig": {
+              "defaultSort": {
+                "key": "Switch"
+              },
+              "columns": {
+                "Switch": {
+                  "mapToHostname": true
+                }
+              },
+              "columnOrders": {
+                "key": 1,
+                "Switch": 2,
+                "Interface": 3,
+                "Status": 4,
+                "Switchport Mode": 5,
+                "Trunked VLANs": 6,
+                "Access VLAN": 7,
+                "Port Description": 8,
+                "Chassis Identifier": 9,
+                "Remote LLDP Hostname": 10,
+                "Remote LLDP PortID": 11,
+                "Speed": 12
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "7803f7c2-439c-4768-a8a7-fdcf8dc3566d",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "PortDescription",
+            "inputType": "FreeForm",
+            "variableType": "String"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691022276885,
+      "lastUpdatedBy": "cvpadmin"
+    }
+  ]
+}
