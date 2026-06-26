@@ -15,4 +15,6 @@ Interface States Examples
 
 .. include:: intf_counter_rate_sum_per_dev.rst
 
+.. include:: combined_interface_bitrate.rst
+
 .. include:: topk10_bcast_in.rst

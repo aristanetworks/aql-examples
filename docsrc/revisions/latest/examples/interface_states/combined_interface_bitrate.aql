@@ -1,0 +1,28 @@
+let raw = `analytics:/Devices/*_devices?/versioned-data/interfaces/data/*/aggregate/rates/1m`{"inOctets", "outOctets"}[_timeWindowStart:_timeWindowEnd]
+
+let selected = newDict()
+
+for device, intfs in _interfaces {
+    if dictHasKey(raw, device) {
+        let deviceData = raw[device]
+        let selectedIntfs = newDict()
+
+        for intf, value in intfs {
+            if dictHasKey(deviceData, intf) {
+                selectedIntfs[intf] = deviceData[intf]
+            }
+        }
+
+        if length(selectedIntfs) > 0 {
+            selected[device] = selectedIntfs
+        }
+    }
+}
+
+let inByInterfaceMbps = selected | recmap(2, _value | map(errvl(_value["inOctets"]["avg"], 0) * 8 / 1000000) | resample(1m))
+let outByInterfaceMbps = selected | recmap(2, _value | map(errvl(_value["outOctets"]["avg"], 0) * 8 / 1000000) | resample(1m))
+
+let inByDeviceMbps = inByInterfaceMbps | map(aggregate(_value, "sum"))
+let outByDeviceMbps = outByInterfaceMbps | map(aggregate(_value, "sum"))
+
+newDict() | setFields("Bitrate In", aggregate(inByDeviceMbps, "sum"), "Bitrate Out", aggregate(outByDeviceMbps, "sum"))
