@@ -1,0 +1,733 @@
+{
+  "dashboards": [
+    {
+      "key": "7c052c12-58de-4027-989c-9c2afb1adb77",
+      "createdAt": [
+        22352252,
+        1575
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "TCAM Capacity",
+      "description": "",
+      "widgets": [
+        {
+          "id": "29b2c81c-bf65-4a58-95c9-b8cd971e068a",
+          "name": "7280R2 Switches",
+          "position": {
+            "x": 0,
+            "y": 6
+          },
+          "dimensions": {
+            "width": 12,
+            "height": 7
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = merge(`analytics:/tags/labels/devices/switch_role/value/egw/elements`)\r\nlet hwCapL3 =`*:/Sysdb/hardware/capacity/status/l3/entry`\r\n\r\nlet podDeviceList = merge(`analytics:/tags/labels/devices/pod_name/value/<_pod_name>/elements`)\r\n\r\nif str(_pod_name) == \"\" {\r\n    let filteredHwCapL3 = hwCapL3 | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value) )\r\n} else {\r\n    let filteredHwCapL3 = hwCapL3 | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(podDeviceList, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value) )\r\n}\r\n\r\nfor deviceKey, deviceValue in filteredHwCapL3{\r\n    filteredHwCapL3[deviceKey][\"MAC\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"LEM\\\", \\\"feature\\\": \\\"MAC\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"LEM\\\", \\\"feature\\\": \\\"MAC\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"FEC Routing\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"FEC\\\", \\\"feature\\\": \\\"Routing\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"FEC\\\", \\\"feature\\\": \\\"Routing\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"Routing1\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource1\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource1\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"Routing2\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource2\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource2\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"Routing3\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource3\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource3\\\"}\")][\"maxLimit\"]*100\r\n}\r\n\r\nfilteredHwCapL3 | map(_value | fields(\"MAC\",\"FEC Routing\", \"Routing1\", \"Routing2\", \"Routing3\"))",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Device"
+                },
+                "Routing3": {
+                  "type": "number",
+                  "decimals": 2,
+                  "unit": "%",
+                  "showDotIndicator": false,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "FEC Routing": {
+                  "type": "number",
+                  "decimals": 2,
+                  "unit": "%",
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "MAC": {
+                  "unit": "%",
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Routing1": {
+                  "unit": "%",
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Routing2": {
+                  "unit": "%",
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "04b7773a-88cd-42d0-bb31-949d5904fca4",
+          "name": "7050X3 Switches",
+          "position": {
+            "x": 0,
+            "y": 13
+          },
+          "dimensions": {
+            "width": 12,
+            "height": 7
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# Get the devices that have the `hdl` (high-density leaf) tag\r\nlet devices = merge(`analytics:/tags/labels/devices/switch_role/value/hdl/elements`)\r\n\r\n# Get the L3 hardware capacity for all devices\r\nlet hwCapL3 =`*:/Sysdb/hardware/capacity/status/l3/entry`\r\n\r\n# Get the L2 hardware capacity for all devices\r\nlet hwCapL2 =`*:/Sysdb/hardware/capacity/status/l2/entry`\r\n\r\n# Get the devices that are part of a specific pod\r\nlet podDeviceList = merge(`analytics:/tags/labels/devices/pod_name/value/<_pod_name>/elements`)\r\n\r\n# If the POD_NAME variable is not set (none) show the utilization for all pods\r\nif str(_pod_name) == \"\" {\r\n    let filteredHwCapL3 = hwCapL3 | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value) )\r\n    let filteredHwCapL2 = hwCapL2 | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value) )\r\n} else {\r\n    let filteredHwCapL3 = hwCapL3 | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(podDeviceList, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value) )\r\n    let filteredHwCapL2 = hwCapL2 | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(podDeviceList, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value) )\r\n}\r\n\r\n# Build a new table with MAC, HOST, LPM and NextHop utilization\r\nfor deviceKey, deviceValue in filteredHwCapL3{\r\n    filteredHwCapL3[deviceKey][\"Host Percent\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"Host\\\", \\\"feature\\\": \\\"\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"Host\\\", \\\"feature\\\": \\\"\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"LPM Percent\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"LPM\\\", \\\"feature\\\": \\\"\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"LPM\\\", \\\"feature\\\": \\\"\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"NextHop Percent\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"NextHop\\\", \\\"feature\\\": \\\"\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"NextHop\\\", \\\"feature\\\": \\\"\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"MAC Percent\"] = filteredHwCapL2[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Linecard0/0\\\", \\\"table\\\":\\\"MAC\\\", \\\"feature\\\": \\\"L2\\\"}\")][\"used\"] / filteredHwCapL2[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Linecard0/0\\\", \\\"table\\\":\\\"MAC\\\", \\\"feature\\\": \\\"L2\\\"}\")][\"maxLimit\"]*100\r\n}\r\nfilteredHwCapL3 | map(_value | fields(\"MAC Percent\",\"Host Percent\", \"LPM Percent\", \"NextHop Percent\"))",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "columnTitle": "Device",
+                  "mapToHostname": true
+                },
+                "MAC Percent": {
+                  "unit": "%",
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "LPM Percent": {
+                  "unit": "%",
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Host Percent": {
+                  "unit": "%",
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "NextHop Percent": {
+                  "unit": "%",
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "9489f737-3a97-4c27-afb2-cdd9f96f94ae",
+          "name": "7020R Switches",
+          "position": {
+            "x": 0,
+            "y": 20
+          },
+          "dimensions": {
+            "width": 12,
+            "height": 7
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "# Get the devices that have the `ldl` (low-density leaf) tag\r\nlet devices = merge(`analytics:/tags/labels/devices/switch_role/value/ldl/elements`)\r\n\r\n# Get the L3 hardware capacity for all devices\r\nlet hwCapL3 =`*:/Sysdb/hardware/capacity/status/l3/entry`\r\n\r\n# Get the multicast hardware capacity for all devices\r\nlet hwCapMcast = `*:/Sysdb/hardware/capacity/status/mcast/entry`\r\n\r\n# Get the devices that are part of a specific pod\r\nlet podDeviceList = merge(`analytics:/tags/labels/devices/pod_name/value/<_pod_name>/elements`)\r\nlet filteredHwCapL3 = hwCapL3 | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(podDeviceList, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")))| map(merge(_value) )\r\nlet filteredHwCapMcast = hwCapMcast | where(dictHasKey(devices, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\")) && dictHasKey(podDeviceList, complexKey(\"{\\\"deviceID\\\": \\\"\"+_key+\"\\\"}\"))) | map(merge(_value) )\r\n\r\n# Build a new table with MAC, MCDB, FEC Routing, Routing1, Routing2 and Routing3 utilization\r\nfor deviceKey, deviceValue in filteredHwCapL3{\r\n    filteredHwCapL3[deviceKey][\"MAC\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"LEM\\\", \\\"feature\\\": \\\"MAC\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"LEM\\\", \\\"feature\\\": \\\"MAC\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"FEC Routing\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"FEC\\\", \\\"feature\\\": \\\"Routing\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"\\\", \\\"table\\\":\\\"FEC\\\", \\\"feature\\\": \\\"Routing\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"Routing1\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource1\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource1\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"Routing2\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource2\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource2\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"Routing3\"] = filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource3\\\"}\")][\"used\"] / filteredHwCapL3[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho\\\", \\\"table\\\":\\\"Routing\\\", \\\"feature\\\": \\\"Resource3\\\"}\")][\"maxLimit\"]*100\r\n    filteredHwCapL3[deviceKey][\"MCDB\"] = filteredHwCapMcast[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho0\\\", \\\"table\\\":\\\"MCDB\\\", \\\"feature\\\": \\\"\\\"}\")][\"used\"] / filteredHwCapMcast[deviceKey][complexKey(\"{\\\"chip\\\": \\\"Jericho0\\\", \\\"table\\\":\\\"MCDB\\\", \\\"feature\\\": \\\"\\\"}\")][\"maxLimit\"]*100\r\n}\r\nfilteredHwCapL3 | map(_value | fields(\"MAC\",\"MCDB\",\"FEC Routing\", \"Routing1\", \"Routing2\", \"Routing3\"))\r\n",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true,
+                  "columnTitle": "Device"
+                },
+                "FEC Routing": {
+                  "type": "number",
+                  "decimals": 2,
+                  "unit": "%",
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "MAC": {
+                  "type": "number",
+                  "decimals": 2,
+                  "unit": "%",
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Routing1": {
+                  "unit": "%",
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Routing2": {
+                  "type": "number",
+                  "unit": "%",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "Routing3": {
+                  "unit": "%",
+                  "type": "number",
+                  "decimals": 2,
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                },
+                "MCDB": {
+                  "mapToHostname": false,
+                  "type": "number",
+                  "decimals": 2,
+                  "unit": "%",
+                  "colorMappings": [
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 70,
+                        "result": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 70,
+                        "to": 90,
+                        "result": {
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 90,
+                        "result": {
+                          "color": "red",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "c5bc913d-3c19-4cb7-b0d1-dd79eee8fb60",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 12,
+            "height": 6
+          },
+          "type": "text-widget",
+          "inputs": {
+            "textContent": "TCAM Capacity\n\nThe 3 tables display the utilization of some TCAM specific slices.\nIn these examples pod_name and switch_role tags are used.\n\nSelect the pod. If none is selected it will show the utilization for all pods.\nAs for the switch roles, for the first table the tag switch_role:egw is used, for the the second switch_role:hdl (high density leaf) and for the last one switch_role:ldl (low density leaf)."
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "f74f224c-d2ea-4c5d-85d6-08f7a0e2f6cf",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 4,
+            "height": 2
+          },
+          "type": "input-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "pod_name",
+            "inputSource": "devices",
+            "selectedCustomTags": [],
+            "tagLabel": "pod_name",
+            "tags": ""
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691168302435,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+    "dashboards": [
+      {
+        "key": "b946c25e-8c85-49f4-89ee-e57266ea4603",
+        "createdAt": [
+          399285739,
+          1569
+        ],
+        "createdBy": "cvpadmin",
+        "metaData": {
+          "schemaVersion": "3",
+          "legacyKey": "",
+          "legacyVersion": "",
+          "fromPackage": ""
+        },
+        "name": "Devices affected by FN72",
+        "description": "",
+        "widgets": [
+          {
+            "id": "303fe171-8fd2-406f-8252-fc6cc8b1aba6",
+            "name": "",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 11,
+              "height": 14
+            },
+            "type": "aql-query-widget",
+            "inputs": {
+              "expression": "let inventory = merge(`analytics:/DatasetInfo/Devices`)\nlet affected = newDict()\nlet id = 1\nfor dkey, dval in inventory{\n    \n    let serial_slice = strCut(dkey,3,7)\n    let model = dval[\"modelName\"]\n    let hostname = dval[\"hostname\"]\n    if strContains(model, \"7280SR3-48YC8\"){\n        if strHasPrefix(dkey, \"JPE\"){\n            if num(serial_slice) < 2131{\n                affected[id] = newDict()\n                affected[id][\"Hostname\"] = hostname\n                affected[id][\"Serial Number\"] = dkey\n                affected[id][\"Model\"] = model\n            }\n        }\n        if strHasPrefix(dkey,\"JAS\"){\n            if num(serial_slice) < 2041{\n                affected[id] = newDict()\n                affected[id][\"Hostname\"] = hostname\n                affected[id][\"Serial Number\"] = dkey\n                affected[id][\"Model\"] = model\n            }\n        }\n        let id = id + 1\n    }\n    if strContains(model, \"7280SR3K-48YC8\"){\n        if strHasPrefix(dkey, \"JPE\"){\n            if num(serial_slice) < 2134{\n                affected[id] = newDict()\n                affected[id][\"Hostname\"] = hostname\n                affected[id][\"Serial Number\"] = dkey\n                affected[id][\"Model\"] = model\n            }\n        }\n        if strHasPrefix(dkey, \"JAS\"){\n            if num(serial_slice) < 2041{\n                affected[id] = newDict()\n                affected[id][\"Hostname\"] = hostname\n                affected[id][\"Serial Number\"] = dkey\n                affected[id][\"Model\"] = model\n            }\n        }\n        let id = id + 1\n    }\n    \n}\naffected",
+              "visualization": "table"
+            },
+            "location": "main"
+          }
+        ],
+        "lastUpdated": 1685150082387,
+        "lastUpdatedBy": "cvpadmin"
+      }
+    ]
+  }

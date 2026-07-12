@@ -1,0 +1,42 @@
+{
+    "dashboards": [
+      {
+        "key": "7ee0a4c8-8e58-4763-95b4-464332fabb82",
+        "createdAt": [
+          62254169,
+          1561
+        ],
+        "createdBy": "tamas",
+        "metaData": {
+          "schemaVersion": "3",
+          "legacyKey": "",
+          "legacyVersion": "",
+          "fromPackage": ""
+        },
+        "name": "Number of MAC entriess across all devices",
+        "description": "",
+        "widgets": [
+          {
+            "id": "e44b876d-1469-4fb7-828e-78cfb3bb294b",
+            "name": "MACs",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 5,
+              "height": 8
+            },
+            "type": "aql-query-widget",
+            "inputs": {
+              "expression": "let data = `*:/Smash/bridging/status/_counts`\nsum(data | map(merge(_value)) | where(dictHasKey(_value, \"smashFdbStatus\")) | map(_value[\"smashFdbStatus\"]))\n",
+              "visualization": "singleValue"
+            },
+            "location": "main"
+          }
+        ],
+        "lastUpdated": 1676173282858,
+        "lastUpdatedBy": "tamas"
+      }
+    ]
+  }

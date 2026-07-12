@@ -1,0 +1,141 @@
+{
+  "dashboards": [
+    {
+      "key": "6185ea4c-1888-46db-af8c-1719594d289a",
+      "createdAt": [
+        196106949,
+        1650
+      ],
+      "createdBy": "sakti",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "MCS Flow filter",
+      "description": "",
+      "widgets": [
+        {
+          "id": "e1b68a84-4e8c-4db7-9aac-44d450dcef6e",
+          "name": "MCS Flow Filter",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 24,
+            "height": 20
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "\nlet flowData = `<_MasterCVX>:/Sysdb/mcs/status/cvp/groups/*/sources/<_source>`\nif str(_group) != \"\" {\n    if dictHasKey(flowData, _group){\n        let flowData = newDict() | setFields(_group, flowData[_group])\n    }else{\n        let flowData = newDict()\n    }\n}\n\nlet mcsReceiver = `<_MasterCVX>:/Sysdb/mcs/status/cvp/groups/*/sources/<_source>/receiver`\nif str(_group) != \"\" {\n    if dictHasKey(mcsReceiver, _group){\n    let mcsReceiver = newDict() | setFields(_group, mcsReceiver[_group])\n    }else{\n        let mcsReceiver = newDict()\n    }\n}\nlet hopDevice = `<_MasterCVX>:/Sysdb/mcs/status/cvp/groups/*/sources/<_source>/hopDevice`\nif str(_group) != \"\" {\n    if dictHasKey(hopDevice, _group){\n    let hopDevice = newDict() | setFields(_group, hopDevice[_group])\n    }else{\n        let hopDevice = newDict()\n    }\n}\n\nlet flowStatus = `<_MasterCVX>:/Sysdb/mcs/status/cvp/groups/*/sources/<_source>/status`\nif str(_group) != \"\"{\n    if dictHasKey(flowStatus, _group) {\n    let flowStatus = newDict() | setFields(_group, flowStatus[_group])\n    }else{\n        let flowStatus = newDict()\n    }\n}\n\nlet status = newDict()\nfor group, groupDetails in flowStatus{\n    let statusData = merge(groupDetails)\n    for statusKey, statusVal in statusData{\n        let statusKey = complexKey(str(statusKey))\n        if statusVal[\"Name\"] != \"noError\"{\n            status[statusKey[\"device\"] + \" intf \" + statusKey[\"intfId\"]] =  \"Error Code \"+ str(statusVal[\"Value\"])+ \" with Value \" + statusVal[\"Name\"]\n        }\n    }\n}\n\nlet source = str(_source)\nlet isGroup = false\nif str(_group) != \"\" {\n    let isGroup = true\n}\nlet result = newDict()\nlet flowBw = \"\"\nlet isInactiveReceiver = true\n\nfor group, groupDetails in flowData{\n    let data = merge(groupDetails)\n    if dictHasKey(data, \"flowBw\"){\n        let flowBw = str(data[\"flowBw\"][\"value\"]) + \" \" + data[\"flowBw\"][\"type\"][\"Name\"]\n    }\n\n    if dictHasKey(data, \"sender\") && data[\"sender\"][\"devId\"] != \"00:00:00:00:00:00\"{\n        let mcsSender = data[\"sender\"]\n\n        let senderDevice = mcsSender[\"devId\"]\n        let senderKey = \"\"\n        let iifneighborIntfId = (mcsSender[\"iif\"][\"neighborIntfId\"] != \"\") ? mcsSender[\"iif\"][\"neighborIntfId\"] : \"N/A\"\n        let iifintfId = (mcsSender[\"iif\"][\"intfId\"] != \"\") ? mcsSender[\"iif\"][\"intfId\"] : \"N/A\"\n        let iifneighborHostname = (mcsSender[\"iif\"][\"neighborHostname\"] != \"\") ? mcsSender[\"iif\"][\"neighborHostname\"] : \"N/A\"\n        let iifneighDevId = (mcsSender[\"iif\"][\"neighborDevId\"] != \"\") ? mcsSender[\"iif\"][\"neighborDevId\"] : \"N/A\"\n\n        if dictHasKey(mcsSender, \"oifs\"){\n            for oifDetail, value in mcsSender[\"oifs\"]{\n\n                let oifIntfId = (oifDetail[\"intfId\"] != \"\") ? oifDetail[\"intfId\"] : \"N/A\"\n                let senderKey = senderDevice + \" intf \" + oifIntfId + \" source \"+str(_source) + \" \" + str(group)\n                let neighborDevId = (oifDetail[\"neighborDevId\"] != \"\") ? oifDetail[\"neighborDevId\"] : \"N/A\"\n                let neighborHostname = (oifDetail[\"neighborHostname\"] != \"\") ? oifDetail[\"neighborHostname\"] : \"N/A\"\n                let neighborIntfId = (oifDetail[\"neighborIntfId\"] != \"\") ? oifDetail[\"neighborIntfId\"] : \"N/A\"\n\n                if !dictHasKey(result,senderKey){\n                    result[senderKey] = newDict()\n                    result[senderKey][\"FLOW BW\"] = flowBw\n                    if ! isGroup{\n                        result[senderKey][\"GROUP\"] = group\n                    }\n\n                    result[senderKey][\"MAC ADDRESS\"] = senderDevice\n                    result[senderKey][\"HOSTNAME (incl roles and trackingId)\"] = mcsSender[\"hostname\"] + \" has sender \" + \" with trackingId \"+str(mcsSender[\"iif\"][\"trackingId\"])\n                    result[senderKey][\"INACTIVE RECEIVER\"] = isInactiveReceiver\n                    result[senderKey][\"OIF (OUT)\"] = \"\"\n                    result[senderKey][\"OIF neighbor information\"] = \"mac address - \" + neighborDevId\n                    result[senderKey][\"IIF neighbor information\"] = \"mac address - \" + iifneighDevId + \" hostname - \"+ iifneighborHostname +\" interface -\"+ iifneighborIntfId\n                    result[senderKey][\"IIF (IN)\"] = iifintfId\n                    result[senderKey][\"FAIL STATUS\"] = \"\"\n                    result[senderKey][\"SENDER LABEL\"] = mcsSender[\"iif\"][\"label\"]\n\n                    let isInactiveReceiver = false\n                    result[senderKey][\"INACTIVE RECEIVER\"] = false\n                }\n\n                result[senderKey][\"OIF (OUT)\"] = oifIntfId\n                result[senderKey][\"OIF neighbor information\"] = \"mac address - \" + neighborDevId + \" hostname - \"+ neighborHostname +\" interface -\"+ neighborIntfId\n                }\n            }\n        if senderKey == \"\"{\n            let senderKey = senderDevice + \" source \"+str(_source) + \" \" + str(group)\n        }\n\n        if !dictHasKey(result,senderKey){\n            result[senderKey] = newDict()\n            result[senderKey][\"FLOW BW\"] = flowBw\n            if ! isGroup{\n                result[senderKey][\"GROUP\"] = group\n            }\n\n            result[senderKey][\"MAC ADDRESS\"] = senderDevice\n            result[senderKey][\"HOSTNAME (incl roles and trackingId)\"] = mcsSender[\"hostname\"] + \" has sender \" + \" with trackingId \"+str(mcsSender[\"iif\"][\"trackingId\"])\n            result[senderKey][\"INACTIVE RECEIVER\"] = isInactiveReceiver\n            result[senderKey][\"OIF (OUT)\"] = \"\"\n            result[senderKey][\"OIF neighbor information\"] = \"\"\n            result[senderKey][\"FAIL STATUS\"] = \"\"\n\n            result[senderKey][\"IIF (IN)\"] = iifintfId\n\n            result[senderKey][\"IIF neighbor information\"] =  \"mac address - \" + iifneighDevId + \" hostname - \"+ iifneighborHostname +\" interface -\"+ iifneighborIntfId\n            result[senderKey][\"SENDER LABEL\"] = mcsSender[\"iif\"][\"label\"]\n\n            let isInactiveReceiver = false\n            result[senderKey][\"INACTIVE RECEIVER\"] = false\n        }\n    }\n}\nfor group, groupDetails in mcsReceiver{\n        let receiverData = merge(groupDetails)\n        for dev, devDetails in receiverData{\n        let receiverKey = \"\"\n        let iifneighborHostname = (devDetails[\"iif\"][\"neighborHostname\"] != \"\") ? devDetails[\"iif\"][\"neighborHostname\"] : \"N/A\"\n        let iifneighborIntfId = (devDetails[\"iif\"][\"neighborIntfId\"] != \"\") ? devDetails[\"iif\"][\"neighborIntfId\"] : \"N/A\"\n        let iifintfId = (devDetails[\"iif\"][\"intfId\"] != \"\") ? devDetails[\"iif\"][\"intfId\"] : \"N/A\"\n        let iifneighDevId = (devDetails[\"iif\"][\"neighborDevId\"] != \"\") ? devDetails[\"iif\"][\"neighborDevId\"] : \"N/A\"\n\n\n        for oifDetail, value in devDetails[\"oifs\"]{\n\n            let oifIntfId = (oifDetail[\"intfId\"] != \"\") ? oifDetail[\"intfId\"] : \"N/A\"\n            let neighborDevId = (oifDetail[\"neighborDevId\"] != \"\") ? oifDetail[\"neighborDevId\"] : \"N/A\"\n            let neighborHostname = (oifDetail[\"neighborHostname\"] != \"\") ? oifDetail[\"neighborHostname\"] : \"N/A\"\n            let neighborIntfId = (oifDetail[\"neighborIntfId\"] != \"\") ? oifDetail[\"neighborIntfId\"] : \"N/A\"\n            let receiverKey = dev + \" intf \" + oifIntfId+ \" source \"+str(_source) + \" \" + str(group)\n\n            if !dictHasKey(result,receiverKey){\n                    result[receiverKey] = newDict()\n                    result[receiverKey][\"MAC ADDRESS\"] = dev\n                    if ! isGroup{\n                        result[receiverKey][\"GROUP\"] = group\n                    }\n                    result[receiverKey][\"FLOW BW\"] = flowBw\n                     result[receiverKey][\"FAIL STATUS\"] = \"\"\n                    result[receiverKey][\"HOSTNAME (incl roles and trackingId)\"] = devDetails[\"hostname\"]+ \" has receiver \" + \" with trackingId \" +str(oifDetail[\"trackingId\"])\n                    result[receiverKey][\"INACTIVE RECEIVER\"] = isInactiveReceiver\n                    result[receiverKey][\"OIF (OUT)\"] = \"\"\n                    result[receiverKey][\"OIF neighbor information\"] = \"\"\n                    result[receiverKey][\"IIF (IN)\"] = iifintfId\n                    result[receiverKey][\"IIF neighbor information\"] =  \"mac address - \" + iifneighDevId + \" hostname - \"+ iifneighborHostname +\" interface -\"+ iifneighborIntfId\n                    if dictHasKey(status, dev + \" intf \" + oifIntfId){\n                        result[receiverKey][\"FAIL STATUS\"] = status[dev + \" intf \" + oifIntfId]\n                    }\n\n                }\n            if dictHasKey(result, receiverKey){\n                result[receiverKey][\"HOSTNAME (incl roles and trackingId)\"] = result[receiverKey][\"HOSTNAME (incl roles and trackingId)\"] + \" has receiver \" + \" with trackingId \" +str(oifDetail[\"trackingId\"])\n\n            }\n\n            result[receiverKey][\"OIF (OUT)\"] =  oifIntfId\n            result[receiverKey][\"OIF neighbor information\"] = \"mac address - \" + neighborDevId + \" hostname - \"+ neighborHostname +\" interface -\"+ neighborIntfId\n        }\n        if receiverKey == \"\"{\n                let receiverKey = dev+ \" source \"+str(_source) + \" \" + str(group)\n        }\n        if ! dictHasKey(result, receiverKey){\n\n            let neighborHostname = (devDetails[\"iif\"][\"neighborHostname\"] != \"\") ? devDetails[\"iif\"][\"neighborHostname\"] : \"N/A\"\n            let neighborIntfId = (devDetails[\"iif\"][\"neighborIntfId\"] != \"\") ? devDetails[\"iif\"][\"neighborIntfId\"] : \"N/A\"\n            let intfId = (devDetails[\"iif\"][\"intfId\"] != \"\") ? devDetails[\"iif\"][\"intfId\"] : \"N/A\"\n            result[receiverKey][\"IIF (IN)\"] = intfId\n            result[receiverKey][\"IIF neighbor information\"] =  \"mac address - \" + iifneighDevId + \" hostname - \"+ iifneighborHostname +\" interface -\"+ iifneighborIntfId\n            result[receiverKey][\"OIF (OUT)\"] = \"\"\n\n        }\n\n    }\n}\nfor group, groupDetail in hopDevice{\n    let hopData = merge(groupDetail)\n    for dev, devDetails in hopData{\n        let resultKey = dev + \" source \"+str(_source) + \" \" + str(group)\n        if ! dictHasKey(result, dev){\n            result[resultKey] = newDict()\n            result[resultKey][\"MAC ADDRESS\"] = dev\n            result[resultKey][\"FLOW BW\"] = \"\"\n            if ! isGroup{\n                result[resultKey][\"GROUP\"]= group\n            }\n\n            result[resultKey][\"FAIL STATUS\"] = \"\"\n            result[resultKey][\"HOSTNAME (incl roles and trackingId)\"] = devDetails[\"hostname\"]+ \" has hopDevice \"\n            result[resultKey][\"FLOW BW\"] = flowBw\n            result[resultKey][\"INACTIVE RECEIVER\"] = isInactiveReceiver\n            let neighborHostname = (devDetails[\"iif\"][\"neighborHostname\"] != \"\") ? devDetails[\"iif\"][\"neighborHostname\"] : \"N/A\"\n            let neighborIntfId = (devDetails[\"iif\"][\"neighborIntfId\"] != \"\") ? devDetails[\"iif\"][\"neighborIntfId\"] : \"N/A\"\n            let intfId = (devDetails[\"iif\"][\"intfId\"] != \"\") ? devDetails[\"iif\"][\"intfId\"] : \"N/A\"\n            let iifneighDevId = (devDetails[\"iif\"][\"neighborDevId\"] != \"\") ? devDetails[\"iif\"][\"neighborDevId\"] : \"N/A\"\n\n            result[resultKey][\"IIF (IN)\"] = intfId\n            result[resultKey][\"IIF neighbor information\"] =  \"mac address - \" + iifneighDevId + \" hostname - \"+ iifneighborHostname +\" interface -\"+ iifneighborIntfId\n            result[resultKey][\"OIF (OUT)\"] = \"\"\n        }\n        for oifDetail, value in devDetails[\"oifs\"]{\n            let oifIntfId = (oifDetail[\"intfId\"] != \"\") ? oifDetail[\"intfId\"] : \"N/A\"\n            let neighborHostname = (oifDetail[\"neighborHostname\"] != \"\") ? oifDetail[\"neighborHostname\"] : \"N/A\"\n            let neighborIntfId = (oifDetail[\"neighborIntfId\"] != \"\") ? oifDetail[\"neighborIntfId\"] : \"N/A\"\n            let neighborDevId = (oifDetail[\"neighborDevId\"] != \"\") ? oifDetail[\"neighborDevId\"] : \"N/A\"\n            result[resultKey][\"OIF neighbor information\"] = \"mac address - \" + neighborDevId + \" hostname - \"+ neighborHostname +\" interface -\"+ neighborIntfId\n            result[resultKey][\"OIF (OUT)\"] = result[resultKey][\"OIF (OUT)\"] + oifIntfId\n\n        }\n    }\n}\nresult",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "columnTitle": "",
+                  "hide": true
+                },
+                "OIF (OUT)": {},
+                "IIF neighbor information": {},
+                "FLOW BW": {},
+                "HOSTNAME (incl roles and trackingId)": {}
+              },
+              "columnOrders": {
+                "key": 1,
+                "HOSTNAME (incl roles and trackingId)": 2,
+                "MAC ADDRESS": 3,
+                "FLOW BW": 4,
+                "SENDER LABEL": 5,
+                "IIF neighbor information": 6,
+                "IIF (IN)": 7,
+                "OIF (OUT)": 8,
+                "OIF neighbor information": 9,
+                "INACTIVE RECEIVER": 10,
+                "FAIL STATUS": 11
+              },
+              "defaultSort": {
+                "key": "label"
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "95f8508e-e713-45dc-ab27-cef037c43fba",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "group",
+            "inputType": "FreeForm",
+            "variableType": "String"
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "54537190-a10c-4ecc-be0d-ec23a9658c11",
+          "name": "",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "source",
+            "inputType": "FreeForm",
+            "variableType": "String"
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "5fce8ace-08d6-49ee-814f-a27142043067",
+          "name": "",
+          "position": {
+            "x": 12,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 6,
+            "height": 2
+          },
+          "type": "variable-widget",
+          "inputs": {
+            "defaultValue": "",
+            "inputName": "MasterCVX",
+            "inputType": "SingleSelect",
+            "selectData": {
+              "manualOptions": [],
+              "createOptionsUsingAql": true,
+              "query": "let data = `*:/Sysdb/controller/cluster/statusDir/status/default`\nlet result = newDict()\nlet devices = merge(`analytics:/DatasetInfo/Devices`)\nfor device, paths in data{\n    if  devices[device][\"modelName\"] == \"vEOS\" || devices[device][\"modelName\"] == \"CloudEOS\" {\n        let cvxStatus = merge(data[device])\n        let isStandAlone = cvxStatus[\"isStandalone\"]\n        let isLeader = cvxStatus[\"isLeader\"]\n        let role = cvxStatus[\"role\"][\"Name\"]\n  \nlet key = device\nif isStandAlone {\n    result[key] = newDict()\n    result[key][\"Master CVX\"] = devices[device][\"hostname\"]\n}\nif isLeader && role == \"master\" {\n    result[key] = newDict()\n    result[key][\"Master CVX\"] = devices[device][\"hostname\"]\n    }\n    }\n}\n\nresult",
+              "useValueAsLabel": true
+            },
+            "variableType": "ComplexPath"
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "layoutType": "",
+      "lastUpdated": 1771875921821,
+      "lastUpdatedBy": "sakti"
+    }
+  ]
+}

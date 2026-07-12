@@ -1,0 +1,441 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PTP Examples &mdash; CloudVision Advanced Query Language 4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=0190abbe" />
+
+  
+    <link rel="canonical" href="https://aql.arista.com/examples/ptp/index.html" />
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=71af5d5d"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Multicast Examples" href="../multicast/index.html" />
+    <link rel="prev" title="MCS Examples" href="../mcs/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CloudVision Advanced Query Language
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index_doc.html">Language Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_stdlib.html">AQL Standard Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Language revisions / Change log</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index_examples.html">AQL Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../interface_states/index.html">Interface States Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layer2_and_layer3/index.html">Layer 2 and Layer 3 examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system_health/index.html">System Health Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mcs/index.html">MCS Examples</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">PTP Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ptp-dashboards">PTP Dashboards</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pre-requisites">Pre-requisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ptp-health">PTP Health</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gmid-input-variable">GMID Input Variable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#devices-in-ptp-error-state">Devices in PTP Error State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ptp-interface-summary">PTP Interface Summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#holdover-status">Holdover Status</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ptp-events">PTP Events</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ptp-topology">PTP Topology</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../multicast/index.html">Multicast Examples</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CloudVision Advanced Query Language</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index_examples.html">AQL Examples</a></li>
+      <li class="breadcrumb-item active">PTP Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/ptp/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ptp-examples">
+<h1>PTP Examples<a class="headerlink" href="#ptp-examples" title="Link to this heading"></a></h1>
+<section id="ptp-dashboards">
+<h2>PTP Dashboards<a class="headerlink" href="#ptp-dashboards" title="Link to this heading"></a></h2>
+<p>This dashboard provides overall PTP health per PTP domain. It validates that all switches within a tagged PTP domain are locked to the expected Grandmaster ID, configured with the correct Domain ID, and running in PTP Boundary Clock mode. Discrepancies are shown via color-coded health indicators (OK/WARNING/ERROR).</p>
+<p>The dashboard addresses the following use cases:</p>
+<ul class="simple">
+<li><p><strong>Inconsistent PTP GMID detection</strong> – An error is raised if tagged switches are not all locked to one of the expected GMIDs. A warning is raised if switches are not running <code class="docutils literal notranslate"><span class="pre">ptp</span> <span class="pre">mode</span> <span class="pre">boundary</span></code>. Additionally, if all of the switches within the same PTP Domain are not locked to same GMID then a “WARNING” is shown.</p></li>
+<li><p><strong>Inconsistent PTP Domain ID detection</strong> – An error is raised if tagged switches are not configured with the correct domain ID.</p></li>
+<li><p><strong>PTP Interface Summary</strong> – Shows per-device PTP port status including role, port state, transport and delay mechanism.</p></li>
+<li><p><strong>Holdover Status</strong> – Shows per-device holdover mode and counts of Master, Slave and Disabled PTP ports.</p></li>
+<li><p><strong>PTP Events</strong> – Displays PTP-related events such as grandmaster changes, unexpected GMIDs and domain inconsistencies.</p></li>
+</ul>
+<section id="pre-requisites">
+<h3>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading"></a></h3>
+<ul>
+<li><p>Devices must be tagged with the following tags in CloudVision (Provisioning &gt; Tags within a workspace):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PTP_DOMAIN:&lt;domain_name&gt;</span></code> – identifies the group of switches belonging to a single PTP domain (e.g. <code class="docutils literal notranslate"><span class="pre">PTP_DOMAIN:PROD</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PTP_DomainID:&lt;id&gt;</span></code> – the expected PTP domain ID number (e.g. <code class="docutils literal notranslate"><span class="pre">PTP_DomainID:127</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PTP_GMID:&lt;gmid&gt;</span></code> – one or more expected Grandmaster IDs in hex format (e.g. <code class="docutils literal notranslate"><span class="pre">PTP_GMID:00:02:c5:ff:fe:34:5b:40</span></code>)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Review and submit the workspace to publish the tag assignments</p></li>
+<li><p>The dashboard uses input filters for <code class="docutils literal notranslate"><span class="pre">DomainID</span></code>, <code class="docutils literal notranslate"><span class="pre">GMID</span></code>, <code class="docutils literal notranslate"><span class="pre">Domain</span></code> (tag query) and <code class="docutils literal notranslate"><span class="pre">Device</span></code> to scope the widgets</p></li>
+</ul>
+<a class="reference internal image-reference" href="../../_images/PTPDashboardsusingAQLver3.jpg"><img alt="PTP Dashboard Overview" class="align-center" src="../../_images/PTPDashboardsusingAQLver3.jpg" style="width: 1400px;" />
+</a>
+</section>
+<section id="ptp-health">
+<h3>PTP Health<a class="headerlink" href="#ptp-health" title="Link to this heading"></a></h3>
+<p>Shows if all devices in the network are locked to the primary GMID[s], correct Domain ID and PTP Mode Boundary. Returns a single value: <code class="docutils literal notranslate"><span class="pre">OK</span></code>, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> (multiple valid GMIDs detected) or <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> (misconfigurations found).</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="w"> </span><span class="n">experimentalFeatures</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+<span class="k">let</span><span class="w"> </span><span class="n">ptpStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/Sysdb/ptp/status/parentDS`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">ptpConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/Sysdb/ptp/config`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">dataSetDevices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/DatasetInfo/Devices`</span><span class="p">)</span>
+
+
+
+<span class="k">let</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="k">let</span><span class="w"> </span><span class="n">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">gl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">for</span><span class="w"> </span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_GMID</span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">strsplit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strSplit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">splitval</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">strsplit</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">{</span>
+<span class="w">           </span><span class="k">let</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">parseInt</span><span class="p">(</span><span class="n">splitval</span><span class="p">,</span><span class="m">16</span><span class="p">))</span>
+<span class="w">        </span><span class="p">}</span><span class="k">else</span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">key</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="k">str</span><span class="p">(</span><span class="n">parseInt</span><span class="p">(</span><span class="n">splitval</span><span class="p">,</span><span class="m">16</span><span class="p">))</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">gl</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t</span>
+<span class="p">}</span>
+<span class="k">let</span><span class="w"> </span><span class="n">devByGmId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">for</span><span class="w"> </span><span class="n">dataSet</span><span class="p">,</span><span class="w"> </span><span class="n">dDetails</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">ptpStatus</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">_Domain</span><span class="p">,</span><span class="w"> </span><span class="n">dataSet</span><span class="p">)){</span>
+<span class="w">     </span><span class="k">let</span><span class="w"> </span><span class="n">gmId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">dDetails</span><span class="p">)[</span><span class="s">&quot;grandmasterIdentity&quot;</span><span class="p">]</span>
+<span class="w">      </span><span class="k">let</span><span class="w"> </span><span class="n">gc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gmId</span><span class="p">[</span><span class="s">&quot;value&quot;</span><span class="p">]</span>
+<span class="w">      </span><span class="k">let</span><span class="w"> </span><span class="n">gmIdStr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v0&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v1&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v2&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v3&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v4&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v5&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v6&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v7&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span>
+<span class="w">      </span><span class="k">let</span><span class="w"> </span><span class="n">gmIdAsStr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v0&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v1&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v2&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v3&quot;</span><span class="p">])</span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v4&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v5&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v6&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v7&quot;</span><span class="p">])</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">devByGmId</span><span class="p">,</span><span class="w"> </span><span class="n">gmIdStr</span><span class="p">){</span>
+<span class="w">            </span><span class="n">devByGmId</span><span class="p">[</span><span class="n">gmIdStr</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="n">devByGmId</span><span class="p">[</span><span class="n">gmIdStr</span><span class="p">][</span><span class="n">dataSet</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+<span class="w">      </span><span class="k">let</span><span class="w"> </span><span class="n">dId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">ptpConfig</span><span class="p">[</span><span class="n">dataSet</span><span class="p">])[</span><span class="s">&quot;domainNumber&quot;</span><span class="p">]</span>
+
+<span class="w">     </span><span class="k">let</span><span class="w"> </span><span class="n">match</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">false</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="w"> </span><span class="n">gl</span><span class="p">,</span><span class="w"> </span><span class="n">gmIdAsStr</span><span class="p">){</span>
+<span class="w">      </span><span class="k">let</span><span class="w"> </span><span class="n">match</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">ptpModeStr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">ptpConfig</span><span class="p">[</span><span class="n">dataSet</span><span class="p">])[</span><span class="s">&quot;ptpMode&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">match</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">ptpModeStr</span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;ptpBoundaryClock&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">dId</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">_DomainID</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="p">}</span><span class="k">else</span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ok</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="p">}}</span>
+
+
+<span class="k">if</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">retString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;OK&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">devByGmId</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">retString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;WARNING&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="k">if</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">retString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ERROR&quot;</span>
+<span class="p">}</span>
+
+<span class="n">retString</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="examples/ptp/PTPHealth.png"><img alt="PTP Health widget" src="examples/ptp/PTPHealth.png" style="width: 1400px;" />
+</a>
+</section>
+<section id="gmid-input-variable">
+<h3>GMID Input Variable<a class="headerlink" href="#gmid-input-variable" title="Link to this heading"></a></h3>
+<p>Populates the GMID multi-select input filter by reading PTP_GMID tag values from CloudVision.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">gmids</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/tags/labels/devices/PTP_GMID/value`</span><span class="p">)</span>
+<span class="n">gmids</span>
+</pre></div>
+</div>
+</section>
+<section id="devices-in-ptp-error-state">
+<h3>Devices in PTP Error State<a class="headerlink" href="#devices-in-ptp-error-state" title="Link to this heading"></a></h3>
+<p>Lists all devices whose PTP configuration does not match the expected GMID, Domain ID, or PTP mode. Devices with valid configuration but multiple active GMIDs in the domain are shown with a <code class="docutils literal notranslate"><span class="pre">WARN</span></code> state.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="w"> </span><span class="n">experimentalFeatures</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+<span class="k">let</span><span class="w"> </span><span class="n">ptpStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/Sysdb/ptp/status/parentDS`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">ptpConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`*:/Sysdb/ptp/config`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">dataSetDevices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="l">`analytics:/DatasetInfo/Devices`</span><span class="p">)</span>
+<span class="k">let</span><span class="w"> </span><span class="n">devMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">for</span><span class="w"> </span><span class="n">dataSet</span><span class="p">,</span><span class="w"> </span><span class="n">dataValues</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">dataSetDevices</span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">_Domain</span><span class="p">,</span><span class="w"> </span><span class="n">dataSet</span><span class="p">)){</span>
+<span class="w">        </span><span class="n">devMap</span><span class="p">[</span><span class="n">dataSet</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">        </span><span class="n">devMap</span><span class="p">[</span><span class="n">dataSet</span><span class="w"> </span><span class="p">][</span><span class="s">&quot;hostname&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">dataValues</span><span class="p">[</span><span class="s">&quot;hostname&quot;</span><span class="p">])</span>
+<span class="w">        </span><span class="n">devMap</span><span class="p">[</span><span class="n">dataSet</span><span class="w"> </span><span class="p">][</span><span class="s">&quot;mac&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">dataValues</span><span class="p">[</span><span class="s">&quot;mac&quot;</span><span class="p">])</span>
+<span class="w">        </span><span class="p">}}</span>
+
+
+<span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">let</span><span class="w"> </span><span class="n">ptpData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">let</span><span class="w"> </span><span class="n">gmIdStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+<span class="k">let</span><span class="w"> </span><span class="n">ptpConfigStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">inputGMlist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">for</span><span class="w"> </span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">_GMID</span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">strsplit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strSplit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">splitval</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">strsplit</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="p">{</span>
+<span class="w">           </span><span class="k">let</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">parseInt</span><span class="p">(</span><span class="n">splitval</span><span class="p">,</span><span class="m">16</span><span class="p">))</span>
+<span class="w">        </span><span class="p">}</span><span class="k">else</span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">key</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="k">str</span><span class="p">(</span><span class="n">parseInt</span><span class="p">(</span><span class="n">splitval</span><span class="p">,</span><span class="m">16</span><span class="p">))</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">inputGMlist</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t</span>
+<span class="p">}</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">readDevByGmId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">readValidGm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">dataSet</span><span class="p">,</span><span class="w"> </span><span class="n">dDetails</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">ptpStatus</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">_Domain</span><span class="p">,</span><span class="w"> </span><span class="n">dataSet</span><span class="p">)){</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">gmId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">dDetails</span><span class="p">)[</span><span class="s">&quot;grandmasterIdentity&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">gc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gmId</span><span class="p">[</span><span class="s">&quot;value&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">gmIdStr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v0&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v1&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v2&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v3&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v4&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v5&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v6&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">formatInt</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v7&quot;</span><span class="p">],</span><span class="m">16</span><span class="p">)</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">gmIdAsStr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v0&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v1&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v2&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v3&quot;</span><span class="p">])</span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v4&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v5&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v6&quot;</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">gc</span><span class="p">[</span><span class="s">&quot;v7&quot;</span><span class="p">])</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">hostname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">devMap</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;hostname&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">dictHasKey</span><span class="p">(</span><span class="n">readDevByGmId</span><span class="p">,</span><span class="w"> </span><span class="n">gmIdAsStr</span><span class="p">){</span>
+<span class="w">        </span><span class="n">readDevByGmId</span><span class="p">[</span><span class="n">gmIdAsStr</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="n">readDevByGmId</span><span class="p">[</span><span class="n">gmIdAsStr</span><span class="p">][</span><span class="n">hostname</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">dId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">ptpConfig</span><span class="p">[</span><span class="n">dataSet</span><span class="p">])[</span><span class="s">&quot;domainNumber&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">ptpModeStr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">ptpConfig</span><span class="p">[</span><span class="n">dataSet</span><span class="p">])[</span><span class="s">&quot;ptpMode&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">match</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;OK&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="w"> </span><span class="n">dictHasKey</span><span class="p">(</span><span class="w"> </span><span class="n">inputGMlist</span><span class="p">,</span><span class="w"> </span><span class="n">gmIdAsStr</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">ptpModeStr</span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;ptpBoundaryClock&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="k">str</span><span class="p">(</span><span class="n">dId</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">_DomainID</span><span class="p">{</span>
+<span class="w">      </span><span class="k">let</span><span class="w"> </span><span class="n">match</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ERROR&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">ptpData</span><span class="p">[</span><span class="n">hostname</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">    </span><span class="n">ptpData</span><span class="p">[</span><span class="n">hostname</span><span class="p">][</span><span class="s">&quot;gmId&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gmIdStr</span>
+<span class="w">    </span><span class="n">ptpData</span><span class="p">[</span><span class="n">hostname</span><span class="p">][</span><span class="s">&quot;ptpMode&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptpModeStr</span>
+<span class="w">    </span><span class="n">ptpData</span><span class="p">[</span><span class="n">hostname</span><span class="p">][</span><span class="s">&quot;domain number&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dId</span>
+<span class="w">    </span><span class="n">ptpData</span><span class="p">[</span><span class="n">hostname</span><span class="p">][</span><span class="s">&quot;match&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">match</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">dictHasKey</span><span class="w"> </span><span class="p">(</span><span class="n">inputGMlist</span><span class="p">,</span><span class="w"> </span><span class="n">gmIdAsStr</span><span class="p">){</span>
+<span class="w">        </span><span class="n">readValidGm</span><span class="p">[</span><span class="n">gmIdAsStr</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+
+
+
+
+<span class="k">for</span><span class="w"> </span><span class="n">gmIdAsStr</span><span class="p">,</span><span class="w"> </span><span class="n">devs</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">readDevByGmId</span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">dev</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">devs</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w">  </span><span class="n">ptpData</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;match&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;OK&quot;</span><span class="p">{</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;domain number&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptpData</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;domain number&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;gmId&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptpData</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;gmId&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;ptpMode&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptpData</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;ptpMode&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;state&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ptpData</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;match&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="w"> </span><span class="n">length</span><span class="p">(</span><span class="n">readValidGm</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="p">{</span>
+<span class="k">for</span><span class="w"> </span><span class="n">gmId</span><span class="p">,</span><span class="w"> </span><span class="n">devs</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">readDevByGmId</span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">dev</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">devs</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w">  </span><span class="n">ptpData</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;match&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;OK&quot;</span><span class="p">{</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;domain number&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptpData</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;domain number&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;gmId&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptpData</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;gmId&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;ptpMode&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptpData</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;ptpMode&quot;</span><span class="p">]</span>
+<span class="w">            </span><span class="n">result</span><span class="p">[</span><span class="n">dev</span><span class="p">][</span><span class="s">&quot;state&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="s">&quot;WARN&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">result</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/errorDevices.png"><img alt="Devices in Error State" src="../../_images/errorDevices.png" style="width: 1400px;" />
+</a>
+</section>
+<section id="ptp-interface-summary">
+<h3>PTP Interface Summary<a class="headerlink" href="#ptp-interface-summary" title="Link to this heading"></a></h3>
+<p>Shows per-device PTP port details for a selected device, including interface name, role, port state, transport mode and delay mechanism. Ports that are admin-disabled are excluded. Port states other than Master or Slave are highlighted in red.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">ptpPort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`&lt;_Device&gt;:/Sysdb/ptp/status/portDS/*`</span>
+
+<span class="k">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">for</span><span class="w"> </span><span class="n">intfPath</span><span class="p">,</span><span class="w"> </span><span class="n">intfValue</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">ptpPort</span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">intfDetails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">intfValue</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="w"> </span><span class="n">intfDetails</span><span class="p">[</span><span class="s">&quot;adminDisabled&quot;</span><span class="p">]{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">intfPath</span><span class="p">[</span><span class="s">&quot;intf&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="w">        </span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;Device&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_Device</span>
+<span class="w">        </span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;Interface&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">intfPath</span><span class="p">[</span><span class="s">&quot;intf&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;Role&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">intfDetails</span><span class="p">[</span><span class="s">&quot;role&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;Port State&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strReplace</span><span class="p">(</span><span class="n">intfDetails</span><span class="p">[</span><span class="s">&quot;portState&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">],</span><span class="w"> </span><span class="s">&quot;ps&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;Transport&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">intfDetails</span><span class="p">[</span><span class="s">&quot;transportMode&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;Delay Mechanism&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">intfDetails</span><span class="p">[</span><span class="s">&quot;delayMechanism&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="p">}</span>
+
+
+<span class="n">result</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="examples/ptp/ptpInterfaces.png"><img alt="PTP Interface Summary" src="examples/ptp/ptpInterfaces.png" style="width: 1400px;" />
+</a>
+</section>
+<section id="holdover-status">
+<h3>Holdover Status<a class="headerlink" href="#holdover-status" title="Link to this heading"></a></h3>
+<p>Displays the holdover mode and counts of Master, Slave and Disabled PTP ports per device. A Slave Count of 0 is highlighted in red as it may indicate a loss of PTP synchronization.</p>
+<div class="highlight-aql notranslate"><div class="highlight"><pre><span></span><span class="k">let</span><span class="w"> </span><span class="n">ptpPort</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`&lt;_Device&gt;:/Sysdb/ptp/status/portDS/*`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">ptpHoldOverState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="l">`&lt;_Device&gt;:/Sysdb/ptp/status`</span>
+<span class="k">let</span><span class="w"> </span><span class="n">deviceCounts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="k">let</span><span class="w"> </span><span class="n">dataSet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_Device</span>
+
+<span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newDict</span><span class="p">()</span>
+<span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Master Count&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Slave Count&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Disabled Count&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Holdover Mode&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">ptpHoldOverState</span><span class="p">)[</span><span class="s">&quot;holdoverState&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">intfPath</span><span class="p">,</span><span class="w"> </span><span class="n">intfValue</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">ptpPort</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">let</span><span class="w"> </span><span class="n">intfDetails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">merge</span><span class="p">(</span><span class="n">intfValue</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">intfDetails</span><span class="p">[</span><span class="s">&quot;adminDisabled&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">let</span><span class="w"> </span><span class="n">portStateName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">intfDetails</span><span class="p">[</span><span class="s">&quot;portState&quot;</span><span class="p">][</span><span class="s">&quot;Name&quot;</span><span class="p">]</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">portStateName</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;psMaster&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Master Count&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Master Count&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">portStateName</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;psSlave&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Slave Count&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Slave Count&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">portStateName</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;psDisabled&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">            </span><span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Disabled Count&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceCounts</span><span class="p">[</span><span class="n">dataSet</span><span class="p">][</span><span class="s">&quot;Disabled Count&quot;</span><span class="p">]</span><span class="o">+</span><span class="w"> </span><span class="m">1</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="n">deviceCounts</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/holdover.png"><img alt="PTP Holdover Status" src="../../_images/holdover.png" style="width: 1400px;" />
+</a>
+</section>
+<section id="ptp-events">
+<h3>PTP Events<a class="headerlink" href="#ptp-events" title="Link to this heading"></a></h3>
+<p>The events widget is configured to show the following PTP event types:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">INCONSISTENT_PTP_DOMAIN_ID</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INCONSISTENT_PTP_GMID</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PTP_DOMAIN_ID_GROUP</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PTP_GRANDMASTER_GROUP</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SYS_PTP_GRANDMASTER_CHANGE</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UNEXPECTED_PTP_GMID</span></code></p></li>
+</ul>
+<p>Events are filtered by the <code class="docutils literal notranslate"><span class="pre">Domain</span></code> tag and show WARNING, ERROR and CRITICAL severities for non-maintenance devices.</p>
+<a class="reference internal image-reference" href="../../_images/ptpEvents.png"><img alt="PTP Events" src="../../_images/ptpEvents.png" style="width: 1400px;" />
+</a>
+</section>
+<section id="ptp-topology">
+<h3>PTP Topology<a class="headerlink" href="#ptp-topology" title="Link to this heading"></a></h3>
+<p>The topology widget shows the network topology with the PTP overlay enabled, filtered by the <code class="docutils literal notranslate"><span class="pre">Domain</span></code> tag. This provides a visual representation of PTP roles and states across the network.</p>
+<a class="reference internal image-reference" href="../../_images/ptpTopology.png"><img alt="PTP Topology" src="../../_images/ptpTopology.png" style="width: 1400px;" />
+</a>
+<p><a class="reference download internal" download="" href="../../_downloads/b59d275de6f89cda676772d97d9a0cf4/PTPAQLDashboardsVer3.json"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">Dashboard</span> <span class="pre">JSON</span> <span class="pre">here</span></code></a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../mcs/index.html" class="btn btn-neutral float-left" title="MCS Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../multicast/index.html" class="btn btn-neutral float-right" title="Multicast Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Arista Networks.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

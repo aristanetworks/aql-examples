@@ -1,0 +1,96 @@
+{
+    "dashboards": [
+      {
+        "key": "a064e1b3-8158-4a3e-b7d5-5d2789eb6320",
+        "createdAt": [
+          781166221,
+          1581
+        ],
+        "createdBy": "tamas",
+        "metaData": {
+          "schemaVersion": "3",
+          "legacyKey": "",
+          "legacyVersion": "",
+          "fromPackage": ""
+        },
+        "name": "Interface counters per interface list per device (aql)",
+        "description": "",
+        "widgets": [
+          {
+            "id": "c8042099-a939-4f4d-b5af-8c8bfea7b4bf",
+            "name": "Total In BW",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 14,
+              "height": 13
+            },
+            "type": "aql-query-widget",
+            "inputs": {
+              "expression": "let intfRatesIn =`analytics:/Devices/<_device>/versioned-data/interfaces/data/*/aggregate/rates/1m`[_timeWindowStart:_timeWindowEnd] | map(_value | field(\"inOctets\") | field(\"avg\"))\nlet intfRatesOut =`analytics:/Devices/<_device>/versioned-data/interfaces/data/*/aggregate/rates/1m`[_timeWindowStart:_timeWindowEnd] | map(_value | field(\"outOctets\") | field(\"avg\"))\nlet intfRatesInFiltered = newDict()\nlet intfRatesOutFiltered = newDict()\nlet res = newDict()\n\nfor intfKey, intfVal in intfRatesIn{\n    if dictHasKey(_interfaces, intfKey){\n            intfRatesInFiltered[intfKey] = intfVal\n    }\n}\n\nfor intfKey, intfVal in intfRatesOut{\n    if dictHasKey(_interfaces, intfKey){\n            intfRatesOutFiltered[intfKey] = intfVal\n    }\n}\n\nlet sumInOctets = aggregate(intfRatesInFiltered | map(_value | resample(10s)), \"sum\")\nlet sumOutOctets = aggregate(intfRatesOutFiltered | map(_value | resample(10s)), \"sum\")\nnewDict() | setFields(_device + \" inOctets rates\", sumInOctets/125000, _device + \" outOctets rates\", sumOutOctets/125000) \n",
+              "graphConfig": {
+                "mapToHostname": true
+              },
+              "visualization": "horizonGraph"
+            },
+            "location": "main"
+          },
+          {
+            "id": "dfc6c06d-9588-4d50-8dc0-a4ed71cb9f26",
+            "name": "",
+            "position": {
+              "x": 0,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 4,
+              "height": 2
+            },
+            "type": "input-widget",
+            "inputs": {
+              "defaultValue": "0123F2E4462997EB155B7C50EC148767",
+              "inputName": "device",
+              "inputSource": "devices",
+              "inputWidgetId": "dfc6c06d-9588-4d50-8dc0-a4ed71cb9f26",
+              "tagLabel": "device"
+            },
+            "location": "inputs"
+          },
+          {
+            "id": "7fd6da21-f0ab-4e02-be44-bf1068f291a4",
+            "name": "",
+            "position": {
+              "x": 4,
+              "y": 0
+            },
+            "dimensions": {
+              "width": 6,
+              "height": 2
+            },
+            "type": "variable-widget",
+            "inputs": {
+              "defaultValue": [
+                "Ethernet1",
+                "Ethernet2"
+              ],
+              "inputName": "interfaces",
+              "inputType": "MultiSelect",
+              "selectData": {
+                "manualOptions": [
+                  "let data ="
+                ],
+                "createOptionsUsingAql": true,
+                "query": "let data = `analytics:/Devices/<_device>/versioned-data/interfaces/data/*`\ndata"
+              },
+              "variableType": "String"
+            },
+            "location": "inputs"
+          }
+        ],
+        "lastUpdated": 1698367019518,
+        "lastUpdatedBy": "tamas"
+      }
+    ]
+  }

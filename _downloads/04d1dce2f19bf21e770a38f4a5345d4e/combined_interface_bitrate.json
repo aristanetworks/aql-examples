@@ -1,0 +1,92 @@
+{
+  "dashboards": [
+    {
+      "key": "cc00fa00-3ba5-458a-a2b2-66ee274187c7",
+      "createdAt": [
+        1003051394,
+        1659
+      ],
+      "createdBy": "sjanke",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "Combined Interface Bitrate",
+      "description": "",
+      "widgets": [
+        {
+          "id": "cb77d7ad-7905-4394-bbbd-250a3ee03634",
+          "name": "Combined Interface Bitrate",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 17,
+            "height": 11
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let raw = `analytics:/Devices/*_devices?/versioned-data/interfaces/data/*/aggregate/rates/1m`{\"inOctets\", \"outOctets\"}[_timeWindowStart:_timeWindowEnd]\n\nlet selected = newDict()\n\nfor device, intfs in _interfaces {\n    if dictHasKey(raw, device) {\n        let deviceData = raw[device]\n        let selectedIntfs = newDict()\n\n        for intf, value in intfs {\n            if dictHasKey(deviceData, intf) {\n                selectedIntfs[intf] = deviceData[intf]\n            }\n        }\n\n        if length(selectedIntfs) > 0 {\n            selected[device] = selectedIntfs\n        }\n    }\n}\n\nlet inByInterfaceMbps = selected | recmap(2, _value | map(errvl(_value[\"inOctets\"][\"avg\"], 0) * 8 / 1000000) | resample(1m))\nlet outByInterfaceMbps = selected | recmap(2, _value | map(errvl(_value[\"outOctets\"][\"avg\"], 0) * 8 / 1000000) | resample(1m))\n\nlet inByDeviceMbps = inByInterfaceMbps | map(aggregate(_value, \"sum\"))\nlet outByDeviceMbps = outByInterfaceMbps | map(aggregate(_value, \"sum\"))\n\nnewDict() | setFields(\"Bitrate In\", aggregate(inByDeviceMbps, \"sum\"), \"Bitrate Out\", aggregate(outByDeviceMbps, \"sum\"))",
+            "graphConfig": {
+              "showLegend": true,
+              "mapToHostname": false,
+              "unit": "Mbps",
+              "interpolation": "linear",
+              "stacked": false,
+              "showFilter": false
+            },
+            "visualization": "lineGraph"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "c6efc579-dfe1-46c0-994a-47423df115a4",
+          "name": "",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 9,
+            "height": 2
+          },
+          "type": "tag-query-widget",
+          "inputs": {
+            "inputName": "interfaces",
+            "inputSource": "interfaces",
+            "defaultValue": "Link-Type:Fabric"
+          },
+          "location": "inputs",
+          "parent": ""
+        },
+        {
+          "id": "55bd2bcc-41c3-4509-8e94-7448cb9a3d9b",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 8,
+            "height": 2
+          },
+          "type": "tag-query-widget",
+          "inputs": {
+            "inputName": "devices",
+            "inputSource": "devices",
+            "defaultValue": ""
+          },
+          "location": "inputs",
+          "parent": ""
+        }
+      ],
+      "layoutType": "Grid",
+      "lastUpdated": 1783708971482,
+      "lastUpdatedBy": "sjanke"
+    }
+  ]
+}

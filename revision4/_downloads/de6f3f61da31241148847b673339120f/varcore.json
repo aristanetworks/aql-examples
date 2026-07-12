@@ -1,0 +1,61 @@
+{
+  "dashboards": [
+    {
+      "key": "5e5cc5e0-17b1-48de-be12-29239f7254b9",
+      "createdAt": [
+        1033268786,
+        1574
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "/var/core monitoring",
+      "description": "",
+      "widgets": [
+        {
+          "id": "42969bdc-6c44-422a-ab0a-6e11235cf6b7",
+          "name": "Devices with files in /var/core",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "dimensions": {
+            "width": 9,
+            "height": 8
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let devices = `analytics:/Devices/*/versioned-data/Device` | map(merge(_value)[\"hostname\"])\nlet result = newDict()\nlet deviceDiskStats = `*:/Kernel/vfs/stat/\\/var\\/core` | map(merge(_value))\nlet deviceDiskStats = deviceDiskStats | where(dictHasKey(_value, \"blocks\") && dictHasKey(_value, \"bfree\") && _value[\"blocks\"] != _value[\"bfree\"])\nfor device, diskStat in deviceDiskStats {\n    result[devices[device]] = newDict() | setFields(\"value\", true)\n}\nresult\n",
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        },
+        {
+          "id": "3c38bfbe-e0bd-4786-a425-404cc54a2cfa",
+          "name": "Note",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 9,
+            "height": 3
+          },
+          "type": "text-widget",
+          "inputs": {
+            "textContent": "### The following devices have at least 1 file in `/var/core` directory which may be an indicative of agents that have been crashing"
+          },
+          "location": "main",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691102940195,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "dashboards": [
+    {
+      "key": "8c739108-62a3-44be-b8be-11e889e263bc",
+      "createdAt": [
+        1032706872,
+        1574
+      ],
+      "createdBy": "tamas",
+      "metaData": {
+        "schemaVersion": "3",
+        "legacyKey": "",
+        "legacyVersion": "",
+        "fromPackage": ""
+      },
+      "name": "FN44",
+      "description": "",
+      "widgets": [
+        {
+          "id": "5fb458a8-8b8e-48e7-9b79-e66253f24e76",
+          "name": "",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "dimensions": {
+            "width": 14,
+            "height": 22
+          },
+          "type": "aql-query-widget",
+          "inputs": {
+            "expression": "let fixed = `*:/Sysdb/hardware/entmib/fixedSystem`\nlet chassis = `*:/Sysdb/hardware/entmib/chassis/cardSlot/*/card`\nlet result = newDict()\n\nfor deviceKey, deviceValue in fixed{\n    let fx_temp = merge(deviceValue)\n    if dictHasKey(fx_temp , \"firmwareRev\") && fx_temp[\"firmwareRev\"] != \"\"{\n        result[deviceKey] = newDict() | setFields(\"Aboot version\", fx_temp[\"firmwareRev\"])\n    }\n\n}\nfor deviceKey, deviceValue in chassis {\n    let cx_tmp = chassis[deviceKey] | map(merge(_value))\n    for card in cx_tmp{\n        if dictHasKey(card, \"firmwareRev\") && card[\"firmwareRev\"] != \"\" {\n            result[deviceKey] = newDict() | setFields(\"Aboot version\", card[\"firmwareRev\"])\n        }\n    }\n\n}\n\nlet re = \"Aboot-norcal\\d+-(\\d+)\\.(\\d+)\\.(\\d+).*\"\n\nfor deviceKey, deviceValue in result{\n    let aboot =  reFindCaptures(deviceValue[\"Aboot version\"], re)\n    if length(aboot) > 0 {\n\n        if num(aboot[0][1]) == 4 {\n            if num(aboot[0][2]) == 0 && num(aboot[0][3]) < 7  {\n                result[deviceKey][\"affected\"] = \"🔥 True\"\n            }\n            if num(aboot[0][2]) == 1 && num(aboot[0][3]) < 1 {\n                result[deviceKey][\"affected\"] = \"🔥 True\"\n            }\n        }\n        if num(aboot[0][1]) == 6 {\n            if num(aboot[0][2]) == 0 && num(aboot[0][3]) < 9  {\n                result[deviceKey][\"affected\"] = \"🔥 True\"\n            }\n            if num(aboot[0][2]) == 1 && num(aboot[0][3]) < 7 {\n                result[deviceKey][\"affected\"] = \"🔥 True\"\n            } else {\n                result[deviceKey][\"affected\"] = \"✅ False\"\n            }\n        } else {\n            result[deviceKey][\"affected\"] = \"✅ False\"\n        }\n\n    } else {\n        result[deviceKey][\"affected\"] = \"✅ False\"\n    }\n\n}\nresult\n",
+            "graphConfig": {
+              "columns": {
+                "key": {
+                  "mapToHostname": true
+                }
+              }
+            },
+            "visualization": "table"
+          },
+          "location": "main",
+          "parent": ""
+        }
+      ],
+      "lastUpdated": 1691102387240,
+      "lastUpdatedBy": "tamas"
+    }
+  ]
+}
